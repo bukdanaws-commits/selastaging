@@ -55,6 +55,8 @@ const MOCK_USERS_BY_ROLE: Record<UserRole, AuthUser> = {
     email: 'andi.wijaya@gmail.com',
     avatar: 'https://api.dicebear.com/9.x/avataaars/svg?seed=Andi',
     phone: '081200003333',
+    organizerId: 'org-sheila-on7',
+    tenantId: 'tenant-sheila-on7',
     role: 'ORGANIZER',
     status: 'active',
     createdAt: new Date().toISOString(),

@@ -73,14 +73,14 @@ export default function SeatLayoutPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white">Seat Layout</h1>
-          <p className="text-[#7FB3AE] mt-1">Konfigurasi layout kursi & section venue</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground">Seat Layout</h1>
+          <p className="text-muted-foreground mt-1">Konfigurasi layout kursi & section venue</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="border-[#00A39D]/30 text-[#00A39D] hover:bg-[#00A39D]/10" onClick={() => setShowMap(!showMap)}>
+          <Button variant="outline" className="border-primary/30 text-primary hover:bg-primary/10" onClick={() => setShowMap(!showMap)}>
             <Eye className="w-4 h-4 mr-1" /> {showMap ? 'List View' : 'Visual Map'}
           </Button>
-          <Button onClick={openCreate} className="bg-[#00A39D] hover:bg-[#00A39D]/90 text-white">
+          <Button onClick={openCreate} className="bg-primary hover:bg-primary/90 text-foreground">
             <Plus className="w-4 h-4 mr-1" /> Add Section
           </Button>
         </div>
@@ -88,54 +88,54 @@ export default function SeatLayoutPage() {
 
       {/* Summary */}
       <div className="grid grid-cols-3 gap-3">
-        <Card className="bg-[#111918] border-white/5">
+        <Card className="bg-card border-border">
           <CardContent className="p-4 text-center">
-            <p className="text-[11px] text-[#7FB3AE]">Total Sections</p>
-            <p className="text-xl font-bold text-white">{sections.length}</p>
+            <p className="text-[11px] text-muted-foreground">Total Sections</p>
+            <p className="text-xl font-bold text-foreground">{sections.length}</p>
           </CardContent>
         </Card>
-        <Card className="bg-[#111918] border-white/5">
+        <Card className="bg-card border-border">
           <CardContent className="p-4 text-center">
-            <p className="text-[11px] text-[#7FB3AE]">Total Capacity</p>
-            <p className="text-xl font-bold text-[#00A39D]">{totalCapacity.toLocaleString('id-ID')}</p>
+            <p className="text-[11px] text-muted-foreground">Total Capacity</p>
+            <p className="text-xl font-bold text-primary">{totalCapacity.toLocaleString('id-ID')}</p>
           </CardContent>
         </Card>
-        <Card className="bg-[#111918] border-white/5">
+        <Card className="bg-card border-border">
           <CardContent className="p-4 text-center">
-            <p className="text-[11px] text-[#7FB3AE]">Floor / Tribun</p>
-            <p className="text-xl font-bold text-white">{floorCount} / {tribunCount}</p>
+            <p className="text-[11px] text-muted-foreground">Floor / Tribun</p>
+            <p className="text-xl font-bold text-foreground">{floorCount} / {tribunCount}</p>
           </CardContent>
         </Card>
       </div>
 
       {!showMap ? (
-        <Card className="bg-[#111918] border-white/5">
+        <Card className="bg-card border-border">
           <CardContent className="p-0">
             <div className="overflow-x-auto max-h-[60vh] overflow-y-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-white/5 hover:bg-transparent">
-                    <TableHead className="text-[#7FB3AE]">Section</TableHead>
-                    <TableHead className="text-[#7FB3AE] text-right">Capacity</TableHead>
-                    <TableHead className="text-[#7FB3AE]">Tier</TableHead>
-                    <TableHead className="text-[#7FB3AE]">Description</TableHead>
-                    <TableHead className="text-[#7FB3AE] text-right">Actions</TableHead>
+                  <TableRow className="border-border hover:bg-transparent">
+                    <TableHead className="text-muted-foreground">Section</TableHead>
+                    <TableHead className="text-muted-foreground text-right">Capacity</TableHead>
+                    <TableHead className="text-muted-foreground">Tier</TableHead>
+                    <TableHead className="text-muted-foreground">Description</TableHead>
+                    <TableHead className="text-muted-foreground text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {sections.map((sec) => (
-                    <TableRow key={sec.id} className="border-white/5 hover:bg-white/[0.02]">
-                      <TableCell className="text-white font-medium">{sec.name}</TableCell>
-                      <TableCell className="text-right text-white">{sec.capacity.toLocaleString('id-ID')}</TableCell>
+                    <TableRow key={sec.id} className="border-border hover:bg-accent/50">
+                      <TableCell className="text-foreground font-medium">{sec.name}</TableCell>
+                      <TableCell className="text-right text-foreground">{sec.capacity.toLocaleString('id-ID')}</TableCell>
                       <TableCell>
                         <Badge className={sec.tier === 'floor' ? 'bg-amber-500/15 text-amber-400 border-amber-500/20' : 'bg-purple-500/15 text-purple-400 border-purple-500/20'}>
                           {sec.tier.toUpperCase()}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-[#7FB3AE] text-sm">{sec.description}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{sec.description}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-[#7FB3AE] hover:text-white" onClick={() => openEdit(sec)}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={() => openEdit(sec)}>
                             <Edit2 className="h-4 w-4" />
                           </Button>
                           <Button variant="ghost" size="icon" className="h-8 w-8 text-red-400/60 hover:text-red-400" onClick={() => handleDelete(sec.id)}>
@@ -152,7 +152,7 @@ export default function SeatLayoutPage() {
         </Card>
       ) : (
         /* Placeholder Visual Map */
-        <Card className="bg-[#111918] border-white/5">
+        <Card className="bg-card border-border">
           <CardContent className="p-6">
             <div className="flex flex-col items-center gap-4">
               {/* Stage */}
@@ -162,10 +162,10 @@ export default function SeatLayoutPage() {
               {/* Floor Sections */}
               <div className="w-full max-w-2xl grid grid-cols-4 gap-2">
                 {sections.filter(s => s.tier === 'floor').map(sec => (
-                  <div key={sec.id} className="bg-[#00A39D]/10 border border-[#00A39D]/20 rounded-lg p-3 text-center">
-                    <p className="text-[10px] text-[#7FB3AE] uppercase">{sec.tier}</p>
-                    <p className="text-sm font-medium text-white">{sec.name}</p>
-                    <p className="text-xs text-[#7FB3AE]">{sec.capacity.toLocaleString('id-ID')}</p>
+                  <div key={sec.id} className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-center">
+                    <p className="text-[10px] text-muted-foreground uppercase">{sec.tier}</p>
+                    <p className="text-sm font-medium text-foreground">{sec.name}</p>
+                    <p className="text-xs text-muted-foreground">{sec.capacity.toLocaleString('id-ID')}</p>
                   </div>
                 ))}
               </div>
@@ -173,13 +173,13 @@ export default function SeatLayoutPage() {
               <div className="w-full max-w-2xl grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
                 {sections.filter(s => s.tier === 'tribun').map(sec => (
                   <div key={sec.id} className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3 text-center">
-                    <p className="text-[10px] text-[#7FB3AE] uppercase">{sec.tier}</p>
-                    <p className="text-sm font-medium text-white">{sec.name}</p>
-                    <p className="text-xs text-[#7FB3AE]">{sec.capacity.toLocaleString('id-ID')}</p>
+                    <p className="text-[10px] text-muted-foreground uppercase">{sec.tier}</p>
+                    <p className="text-sm font-medium text-foreground">{sec.name}</p>
+                    <p className="text-xs text-muted-foreground">{sec.capacity.toLocaleString('id-ID')}</p>
                   </div>
                 ))}
               </div>
-              <p className="text-xs text-white/30 mt-2">Visual seat map — placeholder for interactive editor</p>
+              <p className="text-xs text-muted-foreground/50 mt-2">Visual seat map — placeholder for interactive editor</p>
             </div>
           </CardContent>
         </Card>
@@ -187,25 +187,25 @@ export default function SeatLayoutPage() {
 
       {/* Add/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="bg-[#111918] border-white/10 text-white max-w-lg">
+        <DialogContent className="bg-card border-input text-foreground max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-white">{editingId ? 'Edit Section' : 'Add Section'}</DialogTitle>
+            <DialogTitle className="text-foreground">{editingId ? 'Edit Section' : 'Add Section'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-[#7FB3AE]">Section Name *</Label>
-              <Input value={form.name} onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))} placeholder="e.g. Tribun A" className="bg-[#0A0F0E] border-white/10 text-white placeholder:text-white/30" />
+              <Label className="text-muted-foreground">Section Name *</Label>
+              <Input value={form.name} onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))} placeholder="e.g. Tribun A" className="bg-background border-input text-foreground placeholder:text-muted-foreground/50" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-[#7FB3AE]">Capacity *</Label>
-                <Input type="number" value={form.capacity} onChange={e => setForm(prev => ({ ...prev, capacity: e.target.value }))} placeholder="2000" className="bg-[#0A0F0E] border-white/10 text-white placeholder:text-white/30" />
+                <Label className="text-muted-foreground">Capacity *</Label>
+                <Input type="number" value={form.capacity} onChange={e => setForm(prev => ({ ...prev, capacity: e.target.value }))} placeholder="2000" className="bg-background border-input text-foreground placeholder:text-muted-foreground/50" />
               </div>
               <div className="space-y-2">
-                <Label className="text-[#7FB3AE]">Tier</Label>
+                <Label className="text-muted-foreground">Tier</Label>
                 <div className="flex gap-2">
                   {['floor', 'tribun'].map(t => (
-                    <button key={t} onClick={() => setForm(prev => ({ ...prev, tier: t }))} className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${form.tier === t ? 'bg-[#00A39D] text-white' : 'bg-white/5 text-[#7FB3AE] hover:bg-white/10'}`}>
+                    <button key={t} onClick={() => setForm(prev => ({ ...prev, tier: t }))} className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${form.tier === t ? 'bg-primary text-foreground' : 'bg-accent text-muted-foreground hover:bg-accent'}`}>
                       {t.toUpperCase()}
                     </button>
                   ))}
@@ -213,13 +213,13 @@ export default function SeatLayoutPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label className="text-[#7FB3AE]">Description</Label>
-              <Input value={form.description} onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))} placeholder="Section description" className="bg-[#0A0F0E] border-white/10 text-white placeholder:text-white/30" />
+              <Label className="text-muted-foreground">Description</Label>
+              <Input value={form.description} onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))} placeholder="Section description" className="bg-background border-input text-foreground placeholder:text-muted-foreground/50" />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setDialogOpen(false)} className="text-[#7FB3AE]">Cancel</Button>
-            <Button onClick={handleSave} disabled={!form.name || !form.capacity} className="bg-[#00A39D] hover:bg-[#00A39D]/90 text-white">
+            <Button variant="ghost" onClick={() => setDialogOpen(false)} className="text-muted-foreground">Cancel</Button>
+            <Button onClick={handleSave} disabled={!form.name || !form.capacity} className="bg-primary hover:bg-primary/90 text-foreground">
               {editingId ? 'Update' : 'Create'}
             </Button>
           </DialogFooter>

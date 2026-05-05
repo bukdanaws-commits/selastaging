@@ -66,8 +66,8 @@ export default function WithdrawPage() {
   return (
     <div className="space-y-6 max-w-xl">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-white">Withdraw</h1>
-        <p className="text-[#7FB3AE] mt-1">Cairkan saldo ke rekening bank</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground">Withdraw</h1>
+        <p className="text-muted-foreground mt-1">Cairkan saldo ke rekening bank</p>
       </div>
 
       {/* Available Balance */}
@@ -84,26 +84,26 @@ export default function WithdrawPage() {
       </Card>
 
       {/* Withdrawal Form */}
-      <Card className="bg-[#111918] border-white/5">
+      <Card className="bg-card border-border">
         <CardHeader className="pb-3">
-          <CardTitle className="text-white">Request Withdrawal</CardTitle>
+          <CardTitle className="text-foreground">Request Withdrawal</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label className="text-[#7FB3AE]">Amount (IDR)</Label>
+            <Label className="text-muted-foreground">Amount (IDR)</Label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#7FB3AE] text-sm">Rp</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">Rp</span>
               <Input
                 type="number"
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
                 placeholder="0"
-                className="bg-[#0A0F0E] border-white/10 text-white placeholder:text-white/30 pl-10 text-lg font-semibold"
+                className="bg-background border-input text-foreground placeholder:text-muted-foreground/50 pl-10 text-lg font-semibold"
               />
             </div>
-            <div className="flex items-center justify-between text-xs text-[#7FB3AE]">
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>Min: Rp 100.000</span>
-              <span className="text-white/40 cursor-pointer" onClick={() => setAmount(String(AVAILABLE_BALANCE))}>Max: {formatRupiah(AVAILABLE_BALANCE)}</span>
+              <span className="text-foreground/40 cursor-pointer" onClick={() => setAmount(String(AVAILABLE_BALANCE))}>Max: {formatRupiah(AVAILABLE_BALANCE)}</span>
             </div>
             {numAmount > AVAILABLE_BALANCE && (
               <p className="text-xs text-red-400 flex items-center gap-1"><AlertTriangle className="w-3 h-3" /> Amount exceeds available balance</p>
@@ -111,8 +111,8 @@ export default function WithdrawPage() {
           </div>
 
           <div className="space-y-2">
-            <Label className="text-[#7FB3AE]">Bank Account</Label>
-            <div className="bg-[#0A0F0E] border border-white/10 rounded-md px-3 py-2.5 text-sm text-white">
+            <Label className="text-muted-foreground">Bank Account</Label>
+            <div className="bg-background border border-input rounded-md px-3 py-2.5 text-sm text-foreground">
               Bank BSI — 7123****789 (PT SeleEvent Indonesia) ✅
             </div>
           </div>
@@ -124,7 +124,7 @@ export default function WithdrawPage() {
                 key={pct}
                 variant="outline"
                 size="sm"
-                className="border-white/10 text-[#7FB3AE] hover:text-white hover:bg-white/5 text-xs"
+                className="border-input text-muted-foreground hover:text-foreground hover:bg-accent text-xs"
                 onClick={() => setAmount(String(Math.floor(AVAILABLE_BALANCE * pct / 100)))}
               >
                 {pct}%
@@ -135,7 +135,7 @@ export default function WithdrawPage() {
           <Button
             onClick={() => setConfirmOpen(true)}
             disabled={!isValid}
-            className="w-full bg-[#00A39D] hover:bg-[#00A39D]/90 text-white py-5 text-base font-semibold"
+            className="w-full bg-primary hover:bg-primary/90 text-foreground py-5 text-base font-semibold"
           >
             <ArrowDownRight className="w-5 h-5 mr-2" />
             Withdraw {formatRupiah(numAmount)}
@@ -144,32 +144,32 @@ export default function WithdrawPage() {
       </Card>
 
       {/* Recent Withdrawals */}
-      <Card className="bg-[#111918] border-white/5">
+      <Card className="bg-card border-border">
         <CardHeader className="pb-3">
-          <CardTitle className="text-white text-sm">Recent Withdrawals</CardTitle>
+          <CardTitle className="text-foreground text-sm">Recent Withdrawals</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow className="border-white/5 hover:bg-transparent">
-                <TableHead className="text-[#7FB3AE]">Amount</TableHead>
-                <TableHead className="text-[#7FB3AE]">Status</TableHead>
-                <TableHead className="text-[#7FB3AE]">Date</TableHead>
+              <TableRow className="border-border hover:bg-transparent">
+                <TableHead className="text-muted-foreground">Amount</TableHead>
+                <TableHead className="text-muted-foreground">Status</TableHead>
+                <TableHead className="text-muted-foreground">Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {recentWithdrawals.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={3} className="text-center py-6 text-[#7FB3AE]">No withdrawal requests yet</TableCell>
+                  <TableCell colSpan={3} className="text-center py-6 text-muted-foreground">No withdrawal requests yet</TableCell>
                 </TableRow>
               ) : (
                 recentWithdrawals.map(w => (
-                  <TableRow key={w.id} className="border-white/5 hover:bg-white/[0.02]">
-                    <TableCell className="text-white font-semibold">{formatRupiah(w.amount)}</TableCell>
+                  <TableRow key={w.id} className="border-border hover:bg-accent/50">
+                    <TableCell className="text-foreground font-semibold">{formatRupiah(w.amount)}</TableCell>
                     <TableCell>
                       <Badge className={STATUS_COLORS[w.status]}>{w.status.toUpperCase()}</Badge>
                     </TableCell>
-                    <TableCell className="text-[#7FB3AE] text-xs">{formatDateTimeShort(w.requestedAt)}</TableCell>
+                    <TableCell className="text-muted-foreground text-xs">{formatDateTimeShort(w.requestedAt)}</TableCell>
                   </TableRow>
                 ))
               )}
@@ -180,33 +180,33 @@ export default function WithdrawPage() {
 
       {/* Confirmation Dialog */}
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <DialogContent className="bg-[#111918] border-white/10 text-white max-w-md">
+        <DialogContent className="bg-card border-input text-foreground max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-white">Confirm Withdrawal</DialogTitle>
+            <DialogTitle className="text-foreground">Confirm Withdrawal</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="bg-[#0A0F0E] border border-white/10 rounded-lg p-4 space-y-3">
+            <div className="bg-background border border-input rounded-lg p-4 space-y-3">
               <div className="flex justify-between text-sm">
-                <span className="text-[#7FB3AE]">Amount</span>
-                <span className="text-white font-semibold">{formatRupiah(numAmount)}</span>
+                <span className="text-muted-foreground">Amount</span>
+                <span className="text-foreground font-semibold">{formatRupiah(numAmount)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-[#7FB3AE]">Fee</span>
+                <span className="text-muted-foreground">Fee</span>
                 <span className="text-emerald-400 font-medium">Rp 0</span>
               </div>
-              <div className="border-t border-white/10 pt-3 flex justify-between text-sm">
-                <span className="text-[#7FB3AE] font-medium">You Receive</span>
-                <span className="text-white font-bold text-lg">{formatRupiah(numAmount)}</span>
+              <div className="border-t border-input pt-3 flex justify-between text-sm">
+                <span className="text-muted-foreground font-medium">You Receive</span>
+                <span className="text-foreground font-bold text-lg">{formatRupiah(numAmount)}</span>
               </div>
             </div>
-            <div className="text-xs text-[#7FB3AE] space-y-1">
-              <p>Bank: <span className="text-white">Bank BSI — 7123456789</span></p>
-              <p>Holder: <span className="text-white">PT SeleEvent Indonesia</span></p>
+            <div className="text-xs text-muted-foreground space-y-1">
+              <p>Bank: <span className="text-foreground">Bank BSI — 7123456789</span></p>
+              <p>Holder: <span className="text-foreground">PT SeleEvent Indonesia</span></p>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setConfirmOpen(false)} className="text-[#7FB3AE]">Cancel</Button>
-            <Button onClick={handleWithdraw} disabled={isSubmitting} className="bg-[#00A39D] hover:bg-[#00A39D]/90 text-white">
+            <Button variant="ghost" onClick={() => setConfirmOpen(false)} className="text-muted-foreground">Cancel</Button>
+            <Button onClick={handleWithdraw} disabled={isSubmitting} className="bg-primary hover:bg-primary/90 text-foreground">
               {isSubmitting ? 'Processing...' : 'Confirm Withdrawal'}
             </Button>
           </DialogFooter>

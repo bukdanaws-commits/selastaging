@@ -21,17 +21,17 @@ function FAQItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false)
   return (
     <button
-      className="w-full text-left p-4 rounded-lg bg-[#0A0F0E] border border-white/5 hover:border-[#00A39D]/15 transition-colors"
+      className="w-full text-left p-4 rounded-lg bg-background border border-border hover:border-primary/15 transition-colors"
       onClick={() => setOpen(!open)}
     >
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <HelpCircle className="w-4 h-4 text-[#00A39D] shrink-0" />
-          <span className="text-sm text-white font-medium">{q}</span>
+          <HelpCircle className="w-4 h-4 text-primary shrink-0" />
+          <span className="text-sm text-foreground font-medium">{q}</span>
         </div>
-        {open ? <ChevronUp className="w-4 h-4 text-[#7FB3AE] shrink-0" /> : <ChevronDown className="w-4 h-4 text-[#7FB3AE] shrink-0" />}
+        {open ? <ChevronUp className="w-4 h-4 text-muted-foreground shrink-0" /> : <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />}
       </div>
-      {open && <p className="text-sm text-[#7FB3AE] mt-3 ml-7">{a}</p>}
+      {open && <p className="text-sm text-muted-foreground mt-3 ml-7">{a}</p>}
     </button>
   )
 }
@@ -77,69 +77,69 @@ export default function WristbandGuidePage() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-white">Panduan Gelang</h1>
-        <p className="text-[#7FB3AE] mt-1">Panduan lengkap konfigurasi gelang dan alur penukaran</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground">Panduan Gelang</h1>
+        <p className="text-muted-foreground mt-1">Panduan lengkap konfigurasi gelang dan alur penukaran</p>
       </div>
 
       {/* Wristband Configs Grid */}
       <div>
-        <h3 className="text-sm font-semibold text-[#7FB3AE] uppercase tracking-wider mb-3">Konfigurasi Gelang</h3>
+        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Konfigurasi Gelang</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {wristbandConfigs.map((wb, idx) => (
-            <Card key={String(wb.ticketTypeId ?? idx)} className="bg-[#111918] border-white/5 hover:border-[#00A39D]/20 transition-colors">
+            <Card key={String(wb.ticketTypeId ?? idx)} className="bg-card border-border hover:border-primary/20 transition-colors">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3 mb-3">
                   <div
-                    className="w-10 h-10 rounded-full shrink-0 border-2 border-white/10 shadow-lg"
+                    className="w-10 h-10 rounded-full shrink-0 border-2 border-input shadow-lg"
                     style={{ backgroundColor: String(wb.wristbandColorHex ?? '#E5E7EB') }}
                   />
                   <div>
-                    <p className="text-sm text-white font-semibold">{String(wb.ticketTypeName ?? '-')}</p>
-                    <p className="text-[11px] text-[#7FB3AE]">{String(wb.emoji ?? '')}</p>
+                    <p className="text-sm text-foreground font-semibold">{String(wb.ticketTypeName ?? '-')}</p>
+                    <p className="text-[11px] text-muted-foreground">{String(wb.emoji ?? '')}</p>
                   </div>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-[#7FB3AE]">Warna</span>
-                    <Badge variant="outline" className="text-[10px] text-white border-white/10">
+                    <span className="text-muted-foreground">Warna</span>
+                    <Badge variant="outline" className="text-[10px] text-foreground border-input">
                       {String(wb.wristbandColor ?? '-')}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-[#7FB3AE]">Tipe</span>
-                    <span className="text-white font-medium">{String(wb.wristbandType ?? '-')}</span>
+                    <span className="text-muted-foreground">Tipe</span>
+                    <span className="text-foreground font-medium">{String(wb.wristbandType ?? '-')}</span>
                   </div>
                 </div>
               </CardContent>
             </Card>
           ))}
           {wristbandConfigs.length === 0 && (
-            <p className="text-sm text-[#7FB3AE] col-span-full text-center py-8">Data konfigurasi gelang belum tersedia</p>
+            <p className="text-sm text-muted-foreground col-span-full text-center py-8">Data konfigurasi gelang belum tersedia</p>
           )}
         </div>
       </div>
 
       {/* Redemption Flow */}
       <div>
-        <h3 className="text-sm font-semibold text-[#7FB3AE] uppercase tracking-wider mb-3">Alur Penukaran Gelang</h3>
-        <Card className="bg-[#111918] border-white/5">
+        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Alur Penukaran Gelang</h3>
+        <Card className="bg-card border-border">
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {flowSteps.map((step, idx) => (
                 <div key={step.step} className="relative">
                   <div className="flex flex-col items-center text-center">
-                    <div className="w-14 h-14 rounded-2xl bg-[#00A39D]/10 border border-[#00A39D]/20 flex items-center justify-center mb-3">
-                      <step.icon className="w-6 h-6 text-[#00A39D]" />
+                    <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-3">
+                      <step.icon className="w-6 h-6 text-primary" />
                     </div>
-                    <div className="w-7 h-7 rounded-full bg-[#00A39D] text-white text-xs font-bold flex items-center justify-center mb-2">
+                    <div className="w-7 h-7 rounded-full bg-primary text-foreground text-xs font-bold flex items-center justify-center mb-2">
                       {step.step}
                     </div>
-                    <p className="text-sm font-semibold text-white">{step.title}</p>
-                    <p className="text-xs text-[#7FB3AE] mt-1 leading-relaxed">{step.desc}</p>
+                    <p className="text-sm font-semibold text-foreground">{step.title}</p>
+                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{step.desc}</p>
                   </div>
                   {idx < flowSteps.length - 1 && (
                     <div className="hidden md:block absolute top-7 -right-3 w-6">
-                      <ChevronDown className="w-6 h-6 text-[#00A39D]/40 rotate-[-90deg]" />
+                      <ChevronDown className="w-6 h-6 text-primary/40 rotate-[-90deg]" />
                     </div>
                   )}
                 </div>
@@ -151,7 +151,7 @@ export default function WristbandGuidePage() {
 
       {/* FAQ */}
       <div>
-        <h3 className="text-sm font-semibold text-[#7FB3AE] uppercase tracking-wider mb-3">FAQ & Troubleshooting</h3>
+        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">FAQ & Troubleshooting</h3>
         <div className="space-y-2">
           {faqs.map((faq, i) => (
             <FAQItem key={i} q={faq.q} a={faq.a} />

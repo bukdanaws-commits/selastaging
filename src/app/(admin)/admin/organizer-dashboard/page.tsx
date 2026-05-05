@@ -60,17 +60,17 @@ export default function DashboardPage() {
   const avgSpeed = activeGates > 0 ? Math.round(((liveStats?.totalGateScans as number) ?? 0) / activeGates / 120) : 0
 
   const primaryKpis = [
-    { label: 'Total Peserta', value: totalTicketsSold, icon: Users, color: 'text-white', bg: 'bg-gradient-to-br from-[#00A39D] to-[#00A39D]/70' },
+    { label: 'Total Peserta', value: totalTicketsSold, icon: Users, color: 'text-foreground', bg: 'bg-gradient-to-br from-primary to-primary/70' },
     { label: 'Sudah Redeem', value: totalRedeemed, icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-gradient-to-br from-emerald-600/20 to-emerald-600/5 border border-emerald-500/20' },
     { label: 'Di Dalam Venue', value: totalInside, icon: LogIn, color: 'text-blue-400', bg: 'bg-gradient-to-br from-blue-600/20 to-blue-600/5 border border-blue-500/20' },
     { label: 'Tiket Terjual', value: totalTicketsSold, icon: Ticket, color: 'text-amber-400', bg: 'bg-gradient-to-br from-amber-600/20 to-amber-600/5 border border-amber-500/20' },
   ]
 
   const secondaryStats = [
-    { label: 'Counter Aktif', value: activeCounters, icon: Store, color: 'text-[#00A39D]' },
-    { label: 'Gate Aktif', value: activeGates, icon: DoorOpen, color: 'text-[#00A39D]' },
-    { label: 'Occupancy Rate', value: `${occupancyRate}%`, icon: TrendingUp, color: 'text-[#00A39D]' },
-    { label: 'Avg Speed', value: `${avgSpeed}/min`, icon: Zap, color: 'text-[#00A39D]' },
+    { label: 'Counter Aktif', value: activeCounters, icon: Store, color: 'text-primary' },
+    { label: 'Gate Aktif', value: activeGates, icon: DoorOpen, color: 'text-primary' },
+    { label: 'Occupancy Rate', value: `${occupancyRate}%`, icon: TrendingUp, color: 'text-primary' },
+    { label: 'Avg Speed', value: `${avgSpeed}/min`, icon: Zap, color: 'text-primary' },
   ]
 
   const quickActions = [
@@ -95,8 +95,8 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-white">Dashboard</h1>
-        <p className="text-[#7FB3AE] mt-1">Ringkasan operasional hari ini</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground">Dashboard</h1>
+        <p className="text-muted-foreground mt-1">Ringkasan operasional hari ini</p>
       </div>
 
       {/* Primary KPI Cards */}
@@ -105,11 +105,11 @@ export default function DashboardPage() {
           <Card key={kpi.label} className={cn('py-4 border-0', kpi.bg)}>
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-white/10">
-                  <kpi.icon className="h-5 w-5 text-white" />
+                <div className="p-2 rounded-lg bg-accent">
+                  <kpi.icon className="h-5 w-5 text-foreground" />
                 </div>
                 <div>
-                  <p className="text-[11px] text-white/60">{kpi.label}</p>
+                  <p className="text-[11px] text-muted-foreground/70">{kpi.label}</p>
                   <p className={cn('text-2xl font-bold', kpi.color)}>{kpi.value.toLocaleString('id-ID')}</p>
                 </div>
               </div>
@@ -121,13 +121,13 @@ export default function DashboardPage() {
       {/* Secondary Stats + Revenue */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {secondaryStats.map((stat) => (
-          <Card key={stat.label} className="bg-[#111918] border-white/5">
+          <Card key={stat.label} className="bg-card border-border">
             <CardContent className="p-4 flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-[#00A39D]/10">
-                <stat.icon className="h-4 w-4 text-[#00A39D]" />
+              <div className="p-2 rounded-lg bg-primary/10">
+                <stat.icon className="h-4 w-4 text-primary" />
               </div>
               <div>
-                <p className="text-[11px] text-[#7FB3AE]">{stat.label}</p>
+                <p className="text-[11px] text-muted-foreground">{stat.label}</p>
                 <p className={cn('text-lg font-bold', stat.color)}>{stat.value}</p>
               </div>
             </CardContent>
@@ -136,14 +136,14 @@ export default function DashboardPage() {
       </div>
 
       {/* Revenue Summary */}
-      <Card className="bg-[#111918] border-white/5">
+      <Card className="bg-card border-border">
         <CardContent className="p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-lg bg-amber-500/10">
               <DollarSign className="h-5 w-5 text-amber-400" />
             </div>
             <div>
-              <p className="text-[11px] text-[#7FB3AE]">Total Pendapatan</p>
+              <p className="text-[11px] text-muted-foreground">Total Pendapatan</p>
               <p className="text-xl font-bold text-amber-400">{formatRupiah(totalRevenue)}</p>
             </div>
           </div>
@@ -155,20 +155,20 @@ export default function DashboardPage() {
 
       {/* Quick Actions */}
       <div>
-        <h3 className="text-sm font-semibold text-[#7FB3AE] uppercase tracking-wider mb-3">Aksi Cepat</h3>
+        <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3">Aksi Cepat</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {quickActions.map((action) => (
             <Link key={action.href} href={action.href}>
-              <Card className="bg-[#111918] border-white/5 hover:border-[#00A39D]/30 transition-colors cursor-pointer group">
+              <Card className="bg-card border-border hover:border-primary/30 transition-colors cursor-pointer group">
                 <CardContent className="p-4 flex items-center gap-3">
-                  <div className="p-2.5 rounded-lg bg-[#00A39D]/10 group-hover:bg-[#00A39D]/20 transition-colors">
-                    <action.icon className="h-5 w-5 text-[#00A39D]" />
+                  <div className="p-2.5 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                    <action.icon className="h-5 w-5 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-white">{action.title}</p>
-                    <p className="text-xs text-[#7FB3AE]">{action.desc}</p>
+                    <p className="text-sm font-semibold text-foreground">{action.title}</p>
+                    <p className="text-xs text-muted-foreground">{action.desc}</p>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-[#7FB3AE] group-hover:text-[#00A39D] transition-colors" />
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </CardContent>
               </Card>
             </Link>
@@ -177,34 +177,34 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent Activity Feed */}
-      <Card className="bg-[#111918] border-white/5">
+      <Card className="bg-card border-border">
         <CardHeader className="pb-3">
-          <CardTitle className="text-white text-sm flex items-center gap-2">
-            <Clock className="w-4 h-4 text-[#00A39D]" />
+          <CardTitle className="text-foreground text-sm flex items-center gap-2">
+            <Clock className="w-4 h-4 text-primary" />
             Aktivitas Penukaran Terkini
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0">
           <div className="space-y-2">
             {recentRedemptions.length === 0 ? (
-              <p className="text-sm text-[#7FB3AE] text-center py-4">Belum ada aktivitas penukaran</p>
+              <p className="text-sm text-muted-foreground text-center py-4">Belum ada aktivitas penukaran</p>
             ) : (
               recentRedemptions.map((r, idx) => (
-                <div key={String(r.id ?? idx)} className="flex items-center gap-3 p-3 rounded-lg bg-[#0A0F0E]/60 border border-white/5">
+                <div key={String(r.id ?? idx)} className="flex items-center gap-3 p-3 rounded-lg bg-background/60 border border-border">
                   <div
-                    className="w-9 h-9 rounded-full shrink-0 border-2 border-white/10 flex items-center justify-center"
+                    className="w-9 h-9 rounded-full shrink-0 border-2 border-input flex items-center justify-center"
                     style={{ backgroundColor: String(r.wristbandColorHex ?? '#555') }}
                   >
-                    <CheckCircle2 className="h-4 w-4 text-white" />
+                    <CheckCircle2 className="h-4 w-4 text-foreground" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm text-white font-medium truncate">{String(r.attendeeName ?? '-')}</p>
-                      <Badge className="text-[9px] px-1.5 py-0 bg-[#00A39D]/15 text-[#00A39D] border-[#00A39D]/20">
+                      <p className="text-sm text-foreground font-medium truncate">{String(r.attendeeName ?? '-')}</p>
+                      <Badge className="text-[9px] px-1.5 py-0 bg-primary/15 text-primary border-primary/20">
                         {String(r.ticketType ?? r.ticketTypeName ?? '-')}
                       </Badge>
                     </div>
-                    <div className="flex items-center gap-2 text-[11px] text-[#7FB3AE] mt-0.5">
+                    <div className="flex items-center gap-2 text-[11px] text-muted-foreground mt-0.5">
                       <span className="font-mono">{String(r.wristbandCode ?? '-')}</span>
                       <span>•</span>
                       <span>{String(r.counterName ?? '-')}</span>
@@ -213,10 +213,10 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-[11px] text-[#7FB3AE]">
+                    <p className="text-[11px] text-muted-foreground">
                       {r.redeemedAt ? formatTime(String(r.redeemedAt)) : '-'}
                     </p>
-                    <p className="text-xs font-semibold text-white">{formatRupiah((r.price as number) ?? 0)}</p>
+                    <p className="text-xs font-semibold text-foreground">{formatRupiah((r.price as number) ?? 0)}</p>
                   </div>
                 </div>
               ))

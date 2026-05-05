@@ -143,8 +143,8 @@ export function RedeemPage() {
     <div className="space-y-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-white">Penukaran Gelang</h1>
-        <p className="text-[#7FB3AE] mt-1">
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground">Penukaran Gelang</h1>
+        <p className="text-muted-foreground mt-1">
           Stasiun Penukaran — Scan atau masukkan kode tiket secara manual
         </p>
       </div>
@@ -153,43 +153,43 @@ export function RedeemPage() {
         {/* Left: Scanner + Search */}
         <div className="lg:col-span-2 space-y-6">
           {/* Scanner Section */}
-          <Card className="overflow-hidden bg-[#111918] border-white/5">
+          <Card className="overflow-hidden bg-card border-border">
             <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-lg text-white">
-                <QrCode className="h-5 w-5 text-[#00A39D]" />
+              <CardTitle className="flex items-center gap-2 text-lg text-foreground">
+                <QrCode className="h-5 w-5 text-primary" />
                 Scanner QR Code
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Mock QR Scan Area */}
-              <div className="relative flex items-center justify-center h-48 md:h-64 rounded-lg border-2 border-dashed border-[#00A39D]/30 bg-[#00A39D]/5">
+              <div className="relative flex items-center justify-center h-48 md:h-64 rounded-lg border-2 border-dashed border-primary/30 bg-primary/5">
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-32 h-32 border-4 border-[#00A39D]/40 rounded-xl flex items-center justify-center">
-                    <div className="w-24 h-24 border-2 border-[#00A39D]/20 rounded-lg flex items-center justify-center">
-                      <QrCode className="h-10 w-10 text-[#00A39D]/30" />
+                  <div className="w-32 h-32 border-4 border-primary/40 rounded-xl flex items-center justify-center">
+                    <div className="w-24 h-24 border-2 border-primary/20 rounded-lg flex items-center justify-center">
+                      <QrCode className="h-10 w-10 text-primary/30" />
                     </div>
                   </div>
                 </div>
-                <p className="absolute bottom-3 text-sm text-[#00A39D]/70 font-medium">
+                <p className="absolute bottom-3 text-sm text-primary/70 font-medium">
                   Arahkan QR Code ke scanner
                 </p>
               </div>
 
-              <Separator className="bg-white/5" />
+              <Separator className="bg-accent" />
 
               {/* Manual Input */}
               <div className="flex gap-2">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#7FB3AE]" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   <Input
                     placeholder="Masukkan kode tiket (cth: SHL-JKT-VIPZON-0001)"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="pl-10 bg-[#0A0F0E] border-white/10 text-white placeholder:text-[#7FB3AE]/50"
+                    className="pl-10 bg-background border-input text-foreground placeholder:text-muted-foreground/50"
                   />
                 </div>
-                <Button onClick={handleSearch} className="gap-2 min-w-[100px] bg-[#00A39D] hover:bg-[#00A39D]/90 text-white">
+                <Button onClick={handleSearch} className="gap-2 min-w-[100px] bg-primary hover:bg-primary/90 text-foreground">
                   <Search className="h-4 w-4" />
                   Cari
                 </Button>
@@ -199,45 +199,45 @@ export function RedeemPage() {
 
           {/* Ticket Info Card */}
           {foundTicket && (
-            <Card className="bg-[#111918] border-[#00A39D]/20">
+            <Card className="bg-card border-primary/20">
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-lg text-white">Detail Tiket</h3>
+                  <h3 className="font-semibold text-lg text-foreground">Detail Tiket</h3>
                   {getStatusBadge(String(foundTicket.status))}
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-[#0A0F0E]">
-                    <Ticket className="h-5 w-5 text-[#00A39D] shrink-0" />
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-background">
+                    <Ticket className="h-5 w-5 text-primary shrink-0" />
                     <div>
-                      <p className="text-xs text-[#7FB3AE]">Kode Tiket</p>
-                      <p className="font-mono font-semibold text-sm text-white">{String(foundTicket.ticketCode)}</p>
+                      <p className="text-xs text-muted-foreground">Kode Tiket</p>
+                      <p className="font-mono font-semibold text-sm text-foreground">{String(foundTicket.ticketCode)}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-[#0A0F0E]">
-                    <User className="h-5 w-5 text-[#00A39D] shrink-0" />
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-background">
+                    <User className="h-5 w-5 text-primary shrink-0" />
                     <div>
-                      <p className="text-xs text-[#7FB3AE]">Nama Peserta</p>
-                      <p className="font-semibold text-sm text-white">{String(foundTicket.attendeeName)}</p>
+                      <p className="text-xs text-muted-foreground">Nama Peserta</p>
+                      <p className="font-semibold text-sm text-foreground">{String(foundTicket.attendeeName)}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-[#0A0F0E]">
-                    <Tag className="h-5 w-5 text-[#00A39D] shrink-0" />
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-background">
+                    <Tag className="h-5 w-5 text-primary shrink-0" />
                     <div>
-                      <p className="text-xs text-[#7FB3AE]">Tipe Tiket</p>
-                      <p className="font-semibold text-sm text-white">{String(foundTicket.ticketTypeName ?? foundTicket.ticketType)}</p>
+                      <p className="text-xs text-muted-foreground">Tipe Tiket</p>
+                      <p className="font-semibold text-sm text-foreground">{String(foundTicket.ticketTypeName ?? foundTicket.ticketType)}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-[#0A0F0E]">
-                    <MapPin className="h-5 w-5 text-[#00A39D] shrink-0" />
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-background">
+                    <MapPin className="h-5 w-5 text-primary shrink-0" />
                     <div>
-                      <p className="text-xs text-[#7FB3AE]">Zona</p>
-                      <p className="font-semibold text-sm text-white capitalize">{String(foundTicket.tier ?? '-')}</p>
+                      <p className="text-xs text-muted-foreground">Zona</p>
+                      <p className="font-semibold text-sm text-foreground capitalize">{String(foundTicket.tier ?? '-')}</p>
                     </div>
                   </div>
                 </div>
 
-                <Separator className="bg-white/5" />
+                <Separator className="bg-accent" />
 
                 {/* Already redeemed warning */}
                 {(String(foundTicket.status) === 'redeemed' || String(foundTicket.status) === 'inside') && (
@@ -262,8 +262,8 @@ export function RedeemPage() {
                 {/* Active ticket: wristband pairing */}
                 {String(foundTicket.status) === 'active' && (
                   <div className="space-y-3">
-                    <h4 className="font-medium text-sm flex items-center gap-2 text-white">
-                      <CircleDot className="h-4 w-4 text-[#00A39D]" />
+                    <h4 className="font-medium text-sm flex items-center gap-2 text-foreground">
+                      <CircleDot className="h-4 w-4 text-primary" />
                       Pasangkan Gelang
                     </h4>
                     <div className="flex gap-2">
@@ -271,12 +271,12 @@ export function RedeemPage() {
                         value={wristbandInput}
                         onChange={(e) => setWristbandInput(e.target.value)}
                         placeholder="Scan kode gelang..."
-                        className="font-mono bg-[#0A0F0E] border-white/10 text-white placeholder:text-[#7FB3AE]/50"
+                        className="font-mono bg-background border-input text-foreground placeholder:text-muted-foreground/50"
                       />
                       <Button
                         onClick={handleRedeem}
                         disabled={scanMutation.isPending}
-                        className="gap-2 bg-[#00A39D] hover:bg-[#00A39D]/90 text-white min-w-[140px]"
+                        className="gap-2 bg-primary hover:bg-primary/90 text-foreground min-w-[140px]"
                       >
                         {scanMutation.isPending ? 'Memproses...' : (
                           <>
@@ -286,7 +286,7 @@ export function RedeemPage() {
                         )}
                       </Button>
                     </div>
-                    <p className="text-xs text-[#7FB3AE]">
+                    <p className="text-xs text-muted-foreground">
                       Scan barcode gelang atau masukkan kode secara manual
                     </p>
                   </div>
@@ -309,10 +309,10 @@ export function RedeemPage() {
           )}
 
           {!foundTicket && (
-            <Card className="bg-[#111918] border-dashed border-white/10">
+            <Card className="bg-card border-dashed border-input">
               <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                <Ticket className="h-12 w-12 text-[#7FB3AE]/20 mb-3" />
-                <p className="text-[#7FB3AE] text-sm">
+                <Ticket className="h-12 w-12 text-muted-foreground/20 mb-3" />
+                <p className="text-muted-foreground text-sm">
                   Scan QR code atau masukkan kode tiket untuk melihat detail
                 </p>
               </CardContent>
@@ -322,18 +322,18 @@ export function RedeemPage() {
 
         {/* Right: Today's Stats */}
         <div className="space-y-4">
-          <h3 className="font-semibold text-xs text-[#7FB3AE] uppercase tracking-wider">
+          <h3 className="font-semibold text-xs text-muted-foreground uppercase tracking-wider">
             Statistik Hari Ini
           </h3>
 
-          <Card className="bg-gradient-to-br from-[#00A39D] to-[#00A39D]/70 text-white border-0">
+          <Card className="bg-gradient-to-br from-primary to-primary/70 text-foreground border-0">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-white/20">
+                <div className="p-2 rounded-lg bg-foreground/20">
                   <CheckCircle2 className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-xs text-white/70">Total Diredeem</p>
+                  <p className="text-xs text-muted-foreground/80">Total Diredeem</p>
                   <p className="text-2xl font-bold">{todayStats.totalRedeemed}</p>
                 </div>
               </div>
@@ -354,29 +354,29 @@ export function RedeemPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-[#111918] border-white/5">
+          <Card className="bg-card border-border">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-[#00A39D]/10">
-                  <MapPin className="h-5 w-5 text-[#00A39D]" />
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <MapPin className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xs text-[#7FB3AE]">Floor Zone Diredeem</p>
-                  <p className="text-2xl font-bold text-white">{todayStats.floorRedeemed}</p>
+                  <p className="text-xs text-muted-foreground">Floor Zone Diredeem</p>
+                  <p className="text-2xl font-bold text-foreground">{todayStats.floorRedeemed}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-[#111918] border-white/5">
+          <Card className="bg-card border-border">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-[#00A39D]/10">
-                  <ArrowRight className="h-5 w-5 text-[#00A39D]" />
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <ArrowRight className="h-5 w-5 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xs text-[#7FB3AE]">Tribun Zone Diredeem</p>
-                  <p className="text-2xl font-bold text-white">{todayStats.tribunRedeemed}</p>
+                  <p className="text-xs text-muted-foreground">Tribun Zone Diredeem</p>
+                  <p className="text-2xl font-bold text-foreground">{todayStats.tribunRedeemed}</p>
                 </div>
               </div>
             </CardContent>

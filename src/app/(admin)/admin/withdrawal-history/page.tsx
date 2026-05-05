@@ -48,23 +48,23 @@ export default function WithdrawalHistoryPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-white">Withdrawal History</h1>
-        <p className="text-[#7FB3AE] mt-1">Riwayat pencairan dana</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground">Withdrawal History</h1>
+        <p className="text-muted-foreground mt-1">Riwayat pencairan dana</p>
       </div>
 
-      <Card className="bg-[#111918] border-white/5">
+      <Card className="bg-card border-border">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-white/5 hover:bg-transparent">
-                  <TableHead className="text-[#7FB3AE] w-8"></TableHead>
-                  <TableHead className="text-[#7FB3AE]">ID</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-right">Amount</TableHead>
-                  <TableHead className="text-[#7FB3AE]">Bank</TableHead>
-                  <TableHead className="text-[#7FB3AE]">Status</TableHead>
-                  <TableHead className="text-[#7FB3AE]">Requested</TableHead>
-                  <TableHead className="text-[#7FB3AE]">Completed</TableHead>
+                <TableRow className="border-border hover:bg-transparent">
+                  <TableHead className="text-muted-foreground w-8"></TableHead>
+                  <TableHead className="text-muted-foreground">ID</TableHead>
+                  <TableHead className="text-muted-foreground text-right">Amount</TableHead>
+                  <TableHead className="text-muted-foreground">Bank</TableHead>
+                  <TableHead className="text-muted-foreground">Status</TableHead>
+                  <TableHead className="text-muted-foreground">Requested</TableHead>
+                  <TableHead className="text-muted-foreground">Completed</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -72,59 +72,59 @@ export default function WithdrawalHistoryPage() {
                   <>
                     <TableRow
                       key={w.id}
-                      className="border-white/5 hover:bg-white/[0.02] cursor-pointer"
+                      className="border-border hover:bg-accent/50 cursor-pointer"
                       onClick={() => setExpandedRow(expandedRow === w.id ? null : w.id)}
                     >
                       <TableCell className="w-8">
                         {expandedRow === w.id
-                          ? <ChevronUp className="w-4 h-4 text-[#7FB3AE]" />
-                          : <ChevronDown className="w-4 h-4 text-[#7FB3AE]" />
+                          ? <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                          : <ChevronDown className="w-4 h-4 text-muted-foreground" />
                         }
                       </TableCell>
-                      <TableCell className="font-mono text-sm text-white">{w.id.toUpperCase()}</TableCell>
-                      <TableCell className="text-right text-white font-semibold">{formatRupiah(w.amount)}</TableCell>
-                      <TableCell className="text-[#7FB3AE] text-sm">{w.bank} — {w.bankAccount}</TableCell>
+                      <TableCell className="font-mono text-sm text-foreground">{w.id.toUpperCase()}</TableCell>
+                      <TableCell className="text-right text-foreground font-semibold">{formatRupiah(w.amount)}</TableCell>
+                      <TableCell className="text-muted-foreground text-sm">{w.bank} — {w.bankAccount}</TableCell>
                       <TableCell>
                         <Badge className={STATUS_COLORS[w.status]}>{w.status.toUpperCase()}</Badge>
                       </TableCell>
-                      <TableCell className="text-[#7FB3AE] text-xs">{formatDateTimeShort(w.requestedAt)}</TableCell>
-                      <TableCell className="text-[#7FB3AE] text-xs">{w.completedAt ? formatDateTimeShort(w.completedAt) : '—'}</TableCell>
+                      <TableCell className="text-muted-foreground text-xs">{formatDateTimeShort(w.requestedAt)}</TableCell>
+                      <TableCell className="text-muted-foreground text-xs">{w.completedAt ? formatDateTimeShort(w.completedAt) : '—'}</TableCell>
                     </TableRow>
                     {expandedRow === w.id && (
-                      <TableRow key={`${w.id}-detail`} className="border-white/5 bg-white/[0.01]">
+                      <TableRow key={`${w.id}-detail`} className="border-border bg-accent/25">
                         <TableCell colSpan={7} className="p-4">
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                             <div>
-                              <p className="text-[#7FB3AE] text-xs mb-1">Amount</p>
-                              <p className="text-white">{formatRupiah(w.amount)}</p>
+                              <p className="text-muted-foreground text-xs mb-1">Amount</p>
+                              <p className="text-foreground">{formatRupiah(w.amount)}</p>
                             </div>
                             <div>
-                              <p className="text-[#7FB3AE] text-xs mb-1">Fee</p>
+                              <p className="text-muted-foreground text-xs mb-1">Fee</p>
                               <p className="text-emerald-400">{formatRupiah(w.fee)}</p>
                             </div>
                             <div>
-                              <p className="text-[#7FB3AE] text-xs mb-1">Net Received</p>
-                              <p className="text-white font-bold">{formatRupiah(w.net)}</p>
+                              <p className="text-muted-foreground text-xs mb-1">Net Received</p>
+                              <p className="text-foreground font-bold">{formatRupiah(w.net)}</p>
                             </div>
                             <div>
-                              <p className="text-[#7FB3AE] text-xs mb-1">Bank</p>
-                              <p className="text-white">{w.bank} — {w.bankAccount}</p>
+                              <p className="text-muted-foreground text-xs mb-1">Bank</p>
+                              <p className="text-foreground">{w.bank} — {w.bankAccount}</p>
                             </div>
                             <div>
-                              <p className="text-[#7FB3AE] text-xs mb-1">Notes</p>
-                              <p className="text-white">{w.notes ?? '—'}</p>
+                              <p className="text-muted-foreground text-xs mb-1">Notes</p>
+                              <p className="text-foreground">{w.notes ?? '—'}</p>
                             </div>
                             <div>
-                              <p className="text-[#7FB3AE] text-xs mb-1">Requested At</p>
-                              <p className="text-white">{formatDateTimeShort(w.requestedAt)}</p>
+                              <p className="text-muted-foreground text-xs mb-1">Requested At</p>
+                              <p className="text-foreground">{formatDateTimeShort(w.requestedAt)}</p>
                             </div>
                             <div>
-                              <p className="text-[#7FB3AE] text-xs mb-1">Completed At</p>
-                              <p className="text-white">{w.completedAt ? formatDateTimeShort(w.completedAt) : '—'}</p>
+                              <p className="text-muted-foreground text-xs mb-1">Completed At</p>
+                              <p className="text-foreground">{w.completedAt ? formatDateTimeShort(w.completedAt) : '—'}</p>
                             </div>
                             <div className="flex items-end gap-2">
                               {w.transferProof && (
-                                <Button variant="outline" size="sm" className="border-white/10 text-[#7FB3AE] hover:text-white text-xs">
+                                <Button variant="outline" size="sm" className="border-input text-muted-foreground hover:text-foreground text-xs">
                                   <ExternalLink className="w-3 h-3 mr-1" /> Proof
                                 </Button>
                               )}
@@ -153,16 +153,16 @@ export default function WithdrawalHistoryPage() {
 
       {/* Dispute Dialog */}
       <Dialog open={!!disputeId} onOpenChange={() => setDisputeId(null)}>
-        <DialogContent className="bg-[#111918] border-white/10 text-white max-w-sm">
+        <DialogContent className="bg-card border-input text-foreground max-w-sm">
           <DialogHeader>
-            <DialogTitle className="text-white">Dispute Withdrawal?</DialogTitle>
+            <DialogTitle className="text-foreground">Dispute Withdrawal?</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-[#7FB3AE]">
+          <p className="text-sm text-muted-foreground">
             Jika dana belum diterima, laporkan masalah ini. Tim SeleEvent akan menindaklanjuti dalam 1-3 hari kerja.
           </p>
           <div className="flex justify-end gap-2">
-            <Button variant="ghost" onClick={() => setDisputeId(null)} className="text-[#7FB3AE]">Cancel</Button>
-            <Button onClick={() => setDisputeId(null)} className="bg-orange-500 hover:bg-orange-600 text-white">Submit Dispute</Button>
+            <Button variant="ghost" onClick={() => setDisputeId(null)} className="text-muted-foreground">Cancel</Button>
+            <Button onClick={() => setDisputeId(null)} className="bg-orange-500 hover:bg-orange-600 text-foreground">Submit Dispute</Button>
           </div>
         </DialogContent>
       </Dialog>

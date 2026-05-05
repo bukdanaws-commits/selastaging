@@ -50,47 +50,47 @@ export default function FinancePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-white">Finance</h1>
-        <p className="text-[#7FB3AE] mt-1">Ringkasan keuangan event kamu</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground">Finance</h1>
+        <p className="text-muted-foreground mt-1">Ringkasan keuangan event kamu</p>
       </div>
 
       {/* Revenue Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-        <Card className="bg-gradient-to-br from-[#00A39D]/20 to-[#00A39D]/5 border-[#00A39D]/20">
+        <Card className="bg-gradient-to-br from-primary/20 to-primary/5 border-primary/20">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
-              <DollarSign className="w-4 h-4 text-[#00A39D]" />
-              <span className="text-[11px] text-[#7FB3AE]">Gross Revenue</span>
+              <DollarSign className="w-4 h-4 text-primary" />
+              <span className="text-[11px] text-muted-foreground">Gross Revenue</span>
             </div>
-            <p className="text-xl font-bold text-white">{formatRupiah(finance.grossRevenue)}</p>
+            <p className="text-xl font-bold text-foreground">{formatRupiah(finance.grossRevenue)}</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-[#111918] border-white/5">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
               <TrendingUp className="w-4 h-4 text-red-400" />
-              <span className="text-[11px] text-[#7FB3AE]">Platform Fee ({finance.platformFeePercent}%)</span>
+              <span className="text-[11px] text-muted-foreground">Platform Fee ({finance.platformFeePercent}%)</span>
             </div>
             <p className="text-xl font-bold text-red-400">-{formatRupiah(finance.platformFee)}</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-[#111918] border-white/5">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
               <DollarSign className="w-4 h-4 text-emerald-400" />
-              <span className="text-[11px] text-[#7FB3AE]">Net Revenue</span>
+              <span className="text-[11px] text-muted-foreground">Net Revenue</span>
             </div>
             <p className="text-xl font-bold text-emerald-400">{formatRupiah(finance.netRevenue)}</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-[#111918] border-white/5">
+        <Card className="bg-card border-border">
           <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-2">
               <Wallet className="w-4 h-4 text-amber-400" />
-              <span className="text-[11px] text-[#7FB3AE]">Available Balance</span>
+              <span className="text-[11px] text-muted-foreground">Available Balance</span>
             </div>
             <p className="text-xl font-bold text-amber-400">{formatRupiah(finance.availableBalance)}</p>
           </CardContent>
@@ -98,7 +98,7 @@ export default function FinancePage() {
       </div>
 
       {/* Settlement Status */}
-      <Card className="bg-[#111918] border-white/5">
+      <Card className="bg-card border-border">
         <CardContent className="p-4 flex items-center gap-4">
           <div className={cn(
             'p-3 rounded-lg',
@@ -111,7 +111,7 @@ export default function FinancePage() {
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <p className="text-sm font-semibold text-white">Settlement Status</p>
+              <p className="text-sm font-semibold text-foreground">Settlement Status</p>
               <Badge className={isSettled
                 ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20'
                 : 'bg-yellow-500/15 text-yellow-400 border-yellow-500/20'
@@ -119,7 +119,7 @@ export default function FinancePage() {
                 {isSettled ? 'SETTLED' : 'NOT SETTLED'}
               </Badge>
             </div>
-            <p className="text-xs text-[#7FB3AE] mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {isSettled
                 ? `Settled on ${finance.settlementDate} • H+7 after event`
                 : `Estimated settlement: ${finance.settlementDate} (${daysUntilSettlement} days remaining)`
@@ -127,7 +127,7 @@ export default function FinancePage() {
             </p>
           </div>
           {isSettled && (
-            <Badge className="bg-[#00A39D]/15 text-[#00A39D] border-[#00A39D]/20">
+            <Badge className="bg-primary/15 text-primary border-primary/20">
               Ready to Withdraw
             </Badge>
           )}
@@ -135,10 +135,10 @@ export default function FinancePage() {
       </Card>
 
       {/* Revenue Chart (Bar Chart Placeholder) */}
-      <Card className="bg-[#111918] border-white/5">
+      <Card className="bg-card border-border">
         <CardHeader className="pb-2">
-          <CardTitle className="text-white text-sm flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-[#00A39D]" />
+          <CardTitle className="text-foreground text-sm flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-primary" />
             Daily Revenue (Last 7 Days)
           </CardTitle>
         </CardHeader>
@@ -148,12 +148,12 @@ export default function FinancePage() {
               const height = (d.amount / MAX_DAILY) * 100
               return (
                 <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                  <span className="text-[9px] text-[#7FB3AE] whitespace-nowrap">{formatRupiah(d.amount)}</span>
+                  <span className="text-[9px] text-muted-foreground whitespace-nowrap">{formatRupiah(d.amount)}</span>
                   <div
-                    className="w-full bg-gradient-to-t from-[#00A39D] to-[#00A39D]/40 rounded-t-md min-h-[4px] transition-all"
+                    className="w-full bg-gradient-to-t from-primary to-primary/40 rounded-t-md min-h-[4px] transition-all"
                     style={{ height: `${height}%` }}
                   />
-                  <span className="text-[10px] text-white/50">{d.date}</span>
+                  <span className="text-[10px] text-foreground/50">{d.date}</span>
                 </div>
               )
             })}
@@ -162,10 +162,10 @@ export default function FinancePage() {
       </Card>
 
       {/* Payment Method Breakdown */}
-      <Card className="bg-[#111918] border-white/5">
+      <Card className="bg-card border-border">
         <CardHeader className="pb-2">
-          <CardTitle className="text-white text-sm flex items-center gap-2">
-            <PieChart className="w-4 h-4 text-[#00A39D]" />
+          <CardTitle className="text-foreground text-sm flex items-center gap-2">
+            <PieChart className="w-4 h-4 text-primary" />
             Payment Method Breakdown
           </CardTitle>
         </CardHeader>
@@ -174,12 +174,12 @@ export default function FinancePage() {
             <div key={i} className="flex items-center gap-3">
               <div className="flex-1">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm text-white">{pm.method}</span>
-                  <span className="text-xs text-[#7FB3AE]">{pm.percent}% — {formatRupiah(pm.amount)}</span>
+                  <span className="text-sm text-foreground">{pm.method}</span>
+                  <span className="text-xs text-muted-foreground">{pm.percent}% — {formatRupiah(pm.amount)}</span>
                 </div>
-                <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                <div className="w-full h-2 bg-accent rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-[#00A39D] to-[#00A39D]/60 rounded-full transition-all"
+                    className="h-full bg-gradient-to-r from-primary to-primary/60 rounded-full transition-all"
                     style={{ width: `${pm.percent}%` }}
                   />
                 </div>
@@ -190,14 +190,14 @@ export default function FinancePage() {
       </Card>
 
       {/* Total Withdrawn */}
-      <Card className="bg-[#111918] border-white/5">
+      <Card className="bg-card border-border">
         <CardContent className="p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-lg bg-purple-500/10">
               <ArrowDownRight className="w-5 h-5 text-purple-400" />
             </div>
             <div>
-              <p className="text-[11px] text-[#7FB3AE]">Total Withdrawn</p>
+              <p className="text-[11px] text-muted-foreground">Total Withdrawn</p>
               <p className="text-lg font-bold text-purple-400">{formatRupiah(finance.totalWithdrawn)}</p>
             </div>
           </div>

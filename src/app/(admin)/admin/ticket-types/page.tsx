@@ -104,28 +104,28 @@ export default function TicketTypesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white">Ticket Types</h1>
-          <p className="text-[#7FB3AE] mt-1">Kelola tipe tiket event kamu</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground">Ticket Types</h1>
+          <p className="text-muted-foreground mt-1">Kelola tipe tiket event kamu</p>
         </div>
-        <Button onClick={openCreate} className="bg-[#00A39D] hover:bg-[#00A39D]/90 text-white">
+        <Button onClick={openCreate} className="bg-primary hover:bg-primary/90 text-foreground">
           <Plus className="w-4 h-4 mr-1" /> Add Type
         </Button>
       </div>
 
-      <Card className="bg-[#111918] border-white/5">
+      <Card className="bg-card border-border">
         <CardContent className="p-0">
           <div className="overflow-x-auto max-h-[70vh] overflow-y-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-white/5 hover:bg-transparent">
-                  <TableHead className="text-[#7FB3AE]">Type</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-right">Price</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-right">Quota</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-right">Sold</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-right">Available</TableHead>
-                  <TableHead className="text-[#7FB3AE]">Tier</TableHead>
-                  <TableHead className="text-[#7FB3AE]">Benefits</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-right">Actions</TableHead>
+                <TableRow className="border-border hover:bg-transparent">
+                  <TableHead className="text-muted-foreground">Type</TableHead>
+                  <TableHead className="text-muted-foreground text-right">Price</TableHead>
+                  <TableHead className="text-muted-foreground text-right">Quota</TableHead>
+                  <TableHead className="text-muted-foreground text-right">Sold</TableHead>
+                  <TableHead className="text-muted-foreground text-right">Available</TableHead>
+                  <TableHead className="text-muted-foreground">Tier</TableHead>
+                  <TableHead className="text-muted-foreground">Benefits</TableHead>
+                  <TableHead className="text-muted-foreground text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -133,18 +133,18 @@ export default function TicketTypesPage() {
                   const available = tt.quota - tt.sold
                   const pct = tt.quota > 0 ? (tt.sold / tt.quota) * 100 : 0
                   return (
-                    <TableRow key={tt.id} className="border-white/5 hover:bg-white/[0.02]">
+                    <TableRow key={tt.id} className="border-border hover:bg-accent/50">
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <span>{tt.emoji}</span>
-                          <span className="text-white font-medium">{tt.name}</span>
+                          <span className="text-foreground font-medium">{tt.name}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-right text-white font-semibold">
+                      <TableCell className="text-right text-foreground font-semibold">
                         {formatRupiah(tt.price)}
                       </TableCell>
-                      <TableCell className="text-right text-[#7FB3AE]">{tt.quota.toLocaleString('id-ID')}</TableCell>
-                      <TableCell className="text-right text-white">{tt.sold.toLocaleString('id-ID')}</TableCell>
+                      <TableCell className="text-right text-muted-foreground">{tt.quota.toLocaleString('id-ID')}</TableCell>
+                      <TableCell className="text-right text-foreground">{tt.sold.toLocaleString('id-ID')}</TableCell>
                       <TableCell className="text-right">
                         <span className={available < 100 ? 'text-red-400 font-medium' : 'text-emerald-400'}>
                           {available.toLocaleString('id-ID')}
@@ -158,14 +158,14 @@ export default function TicketTypesPage() {
                       <TableCell>
                         <div className="max-w-[180px] truncate">
                           {tt.benefits.slice(0, 2).map((b, i) => (
-                            <span key={i} className="text-xs text-[#7FB3AE] block truncate">{b}</span>
+                            <span key={i} className="text-xs text-muted-foreground block truncate">{b}</span>
                           ))}
-                          {tt.benefits.length > 2 && <span className="text-xs text-white/40">+{tt.benefits.length - 2} more</span>}
+                          {tt.benefits.length > 2 && <span className="text-xs text-foreground/40">+{tt.benefits.length - 2} more</span>}
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-1">
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-[#7FB3AE] hover:text-white" onClick={() => openEdit(tt)}>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={() => openEdit(tt)}>
                             <Edit2 className="h-4 w-4" />
                           </Button>
                           <Button variant="ghost" size="icon" className="h-8 w-8 text-red-400/60 hover:text-red-400" onClick={() => setDeleteId(tt.id)}>
@@ -184,27 +184,27 @@ export default function TicketTypesPage() {
 
       {/* Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card className="bg-[#111918] border-white/5">
+        <Card className="bg-card border-border">
           <CardContent className="p-4 text-center">
-            <p className="text-[11px] text-[#7FB3AE]">Total Types</p>
-            <p className="text-xl font-bold text-white">{ticketTypes.length}</p>
+            <p className="text-[11px] text-muted-foreground">Total Types</p>
+            <p className="text-xl font-bold text-foreground">{ticketTypes.length}</p>
           </CardContent>
         </Card>
-        <Card className="bg-[#111918] border-white/5">
+        <Card className="bg-card border-border">
           <CardContent className="p-4 text-center">
-            <p className="text-[11px] text-[#7FB3AE]">Total Quota</p>
-            <p className="text-xl font-bold text-white">{ticketTypes.reduce((s, t) => s + t.quota, 0).toLocaleString('id-ID')}</p>
+            <p className="text-[11px] text-muted-foreground">Total Quota</p>
+            <p className="text-xl font-bold text-foreground">{ticketTypes.reduce((s, t) => s + t.quota, 0).toLocaleString('id-ID')}</p>
           </CardContent>
         </Card>
-        <Card className="bg-[#111918] border-white/5">
+        <Card className="bg-card border-border">
           <CardContent className="p-4 text-center">
-            <p className="text-[11px] text-[#7FB3AE]">Total Sold</p>
-            <p className="text-xl font-bold text-[#00A39D]">{ticketTypes.reduce((s, t) => s + t.sold, 0).toLocaleString('id-ID')}</p>
+            <p className="text-[11px] text-muted-foreground">Total Sold</p>
+            <p className="text-xl font-bold text-primary">{ticketTypes.reduce((s, t) => s + t.sold, 0).toLocaleString('id-ID')}</p>
           </CardContent>
         </Card>
-        <Card className="bg-[#111918] border-white/5">
+        <Card className="bg-card border-border">
           <CardContent className="p-4 text-center">
-            <p className="text-[11px] text-[#7FB3AE]">Revenue</p>
+            <p className="text-[11px] text-muted-foreground">Revenue</p>
             <p className="text-xl font-bold text-amber-400">{formatRupiah(ticketTypes.reduce((s, t) => s + t.price * t.sold, 0))}</p>
           </CardContent>
         </Card>
@@ -212,43 +212,43 @@ export default function TicketTypesPage() {
 
       {/* Add/Edit Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="bg-[#111918] border-white/10 text-white max-w-lg">
+        <DialogContent className="bg-card border-input text-foreground max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-white">{editingId ? 'Edit Ticket Type' : 'Add Ticket Type'}</DialogTitle>
+            <DialogTitle className="text-foreground">{editingId ? 'Edit Ticket Type' : 'Add Ticket Type'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-[#7FB3AE]">Name *</Label>
-              <Input value={form.name} onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))} placeholder="e.g. VVIP PIT" className="bg-[#0A0F0E] border-white/10 text-white placeholder:text-white/30" />
+              <Label className="text-muted-foreground">Name *</Label>
+              <Input value={form.name} onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))} placeholder="e.g. VVIP PIT" className="bg-background border-input text-foreground placeholder:text-muted-foreground/50" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-[#7FB3AE]">Price (IDR) *</Label>
-                <Input type="number" value={form.price} onChange={e => setForm(prev => ({ ...prev, price: e.target.value }))} placeholder="3500000" className="bg-[#0A0F0E] border-white/10 text-white placeholder:text-white/30" />
+                <Label className="text-muted-foreground">Price (IDR) *</Label>
+                <Input type="number" value={form.price} onChange={e => setForm(prev => ({ ...prev, price: e.target.value }))} placeholder="3500000" className="bg-background border-input text-foreground placeholder:text-muted-foreground/50" />
               </div>
               <div className="space-y-2">
-                <Label className="text-[#7FB3AE]">Quota *</Label>
-                <Input type="number" value={form.quota} onChange={e => setForm(prev => ({ ...prev, quota: e.target.value }))} placeholder="200" className="bg-[#0A0F0E] border-white/10 text-white placeholder:text-white/30" />
+                <Label className="text-muted-foreground">Quota *</Label>
+                <Input type="number" value={form.quota} onChange={e => setForm(prev => ({ ...prev, quota: e.target.value }))} placeholder="200" className="bg-background border-input text-foreground placeholder:text-muted-foreground/50" />
               </div>
             </div>
             <div className="space-y-2">
-              <Label className="text-[#7FB3AE]">Tier</Label>
+              <Label className="text-muted-foreground">Tier</Label>
               <div className="flex gap-2">
                 {['floor', 'tribun'].map(t => (
-                  <button key={t} onClick={() => setForm(prev => ({ ...prev, tier: t }))} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${form.tier === t ? 'bg-[#00A39D] text-white' : 'bg-white/5 text-[#7FB3AE] hover:bg-white/10'}`}>
+                  <button key={t} onClick={() => setForm(prev => ({ ...prev, tier: t }))} className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${form.tier === t ? 'bg-primary text-foreground' : 'bg-accent text-muted-foreground hover:bg-accent'}`}>
                     {t.toUpperCase()}
                   </button>
                 ))}
               </div>
             </div>
             <div className="space-y-2">
-              <Label className="text-[#7FB3AE]">Benefits (one per line)</Label>
-              <Textarea value={form.benefits} onChange={e => setForm(prev => ({ ...prev, benefits: e.target.value }))} placeholder="Meet & Greet&#10;VIP Lounge&#10;Free Merchandise" className="bg-[#0A0F0E] border-white/10 text-white placeholder:text-white/30 min-h-[80px]" />
+              <Label className="text-muted-foreground">Benefits (one per line)</Label>
+              <Textarea value={form.benefits} onChange={e => setForm(prev => ({ ...prev, benefits: e.target.value }))} placeholder="Meet & Greet&#10;VIP Lounge&#10;Free Merchandise" className="bg-background border-input text-foreground placeholder:text-muted-foreground/50 min-h-[80px]" />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setDialogOpen(false)} className="text-[#7FB3AE]">Cancel</Button>
-            <Button onClick={handleSave} disabled={!form.name || !form.price || !form.quota} className="bg-[#00A39D] hover:bg-[#00A39D]/90 text-white">
+            <Button variant="ghost" onClick={() => setDialogOpen(false)} className="text-muted-foreground">Cancel</Button>
+            <Button onClick={handleSave} disabled={!form.name || !form.price || !form.quota} className="bg-primary hover:bg-primary/90 text-foreground">
               {editingId ? 'Update' : 'Create'}
             </Button>
           </DialogFooter>
@@ -257,14 +257,14 @@ export default function TicketTypesPage() {
 
       {/* Delete Confirm Dialog */}
       <Dialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <DialogContent className="bg-[#111918] border-white/10 text-white max-w-sm">
+        <DialogContent className="bg-card border-input text-foreground max-w-sm">
           <DialogHeader>
-            <DialogTitle className="text-white">Delete Ticket Type?</DialogTitle>
+            <DialogTitle className="text-foreground">Delete Ticket Type?</DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-[#7FB3AE]">This action cannot be undone.</p>
+          <p className="text-sm text-muted-foreground">This action cannot be undone.</p>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setDeleteId(null)} className="text-[#7FB3AE]">Cancel</Button>
-            <Button onClick={() => deleteId && handleDelete(deleteId)} className="bg-red-500 hover:bg-red-600 text-white">Delete</Button>
+            <Button variant="ghost" onClick={() => setDeleteId(null)} className="text-muted-foreground">Cancel</Button>
+            <Button onClick={() => deleteId && handleDelete(deleteId)} className="bg-red-500 hover:bg-red-600 text-foreground">Delete</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

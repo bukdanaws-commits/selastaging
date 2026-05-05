@@ -8,6 +8,8 @@ export interface NavItem {
   icon: string
   badge?: number | string
   roles: UserRole[]
+  /** Override the nav label for specific roles. Falls back to `title` if not set. */
+  titleByRole?: Partial<Record<UserRole, string>>
 }
 
 export interface NavSection {
@@ -34,6 +36,7 @@ export const NAV_SECTIONS: NavSection[] = [
         href: '/admin/events',
         icon: 'CalendarDays',
         roles: ['SUPER_ADMIN', 'ORGANIZER'],
+        titleByRole: { ORGANIZER: 'My Events' },
       },
       {
         title: 'Organizers',
@@ -59,12 +62,14 @@ export const NAV_SECTIONS: NavSection[] = [
         href: '/admin/orders',
         icon: 'ShoppingCart',
         roles: ['SUPER_ADMIN', 'ORGANIZER'],
+        titleByRole: { ORGANIZER: 'My Orders' },
       },
       {
         title: 'Tickets',
         href: '/admin/tickets',
         icon: 'ScanLine',
         roles: ['SUPER_ADMIN', 'ORGANIZER'],
+        titleByRole: { ORGANIZER: 'My Tickets' },
       },
       {
         title: 'Seat Layout',
@@ -84,18 +89,21 @@ export const NAV_SECTIONS: NavSection[] = [
         href: '/admin/staff',
         icon: 'Users',
         roles: ['SUPER_ADMIN', 'ORGANIZER'],
+        titleByRole: { ORGANIZER: 'My Staff' },
       },
       {
         title: 'Counters',
         href: '/admin/counters',
         icon: 'Monitor',
         roles: ['SUPER_ADMIN', 'ORGANIZER'],
+        titleByRole: { ORGANIZER: 'My Counters' },
       },
       {
         title: 'Gates',
         href: '/admin/gate-management',
         icon: 'DoorOpen',
         roles: ['SUPER_ADMIN', 'ORGANIZER'],
+        titleByRole: { ORGANIZER: 'My Gates' },
       },
       {
         title: 'Crew & Gates',
@@ -237,7 +245,12 @@ export function getNavSectionsForRole(role: UserRole): NavSection[] {
   return NAV_SECTIONS
     .map((section) => ({
       ...section,
-      items: section.items.filter((item) => item.roles.includes(role)),
+      items: section.items
+        .filter((item) => item.roles.includes(role))
+        .map((item) => ({
+          ...item,
+          title: item.titleByRole?.[role] ?? item.title,
+        })),
     }))
     .filter((section) => section.items.length > 0)
 }

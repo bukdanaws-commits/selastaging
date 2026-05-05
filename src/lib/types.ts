@@ -53,6 +53,8 @@ export interface IUser {
   name: string
   avatar?: string
   phone?: string
+  organizerId?: string
+  tenantId?: string
   role: UserRole
   status: UserStatus
   lastLoginAt?: string
@@ -637,8 +639,8 @@ export const ROLE_ACCESS: Record<UserRole, {
     canViewAll: true,
   },
   ORGANIZER: {
-    dashboard: '/organizer',
-    routes: ['/organizer/*'],
+    dashboard: '/admin',
+    routes: ['/admin/*'],
     canViewAll: false,
   },
   COUNTER_STAFF: {

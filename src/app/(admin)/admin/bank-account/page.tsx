@@ -57,8 +57,8 @@ export default function BankAccountPage() {
   return (
     <div className="space-y-6 max-w-xl">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-white">Bank Account</h1>
-        <p className="text-[#7FB3AE] mt-1">Kelola rekening pencairan dana</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground">Bank Account</h1>
+        <p className="text-muted-foreground mt-1">Kelola rekening pencairan dana</p>
       </div>
 
       {/* Info Note */}
@@ -73,22 +73,22 @@ export default function BankAccountPage() {
       </Card>
 
       {!bank ? (
-        <Card className="bg-[#111918] border-white/5">
+        <Card className="bg-card border-border">
           <CardContent className="p-8 text-center">
-            <Building2 className="w-12 h-12 text-white/10 mx-auto mb-3" />
-            <p className="text-white font-medium mb-1">No Bank Account</p>
-            <p className="text-sm text-[#7FB3AE] mb-4">Tambahkan rekening bank untuk menerima pencairan dana</p>
-            <Button onClick={() => { setForm({ bankName: '', accountNumber: '', accountHolder: '' }); setDialogOpen(true) }} className="bg-[#00A39D] hover:bg-[#00A39D]/90 text-white">
+            <Building2 className="w-12 h-12 text-foreground/10 mx-auto mb-3" />
+            <p className="text-foreground font-medium mb-1">No Bank Account</p>
+            <p className="text-sm text-muted-foreground mb-4">Tambahkan rekening bank untuk menerima pencairan dana</p>
+            <Button onClick={() => { setForm({ bankName: '', accountNumber: '', accountHolder: '' }); setDialogOpen(true) }} className="bg-primary hover:bg-primary/90 text-foreground">
               <Edit2 className="w-4 h-4 mr-1" /> Add Bank Account
             </Button>
           </CardContent>
         </Card>
       ) : (
-        <Card className="bg-[#111918] border-white/5">
+        <Card className="bg-card border-border">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-white flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-[#00A39D]" />
+              <CardTitle className="text-foreground flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-primary" />
                 Bank Account Details
               </CardTitle>
               <Badge className={bank.verified
@@ -106,23 +106,23 @@ export default function BankAccountPage() {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <p className="text-[11px] text-[#7FB3AE] mb-1">Bank</p>
-                <p className="text-white font-medium">{bank.bankName}</p>
+                <p className="text-[11px] text-muted-foreground mb-1">Bank</p>
+                <p className="text-foreground font-medium">{bank.bankName}</p>
               </div>
               <div>
-                <p className="text-[11px] text-[#7FB3AE] mb-1">Account Number</p>
-                <p className="text-white font-mono font-medium">{bank.accountNumber}</p>
+                <p className="text-[11px] text-muted-foreground mb-1">Account Number</p>
+                <p className="text-foreground font-mono font-medium">{bank.accountNumber}</p>
               </div>
               <div>
-                <p className="text-[11px] text-[#7FB3AE] mb-1">Account Holder</p>
-                <p className="text-white font-medium">{bank.accountHolder}</p>
+                <p className="text-[11px] text-muted-foreground mb-1">Account Holder</p>
+                <p className="text-foreground font-medium">{bank.accountHolder}</p>
               </div>
             </div>
             <div className="pt-2">
               <Button
                 variant="outline"
                 size="sm"
-                className="border-[#00A39D]/30 text-[#00A39D] hover:bg-[#00A39D]/10"
+                className="border-primary/30 text-primary hover:bg-primary/10"
                 onClick={() => { setForm({ bankName: bank.bankName, accountNumber: bank.accountNumber, accountHolder: bank.accountHolder }); setDialogOpen(true) }}
               >
                 <Edit2 className="w-4 h-4 mr-1" /> Edit Bank Account
@@ -134,36 +134,36 @@ export default function BankAccountPage() {
 
       {/* Edit/Add Dialog */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="bg-[#111918] border-white/10 text-white max-w-lg">
+        <DialogContent className="bg-card border-input text-foreground max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-white">{bank ? 'Edit Bank Account' : 'Add Bank Account'}</DialogTitle>
+            <DialogTitle className="text-foreground">{bank ? 'Edit Bank Account' : 'Add Bank Account'}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-[#7FB3AE]">Bank Name *</Label>
+              <Label className="text-muted-foreground">Bank Name *</Label>
               <select
                 value={form.bankName}
                 onChange={e => setForm(prev => ({ ...prev, bankName: e.target.value }))}
-                className="w-full bg-[#0A0F0E] border border-white/10 text-white rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#00A39D]"
+                className="w-full bg-background border border-input text-foreground rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
               >
-                <option value="" className="bg-[#0A0F0E]">Select bank...</option>
+                <option value="" className="bg-background">Select bank...</option>
                 {BANK_OPTIONS.map(bank => (
-                  <option key={bank} value={bank} className="bg-[#0A0F0E]">{bank}</option>
+                  <option key={bank} value={bank} className="bg-background">{bank}</option>
                 ))}
               </select>
             </div>
             <div className="space-y-2">
-              <Label className="text-[#7FB3AE]">Account Number *</Label>
-              <Input value={form.accountNumber} onChange={e => setForm(prev => ({ ...prev, accountNumber: e.target.value }))} placeholder="Enter account number" className="bg-[#0A0F0E] border-white/10 text-white placeholder:text-white/30 font-mono" />
+              <Label className="text-muted-foreground">Account Number *</Label>
+              <Input value={form.accountNumber} onChange={e => setForm(prev => ({ ...prev, accountNumber: e.target.value }))} placeholder="Enter account number" className="bg-background border-input text-foreground placeholder:text-muted-foreground/50 font-mono" />
             </div>
             <div className="space-y-2">
-              <Label className="text-[#7FB3AE]">Account Holder Name *</Label>
-              <Input value={form.accountHolder} onChange={e => setForm(prev => ({ ...prev, accountHolder: e.target.value }))} placeholder="Name as shown on bank account" className="bg-[#0A0F0E] border-white/10 text-white placeholder:text-white/30" />
+              <Label className="text-muted-foreground">Account Holder Name *</Label>
+              <Input value={form.accountHolder} onChange={e => setForm(prev => ({ ...prev, accountHolder: e.target.value }))} placeholder="Name as shown on bank account" className="bg-background border-input text-foreground placeholder:text-muted-foreground/50" />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setDialogOpen(false)} className="text-[#7FB3AE]">Cancel</Button>
-            <Button onClick={handleSave} disabled={!form.bankName || !form.accountNumber || !form.accountHolder} className="bg-[#00A39D] hover:bg-[#00A39D]/90 text-white">
+            <Button variant="ghost" onClick={() => setDialogOpen(false)} className="text-muted-foreground">Cancel</Button>
+            <Button onClick={handleSave} disabled={!form.bankName || !form.accountNumber || !form.accountHolder} className="bg-primary hover:bg-primary/90 text-foreground">
               {bank ? 'Update' : 'Save Bank Account'}
             </Button>
           </DialogFooter>

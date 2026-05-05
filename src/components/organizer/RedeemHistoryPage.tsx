@@ -125,27 +125,27 @@ export function RedeemHistoryPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white">Riwayat Penukaran</h1>
-          <p className="text-[#7FB3AE] mt-1">
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground">Riwayat Penukaran</h1>
+          <p className="text-muted-foreground mt-1">
             Log penukaran gelang hari ini — {filteredData.length} entri
           </p>
         </div>
-        <Button onClick={handleExport} variant="outline" className="gap-2 self-start bg-[#111918] border-white/10 text-white hover:bg-white/5 hover:text-white">
+        <Button onClick={handleExport} variant="outline" className="gap-2 self-start bg-card border-input text-foreground hover:bg-accent hover:text-foreground">
           <Download className="h-4 w-4" />
           Export Excel
         </Button>
       </div>
 
       {/* Filters */}
-      <Card className="bg-[#111918] border-white/5">
+      <Card className="bg-card border-border">
         <CardContent className="pt-6">
           <div className="flex flex-wrap gap-3 items-center">
-            <Filter className="h-4 w-4 text-[#7FB3AE]" />
+            <Filter className="h-4 w-4 text-muted-foreground" />
             <Select value={ticketTypeFilter} onValueChange={handleTicketTypeChange}>
-              <SelectTrigger className="w-[180px] bg-[#0A0F0E] border-white/10 text-white">
+              <SelectTrigger className="w-[180px] bg-background border-input text-foreground">
                 <SelectValue placeholder="Tipe Tiket" />
               </SelectTrigger>
-              <SelectContent className="bg-[#111918] border-white/10">
+              <SelectContent className="bg-card border-input">
                 <SelectItem value="all">Semua Tipe</SelectItem>
                 {ticketTypes.map((type) => (
                   <SelectItem key={type} value={type}>
@@ -155,10 +155,10 @@ export function RedeemHistoryPage() {
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={handleStatusChange}>
-              <SelectTrigger className="w-[180px] bg-[#0A0F0E] border-white/10 text-white">
+              <SelectTrigger className="w-[180px] bg-background border-input text-foreground">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
-              <SelectContent className="bg-[#111918] border-white/10">
+              <SelectContent className="bg-card border-input">
                 <SelectItem value="all">Semua Status</SelectItem>
                 <SelectItem value="redeemed">Diredeem</SelectItem>
                 <SelectItem value="inside">Di Dalam Venue</SelectItem>
@@ -169,27 +169,27 @@ export function RedeemHistoryPage() {
       </Card>
 
       {/* Table */}
-      <Card className="bg-[#111918] border-white/5">
+      <Card className="bg-card border-border">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-white/5 hover:bg-transparent">
-                  <TableHead className="w-12 text-center text-[#7FB3AE]">#</TableHead>
-                  <TableHead className="text-[#7FB3AE]">Kode Tiket</TableHead>
-                  <TableHead className="hidden md:table-cell text-[#7FB3AE]">Peserta</TableHead>
-                  <TableHead className="hidden sm:table-cell text-[#7FB3AE]">Tipe</TableHead>
-                  <TableHead className="hidden lg:table-cell text-[#7FB3AE]">Zona</TableHead>
-                  <TableHead className="text-[#7FB3AE]">Kode Gelang</TableHead>
-                  <TableHead className="hidden sm:table-cell text-[#7FB3AE]">Waktu</TableHead>
-                  <TableHead className="text-[#7FB3AE]">Status</TableHead>
+                <TableRow className="border-border hover:bg-transparent">
+                  <TableHead className="w-12 text-center text-muted-foreground">#</TableHead>
+                  <TableHead className="text-muted-foreground">Kode Tiket</TableHead>
+                  <TableHead className="hidden md:table-cell text-muted-foreground">Peserta</TableHead>
+                  <TableHead className="hidden sm:table-cell text-muted-foreground">Tipe</TableHead>
+                  <TableHead className="hidden lg:table-cell text-muted-foreground">Zona</TableHead>
+                  <TableHead className="text-muted-foreground">Kode Gelang</TableHead>
+                  <TableHead className="hidden sm:table-cell text-muted-foreground">Waktu</TableHead>
+                  <TableHead className="text-muted-foreground">Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {paginatedData.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center py-12">
-                      <div className="flex flex-col items-center gap-2 text-[#7FB3AE]">
+                      <div className="flex flex-col items-center gap-2 text-muted-foreground">
                         <History className="h-10 w-10 opacity-20" />
                         <p>Tidak ada riwayat penukaran ditemukan</p>
                       </div>
@@ -197,30 +197,30 @@ export function RedeemHistoryPage() {
                   </TableRow>
                 ) : (
                   paginatedData.map((ticket, index) => (
-                    <TableRow key={String(ticket.id ?? index)} className="border-white/5 hover:bg-white/[0.02]">
-                      <TableCell className="text-center text-[#7FB3AE] text-sm">
+                    <TableRow key={String(ticket.id ?? index)} className="border-border hover:bg-accent/50">
+                      <TableCell className="text-center text-muted-foreground text-sm">
                         {(currentPage - 1) * ITEMS_PER_PAGE + index + 1}
                       </TableCell>
                       <TableCell>
-                        <span className="font-mono text-sm font-medium text-white">
+                        <span className="font-mono text-sm font-medium text-foreground">
                           {String(ticket.ticketCode ?? '-')}
                         </span>
                       </TableCell>
-                      <TableCell className="hidden md:table-cell text-sm text-white">
+                      <TableCell className="hidden md:table-cell text-sm text-foreground">
                         {String(ticket.userName ?? ticket.attendeeName ?? '-')}
                       </TableCell>
-                      <TableCell className="hidden sm:table-cell text-sm text-[#7FB3AE]">
+                      <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
                         {String(ticket.ticketType ?? ticket.ticketTypeName ?? '-')}
                       </TableCell>
-                      <TableCell className="hidden lg:table-cell text-sm text-[#7FB3AE] capitalize">
+                      <TableCell className="hidden lg:table-cell text-sm text-muted-foreground capitalize">
                         {String(ticket.tier ?? '-')}
                       </TableCell>
                       <TableCell>
-                        <span className="font-mono text-sm font-semibold text-[#00A39D]">
+                        <span className="font-mono text-sm font-semibold text-primary">
                           {String(ticket.wristbandCode ?? '—')}
                         </span>
                       </TableCell>
-                      <TableCell className="hidden sm:table-cell text-sm text-[#7FB3AE]">
+                      <TableCell className="hidden sm:table-cell text-sm text-muted-foreground">
                         {ticket.redeemedAt
                           ? formatDateTimeShort(String(ticket.redeemedAt))
                           : '—'}
@@ -235,8 +235,8 @@ export function RedeemHistoryPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-4 py-3 border-t border-white/5">
-              <p className="text-sm text-[#7FB3AE]">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+              <p className="text-sm text-muted-foreground">
                 Menampilkan {(currentPage - 1) * ITEMS_PER_PAGE + 1}–
                 {Math.min(currentPage * ITEMS_PER_PAGE, filteredData.length)} dari{' '}
                 {filteredData.length} entri
@@ -245,7 +245,7 @@ export function RedeemHistoryPage() {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="h-8 w-8 bg-[#0A0F0E] border-white/10 text-[#7FB3AE] hover:text-white hover:bg-white/5"
+                  className="h-8 w-8 bg-background border-input text-muted-foreground hover:text-foreground hover:bg-accent"
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={currentPage === 1}
                 >
@@ -256,7 +256,7 @@ export function RedeemHistoryPage() {
                   .map((page, i, arr) => (
                     <span key={page} className="contents">
                       {i > 0 && arr[i - 1] !== page - 1 && (
-                        <span className="px-1 text-[#7FB3AE]">…</span>
+                        <span className="px-1 text-muted-foreground">…</span>
                       )}
                       <Button
                         variant={page === currentPage ? 'default' : 'outline'}
@@ -264,8 +264,8 @@ export function RedeemHistoryPage() {
                         className={cn(
                           'h-8 w-8',
                           page === currentPage
-                            ? 'bg-[#00A39D] hover:bg-[#00A39D]/90 text-white border-0'
-                            : 'bg-[#0A0F0E] border-white/10 text-[#7FB3AE] hover:text-white hover:bg-white/5'
+                            ? 'bg-primary hover:bg-primary/90 text-foreground border-0'
+                            : 'bg-background border-input text-muted-foreground hover:text-foreground hover:bg-accent'
                         )}
                         onClick={() => setCurrentPage(page)}
                       >
@@ -276,7 +276,7 @@ export function RedeemHistoryPage() {
                 <Button
                   variant="outline"
                   size="icon"
-                  className="h-8 w-8 bg-[#0A0F0E] border-white/10 text-[#7FB3AE] hover:text-white hover:bg-white/5"
+                  className="h-8 w-8 bg-background border-input text-muted-foreground hover:text-foreground hover:bg-accent"
                   onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                   disabled={currentPage === totalPages}
                 >
