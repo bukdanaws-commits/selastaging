@@ -63,6 +63,7 @@ export interface IUser {
 export interface IEvent {
   id: string
   tenantId: string
+  organizerId: string
   slug: string
   title: string
   subtitle?: string

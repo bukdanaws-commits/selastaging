@@ -21,6 +21,7 @@ interface AuthState {
   isLoading: boolean
   accessToken: string | null
   refreshToken: string | null
+  selectedEventId: string | null
 
   // Actions
   login: () => Promise<void>
@@ -29,6 +30,7 @@ interface AuthState {
   rehydrateSession: () => Promise<void>
   storeTokens: (access: string, refresh: string) => void
   hasRole: (...roles: UserRole[]) => boolean
+  setSelectedEvent: (eventId: string | null) => void
 }
 
 // ─── ROLE-BASED MOCK USERS (DEV ONLY — for loginAsRole quick testing) ─────
@@ -100,7 +102,7 @@ const MOCK_USERS_BY_ROLE: Record<UserRole, AuthUser> = {
 
 export const DASHBOARD_ROUTES: Record<UserRole, string> = {
   SUPER_ADMIN: '/admin',
-  ORGANIZER: '/organizer',
+  ORGANIZER: '/admin',
   COUNTER_STAFF: '/counter',
   GATE_STAFF: '/gate',
   PARTICIPANT: '/',
@@ -184,6 +186,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isLoading: false,
   accessToken: typeof window !== 'undefined' ? getAccessToken() : null,
   refreshToken: null,
+  selectedEventId: null,
 
   login: async () => {
     set({ isLoading: true })
@@ -271,11 +274,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const useMock = !mockEnvDisabled && !mockLocalStorageDisabled
       if (useMock) {
         const pathname = window.location.pathname
-        
-        // Determine role from URL path
+
+        // Determine role from URL path + localStorage
         let role: UserRole = 'PARTICIPANT'
-        if (pathname.startsWith('/admin')) role = 'SUPER_ADMIN'
-        else if (pathname.startsWith('/organizer')) role = 'ORGANIZER'
+        if (pathname.startsWith('/admin')) {
+          // Both SUPER_ADMIN and ORGANIZER use /admin
+          // Check localStorage for previously selected role, default to SUPER_ADMIN
+          const savedRole = localStorage.getItem('sele_mock_role')
+          role = (savedRole === 'ORGANIZER') ? 'ORGANIZER' : 'SUPER_ADMIN'
+        }
         else if (pathname.startsWith('/counter')) role = 'COUNTER_STAFF'
         else if (pathname.startsWith('/gate')) role = 'GATE_STAFF'
 
@@ -329,5 +336,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const user = get().user
     if (!user) return false
     return roles.includes(user.role)
+  },
+
+  setSelectedEvent: (eventId) => {
+    set({ selectedEventId: eventId })
   },
 }))

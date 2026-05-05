@@ -2949,3 +2949,144 @@ Stage Summary:
 - User can run VPC connector creation locally with new range 28.2.0.0/28
 - Provided fallback commands (subnet-based and alternate range) if creation still fails
 - Remaining: Steps 9-12 need testing once VPC connector is ready
+
+---
+Task ID: 8
+Agent: Hardcoded Slug Fixer
+Task: Find and fix all hardcoded event slugs in the codebase
+
+Work Log:
+- Searched for all occurrences of `sheila-on-7-melompat-lebih-tinggi` in `src/` directory
+- Found 10 total occurrences across 7 files:
+  - `src/lib/mock/mock-data.ts:592` — Mock data definition (kept as-is, data source)
+  - `src/components/organizer/OrganizerLiveMonitor.tsx:38-40` — 3 API hook calls (FIXED)
+  - `src/components/organizer/RedeemHistoryPage.tsx:58` — 1 API hook call (FIXED)
+  - `src/components/organizer/RedeemPage.tsx:46-47` — 2 API hook calls (FIXED)
+  - `src/app/(admin)/admin/organizer-dashboard/page.tsx:28` — 1 module-level constant (FIXED)
+  - `src/app/(admin)/admin/my-event/page.tsx:18` — 1 static event object (FIXED)
+  - `src/components/admin/AdminLayout.tsx:104` — Event selector data source (refactored to shared constant)
+
+- Created shared constants file `src/lib/mock-events.ts`:
+  - Extracted MOCK_EVENTS array from AdminLayout into shared module
+  - Defined DEFAULT_EVENT_SLUG constant for fallback
+  - Exported MockEvent interface for type safety
+
+- Created utility hook `src/hooks/use-current-event.ts`:
+  - `useCurrentEventSlug()` — reads `selectedEventId` from `useAuthStore`
+  - Looks up corresponding event in MOCK_EVENTS by ID
+  - Returns the event slug
+  - Falls back to DEFAULT_EVENT_SLUG if no event selected
+
+- Updated 5 consuming files:
+  1. `OrganizerLiveMonitor.tsx` — replaced 3 hardcoded slugs with `useCurrentEventSlug()`
+  2. `RedeemHistoryPage.tsx` — replaced 1 hardcoded slug with `useCurrentEventSlug()`
+  3. `RedeemPage.tsx` — replaced 2 hardcoded slugs with `useCurrentEventSlug()`
+  4. `organizer-dashboard/page.tsx` — replaced module-level `const EVENT_SLUG` with `useCurrentEventSlug()` inside component
+  5. `my-event/page.tsx` — replaced static MOCK_EVENT with dynamic lookup using `useAuthStore.selectedEventId` → MOCK_EVENTS → EVENT_DETAILS map
+
+- Refactored `AdminLayout.tsx`:
+  - Removed inline MOCK_EVENTS constant
+  - Imported shared MOCK_EVENTS from `@/lib/mock-events`
+
+- Files NOT changed (intentional):
+  - `src/lib/mock/mock-data.ts` — data definition file, slug values are legitimate data
+  - `src/lib/mock-events.ts` — our new shared constants (contains slug values by design)
+  - `src/app/(admin)/admin/my-event/page.tsx` EVENT_DETAILS — display data, not API parameters
+
+- Ran `bun run lint` — 0 errors, 0 warnings
+
+Stage Summary:
+- All 8 hardcoded slug usages in API call arguments replaced with dynamic `useCurrentEventSlug()`
+- Event selector in AdminLayout now drives all organizer pages via auth store
+- Fallback behavior preserved — defaults to Jakarta event if none selected
+- No breaking changes — existing functionality fully preserved
+- New files created: `src/lib/mock-events.ts`, `src/hooks/use-current-event.ts`
+
+---
+Task ID: 7
+Agent: Mock Multi-Event Updater
+Task: Update mock store system to support multiple events instead of a single event
+
+Work Log:
+- Read worklog.md for full project context and previous task history
+- Read all three mock system files: mock-data.ts, mock-store.ts, mock-handlers.ts
+- Read types.ts to confirm IEvent interface already has organizerId field
+- Searched for all occurrences of `state.event`, `get().event`, `store.event`, `data.event` across all mock files
+
+Changes Made:
+
+1. **mock-data.ts**:
+   - Changed `MockDataBundle.event: IEvent` to `MockDataBundle.events: IEvent[]`
+   - Added `organizerId: ORGANIZER_ID` field to all event seed data
+   - Created 3 additional mock events:
+     - Bandung: `evt-sheila-on7-bandung-001`, slug `sheila-on-7-melompat-lebih-tinggi-bandung-2026`, Stadion Gelora Bandung Lautan Api, capacity 15000, date 2026-07-20, status: published
+     - Surabaya: `evt-sheila-on7-surabaya-001`, slug `sheila-on-7-melompat-lebih-tinggi-surabaya-2026`, Stadion Gelora Bung Tomo, capacity 12000, date 2026-08-15, status: published
+     - Yogyakarta: `evt-sheila-on7-yogyakarta-001`, slug `sheila-on-7-melompat-lebih-tinggi-yogyakarta-2026`, Stadion Maguwoharjo, capacity 8000, date 2026-09-05, status: draft
+   - Kept existing Jakarta event as `events[0]` via `const event = events[0]` alias
+   - Updated `generateAllMockData()` return to use `events` array
+
+2. **mock-store.ts**:
+   - Changed `IMockAllData.event: IEvent` to `IMockAllData.events: IEvent[]`
+   - Changed `MockState.event: IEvent` to `MockState.events: IEvent[]`
+   - Changed initial state from `event: {} as IEvent` to `events: [] as IEvent[]`
+   - Updated `initialize()`: `data.event` → `data.events[0]` for tenantId/createdAt references, `event: data.event` → `events: data.events` in set()
+   - Updated ALL mutation references:
+     - `redeemTicket()`: `state.event.tenantId` → `state.events[0].tenantId`
+     - `scanGate()`: `state.event.tenantId` → `state.events[0].tenantId`, `state.event.id` → `state.events[0].id`
+     - `checkTicket()`: `state.event.title` → `state.events[0].title`, `state.event.date` → `state.events[0].date`
+     - `createOrder()`: `state.event.tenantId` → `state.events[0].tenantId`, `state.event.title` → `state.events[0].title`
+     - `createPayment()`: `currentState.event.id` → `currentState.events[0].id`
+     - `requestWithdrawal()`: `state.event` → `state.events[0]`
+   - Updated `getDashboardKPIs()`: destructured `events` from state, aliased `const event = events[0]`
+   - Updated `getLiveStats()`: `state.event.capacity` → `state.events[0].capacity`
+
+3. **mock-handlers.ts**:
+   - Updated `GET /api/v1/events/:slug`: Uses `store.events.find()` to match by slug, falls back to `store.events[0]`
+   - Updated `GET /api/v1/orders/:orderId`: `store.event` → `store.events.find((e) => e.id === order.eventId)`
+   - Updated organizer balance, withdrawals, payment-logs: `store.event.id` → `store.events[0].id`
+   - Updated admin dashboard: `eventsSummary` now maps over all `store.events` instead of single event
+   - Updated admin analytics: `eventAnalytics` now maps over all `store.events` per-event breakdown
+   - Updated `GET /api/v1/admin/events`: Returns `store.events` directly (was `[store.event]`)
+   - Updated admin seats: `store.event?.id` → `store.events[0]?.id`
+
+Verification:
+- `bun run lint` passes clean (0 errors, 0 warnings)
+- No remaining references to `state.event`, `get().event`, `store.event`, or `data.event` in mock files
+- External API interface unchanged — mock handlers continue to work as before
+- Existing Jakarta event remains `events[0]` so all ticket/order/counter/gate data still references correctly
+
+
+---
+Task ID: merge-dashboard-1
+Agent: Main Orchestrator
+Task: Merge admin + organizer dashboards into single /admin/ route with role-based navigation
+
+Work Log:
+- Analyzed complete codebase: types.ts, auth-store.ts, AdminLayout.tsx, OrganizerLayout.tsx, page structures
+- Identified double organizer directory problem: (admin)/organizer/ + (organizer)/organizer/
+- Identified 7 root-level organizer pages without /organizer/ prefix
+- Updated types.ts: added organizerId to IEvent interface
+- Updated auth-store.ts: changed ORGANIZER DASHBOARD_ROUTES from /organizer to /admin, added selectedEventId + setSelectedEvent
+- Updated auth-store.ts: modified rehydrateSession mock mode to support both SUPER_ADMIN and ORGANIZER at /admin via localStorage role
+- Created nav-config.ts with role-based navigation (27 items, 7 sections, role filtering)
+- Rewrote AdminLayout.tsx: role-based nav from nav-config, dynamic user info, event selector, role switcher (mock mode)
+- Created 16 new organizer-specific page files under (admin)/admin/
+- Made admin/page.tsx role-aware: SUPER_ADMIN sees DashboardOverview, ORGANIZER sees OrganizerDashboardPage
+- Deleted (admin)/organizer/ directory (duplicate with kotaK layout)
+- Deleted (organizer)/ route group entirely
+- Deleted unused components: admin/OrganizerLayout.tsx, admin/RedeemPage.tsx, admin/RedeemHistoryPage.tsx
+- Fixed pre-existing bug: queryKeys.admin.verifications missing → added to use-api.ts
+- Fixed pre-existing bug: adminApi.getVerifications missing → added to api.ts + API.ADMIN.VERIFICATIONS constant
+- Installed missing qrcode.react package
+- Sub-agents completed: mock store events array refactor (event → events: IEvent[]) + 3 new city events
+- Sub-agents completed: hardcoded slug fix with useCurrentEventSlug() hook + mock-events.ts shared module
+
+Stage Summary:
+- Admin and Organizer dashboards merged at /admin/ with role-based navigation
+- All routes verified: /admin, /admin/events, /admin/redeem, /admin/finance, /admin/my-event etc. return 200
+- Old /organizer/* routes return 404 as expected
+- Counter and Gate routes unchanged and working
+- Lint passes clean
+- Mock store now supports 4 events (Jakarta, Bandung, Surabaya, Yogyakarta)
+- Event selector in AdminLayout header for ORGANIZER role
+- Role switcher in header for mock mode development

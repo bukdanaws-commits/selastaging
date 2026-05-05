@@ -26,6 +26,7 @@ import {
   RefreshCw,
 } from 'lucide-react'
 import { useOrganizerLiveMonitor, useOrganizerCounters, useOrganizerGates } from '@/hooks/use-api'
+import { useCurrentEventSlug } from '@/hooks/use-current-event'
 import { formatTime } from '@/lib/utils'
 import { getSSEClient } from '@/lib/sse'
 
@@ -35,9 +36,10 @@ export function OrganizerLiveMonitor() {
   const feedRef = useRef<HTMLDivElement>(null)
   const [sseConnected, setSseConnected] = useState(false)
 
-  const { data: liveData, isLoading } = useOrganizerLiveMonitor('sheila-on-7-melompat-lebih-tinggi')
-  const { data: gatesData } = useOrganizerGates('sheila-on-7-melompat-lebih-tinggi')
-  const { data: countersData } = useOrganizerCounters('sheila-on-7-melompat-lebih-tinggi')
+  const eventSlug = useCurrentEventSlug()
+  const { data: liveData, isLoading } = useOrganizerLiveMonitor(eventSlug)
+  const { data: gatesData } = useOrganizerGates(eventSlug)
+  const { data: countersData } = useOrganizerCounters(eventSlug)
 
   const liveStats = liveData as Record<string, unknown> | undefined
   const gates = ((gatesData as { data: unknown[] } | undefined)?.data ?? []) as Record<string, unknown>[]

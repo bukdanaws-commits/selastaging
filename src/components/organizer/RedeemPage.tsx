@@ -21,6 +21,7 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import { useOrganizerTickets, useOrganizerWristbandInventory, useCounterScan } from '@/hooks/use-api'
+import { useCurrentEventSlug } from '@/hooks/use-current-event'
 import { formatRupiah } from '@/lib/utils'
 
 function getStatusBadge(status: string) {
@@ -43,8 +44,9 @@ export function RedeemPage() {
   const [foundTicket, setFoundTicket] = useState<Record<string, unknown> | null>(null)
   const [wristbandInput, setWristbandInput] = useState('')
 
-  const { data: ticketsData, isLoading: ticketsLoading } = useOrganizerTickets('sheila-on-7-melompat-lebih-tinggi')
-  const { data: wristbandData, isLoading: wristbandLoading } = useOrganizerWristbandInventory('sheila-on-7-melompat-lebih-tinggi')
+  const eventSlug = useCurrentEventSlug()
+  const { data: ticketsData, isLoading: ticketsLoading } = useOrganizerTickets(eventSlug)
+  const { data: wristbandData, isLoading: wristbandLoading } = useOrganizerWristbandInventory(eventSlug)
   const scanMutation = useCounterScan()
 
   const tickets = ((ticketsData as { data: unknown[] } | undefined)?.data ?? []) as Record<string, unknown>[]

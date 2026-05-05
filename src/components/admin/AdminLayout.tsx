@@ -5,28 +5,41 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
   LayoutDashboard,
-  Calendar,
+  CalendarDays,
   ShoppingCart,
-  Ticket,
+  ScanLine,
   Users,
-  Monitor,
+  Activity,
   BarChart3,
   Settings,
-  Grid3X3,
   LogOut,
   Menu,
   X,
   Bell,
   ChevronDown,
-  AlertCircle,
-  Activity,
-  Store,
-  DoorOpen,
   UserCog,
-  UserCheck,
+  DoorOpen,
   Wallet,
-  CreditCard,
-  RefreshCcw,
+  RotateCcw,
+  Building2,
+  Armchair,
+  Ticket,
+  History,
+  Gift,
+  CircleCheckBig,
+  Palette,
+  Landmark,
+  ArrowDownToLine,
+  Receipt,
+  FileCheck,
+  FileText,
+  UserPlus,
+  Radio,
+  Monitor,
+  Store,
+  UserCircle,
+  Shield,
+  ArrowLeftRight,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -41,82 +54,55 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { useAuthStore, ROLE_LABELS, ROLE_BADGE_COLORS } from '@/lib/auth-store'
+import { MOCK_EVENTS } from '@/lib/mock-events'
+import { getNavSectionsForRole, type NavSection, type NavItem } from '@/lib/nav-config'
+import type { UserRole } from '@/lib/types'
 
-// ============================================================
-// Navigation Config
-// ============================================================
+// ─── ICON MAP ──────────────────────────────────────────────────────────────
 
-interface NavSection {
-  label: string
-  items: {
-    title: string
-    href: string
-    icon: React.ElementType
-    badge?: number | string
-  }[]
+const ICON_MAP: Record<string, React.ElementType> = {
+  LayoutDashboard,
+  CalendarDays,
+  ShoppingCart,
+  ScanLine,
+  Users,
+  Activity,
+  BarChart3,
+  Settings,
+  UserCog,
+  DoorOpen,
+  Wallet,
+  RotateCcw,
+  Building2,
+  Armchair,
+  Ticket,
+  History,
+  Gift,
+  CircleCheckBig,
+  Palette,
+  Landmark,
+  ArrowDownToLine,
+  Receipt,
+  FileCheck,
+  FileText,
+  UserPlus,
+  Radio,
+  Monitor,
+  Store,
 }
 
-const navSections: NavSection[] = [
-  {
-    label: 'Utama',
-    items: [
-      { title: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-      { title: 'Organizers', href: '/admin/organizers', icon: UserCheck },
-      { title: 'Events', href: '/admin/events', icon: Calendar },
-    ],
-  },
-  {
-    label: 'Transaksi',
-    items: [
-      { title: 'Orders', href: '/admin/orders', icon: ShoppingCart },
-      { title: 'Tickets & Gelang', href: '/admin/tickets', icon: Ticket },
-      { title: 'Kursi & Layout', href: '/admin/seats', icon: Grid3X3 },
-    ],
-  },
-  {
-    label: 'Operasional',
-    items: [
-      { title: 'Crew & Gates', href: '/admin/crew-gates', icon: Users },
-      { title: 'Kelola Konter', href: '/admin/counters', icon: Store },
-      { title: 'Kelola Gate', href: '/admin/gate-management', icon: DoorOpen },
-      { title: 'Staff & Role', href: '/admin/staff', icon: UserCog },
-    ],
-  },
-  {
-    label: 'Keuangan',
-    items: [
-      { title: 'Withdrawals', href: '/admin/withdrawals', icon: Wallet },
-      { title: 'Payment Logs', href: '/admin/payment-logs', icon: CreditCard },
-      { title: 'Refunds', href: '/admin/refunds', icon: RefreshCcw },
-    ],
-  },
-  {
-    label: 'D-Day',
-    items: [
-      {
-        title: 'Gate Monitoring',
-        href: '/admin/gate-monitoring',
-        icon: Monitor,
-        badge: 4,
-      },
-      { title: 'Live Monitor', href: '/admin/live-monitor', icon: Activity },
-    ],
-  },
-  {
-    label: 'Laporan',
-    items: [
-      { title: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
-    ],
-  },
-  {
-    label: 'System',
-    items: [{ title: 'Settings', href: '/admin/settings', icon: Settings }],
-  },
-]
+// ─── MOCK EVENTS FOR EVENT SELECTOR ────────────────────────────────────────
+// (imported from @/lib/mock-events)
 
-// ============================================================
-// Component
-// ============================================================
+// ─── COMPONENT ─────────────────────────────────────────────────────────────
 
 interface AdminLayoutProps {
   children: React.ReactNode
@@ -126,11 +112,33 @@ interface AdminLayoutProps {
 export function AdminLayout({ children, onExit }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
+  const { user, logout, hasRole, selectedEventId, setSelectedEvent, loginAsRole } = useAuthStore()
+
+  const userRole = user?.role ?? 'SUPER_ADMIN'
+  const userName = user?.name ?? 'User'
+  const userEmail = user?.email ?? ''
+  const userAvatar = user?.avatar
+  const userInitials = userName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+
+  // Get role-filtered navigation
+  const navSections = getNavSectionsForRole(userRole)
 
   const isActive = (href: string) => {
     if (href === '/admin') return pathname === '/admin'
     return pathname.startsWith(href)
   }
+
+  // ─── Role Switcher (Mock Mode) ─────────────────────────────────────────
+  const handleSwitchRole = async (newRole: UserRole) => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('sele_mock_role', newRole)
+    }
+    await loginAsRole(newRole)
+  }
+
+  const isMockMode = typeof window !== 'undefined' &&
+    process.env.NEXT_PUBLIC_USE_MOCK !== 'false' &&
+    localStorage.getItem('sele_use_mock') !== 'false'
 
   return (
     <div className="min-h-screen bg-background">
@@ -152,16 +160,19 @@ export function AdminLayout({ children, onExit }: AdminLayoutProps) {
         {/* Sidebar Header */}
         <div className="flex items-center justify-between h-16 px-4 border-b">
           <Link href="/admin" className="flex items-center gap-2">
-            <div className="flex items-center gap-2">
-              <Activity className="h-6 w-6 text-primary" />
-              <span className="font-bold text-lg tracking-tight">
-                SHEILA ON 7
-              </span>
-            </div>
-            <Badge className="bg-primary text-primary-foreground text-[10px] px-1.5 py-0">
-              ADMIN
-            </Badge>
+            <Activity className="h-6 w-6 text-primary" />
+            <span className="font-bold text-lg tracking-tight">
+              SELEEVENT
+            </span>
           </Link>
+          <Badge
+            className={cn(
+              'text-[10px] px-1.5 py-0',
+              ROLE_BADGE_COLORS[userRole] ?? 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+            )}
+          >
+            {ROLE_LABELS[userRole]?.toUpperCase() ?? userRole}
+          </Badge>
           <Button
             variant="ghost"
             size="icon"
@@ -171,6 +182,27 @@ export function AdminLayout({ children, onExit }: AdminLayoutProps) {
             <X className="h-5 w-5" />
           </Button>
         </div>
+
+        {/* Event Selector (for ORGANIZER) */}
+        {hasRole('ORGANIZER') && (
+          <div className="px-3 py-2 border-b">
+            <Select
+              value={selectedEventId ?? MOCK_EVENTS[0]?.id}
+              onValueChange={(val) => setSelectedEvent(val)}
+            >
+              <SelectTrigger className="h-8 text-xs">
+                <SelectValue placeholder="Select event..." />
+              </SelectTrigger>
+              <SelectContent>
+                {MOCK_EVENTS.map((event) => (
+                  <SelectItem key={event.id} value={event.id} className="text-xs">
+                    {event.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
         {/* Sidebar Navigation */}
         <ScrollArea className="h-[calc(100vh-8rem)]">
@@ -183,6 +215,7 @@ export function AdminLayout({ children, onExit }: AdminLayoutProps) {
                 <div className="space-y-1">
                   {section.items.map((item) => {
                     const active = isActive(item.href)
+                    const IconComponent = ICON_MAP[item.icon] ?? LayoutDashboard
                     return (
                       <Link
                         key={item.href}
@@ -195,7 +228,7 @@ export function AdminLayout({ children, onExit }: AdminLayoutProps) {
                         )}
                         onClick={() => setSidebarOpen(false)}
                       >
-                        <item.icon className="h-4 w-4 shrink-0" />
+                        <IconComponent className="h-4 w-4 shrink-0" />
                         <span className="flex-1">{item.title}</span>
                         {item.badge && (
                           <Badge
@@ -217,25 +250,26 @@ export function AdminLayout({ children, onExit }: AdminLayoutProps) {
           </nav>
         </ScrollArea>
 
-        {/* Sidebar Footer */}
+        {/* Sidebar Footer — User info */}
         <div className="absolute bottom-0 left-0 right-0 border-t bg-card">
           <div className="flex items-center gap-3 p-4">
             <Avatar className="h-8 w-8">
-              <AvatarImage src="" />
+              <AvatarImage src={userAvatar} />
               <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                SA
+                {userInitials}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">Super Admin</p>
+              <p className="text-sm font-medium truncate">{userName}</p>
               <p className="text-xs text-muted-foreground truncate">
-                raka@sheilaon7.com
+                {userEmail}
               </p>
             </div>
             <Button
               variant="ghost"
               size="icon"
               className="h-8 w-8 text-muted-foreground hover:text-destructive"
+              onClick={logout}
               title="Logout"
             >
               <LogOut className="h-4 w-4" />
@@ -259,7 +293,50 @@ export function AdminLayout({ children, onExit }: AdminLayoutProps) {
               <Menu className="h-5 w-5" />
             </Button>
 
-            <div className="flex items-center gap-4 ml-auto">
+            <div className="flex items-center gap-3 ml-auto">
+              {/* Role Switcher (Mock Mode Only) */}
+              {isMockMode && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8">
+                      <ArrowLeftRight className="h-3.5 w-3.5" />
+                      <span className="hidden sm:inline">Switch Role</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      className={cn(userRole === 'SUPER_ADMIN' && 'bg-accent')}
+                      onClick={() => handleSwitchRole('SUPER_ADMIN')}
+                    >
+                      <Shield className="mr-2 h-4 w-4" />
+                      Super Admin
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className={cn(userRole === 'ORGANIZER' && 'bg-accent')}
+                      onClick={() => handleSwitchRole('ORGANIZER')}
+                    >
+                      <UserCircle className="mr-2 h-4 w-4" />
+                      Organizer
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className={cn(userRole === 'COUNTER_STAFF' && 'bg-accent')}
+                      onClick={() => { window.location.href = '/counter' }}
+                    >
+                      <Store className="mr-2 h-4 w-4" />
+                      Counter Staff
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className={cn(userRole === 'GATE_STAFF' && 'bg-accent')}
+                      onClick={() => { window.location.href = '/gate' }}
+                    >
+                      <DoorOpen className="mr-2 h-4 w-4" />
+                      Gate Staff
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+
               {/* Notification Bell */}
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-5 w-5" />
@@ -271,24 +348,41 @@ export function AdminLayout({ children, onExit }: AdminLayoutProps) {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="gap-2">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src="" />
+                      <AvatarImage src={userAvatar} />
                       <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                        SA
+                        {userInitials}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="hidden sm:inline text-sm">Super Admin</span>
+                    <span className="hidden sm:inline text-sm">{userName}</span>
                     <ChevronDown className="h-4 w-4 text-muted-foreground" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuItem asChild>
-                    <Link href="/admin/settings">
-                      <Settings className="mr-2 h-4 w-4" />
-                      Pengaturan
-                    </Link>
-                  </DropdownMenuItem>
+                  <div className="px-2 py-1.5">
+                    <p className="text-sm font-medium">{userName}</p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          'text-[10px] px-1.5 py-0',
+                          ROLE_BADGE_COLORS[userRole]
+                        )}
+                      >
+                        {ROLE_LABELS[userRole]}
+                      </Badge>
+                    </div>
+                  </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-destructive">
+                  {hasRole('SUPER_ADMIN') && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin/settings">
+                        <Settings className="mr-2 h-4 w-4" />
+                        Pengaturan
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="text-destructive" onClick={logout}>
                     <LogOut className="mr-2 h-4 w-4" />
                     Keluar
                   </DropdownMenuItem>

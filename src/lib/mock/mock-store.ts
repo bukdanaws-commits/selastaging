@@ -65,7 +65,7 @@ function generateId(entity: string): string {
 
 export interface IMockAllData {
   users: IUser[]
-  event: IEvent
+  events: IEvent[]
   ticketTypes: ITicketType[]
   orders: IOrder[]
   tickets: ITicket[]
@@ -117,7 +117,7 @@ interface IDashboardKPIsFull extends IDashboardKPIs {
 export interface MockState {
   // All entity arrays
   users: IUser[]
-  event: IEvent
+  events: IEvent[]
   ticketTypes: ITicketType[]
   orders: IOrder[]
   tickets: ITicket[]
@@ -205,7 +205,7 @@ export interface MockState {
 export const useMockStore = create<MockState>((set, get) => ({
   // ─── INITIAL STATE ──────────────────────────────────────────────────────
   users: [],
-  event: {} as IEvent,
+  events: [] as IEvent[],
   ticketTypes: [],
   orders: [],
   tickets: [],
@@ -234,12 +234,12 @@ export const useMockStore = create<MockState>((set, get) => ({
     const counterStaffUsers = data.users.filter(u => u.role === 'COUNTER_STAFF')
     const counterStaff: ICounterStaff[] = counterStaffUsers.map((user, i) => ({
       id: `cs-${user.id}`,
-      tenantId: data.event.tenantId,
+      tenantId: data.events[0].tenantId,
       userId: user.id,
       counterId: data.counters[i % data.counters.length]?.id || data.counters[0]?.id || '',
       shift: (i % 3 === 0 ? 'pagi' : i % 3 === 1 ? 'siang' : 'malam') as ShiftType,
       status: 'active',
-      assignedAt: data.event.createdAt,
+      assignedAt: data.events[0].createdAt,
       user,
       counter: data.counters[i % data.counters.length],
     }))
@@ -248,19 +248,19 @@ export const useMockStore = create<MockState>((set, get) => ({
     const gateStaffUsers = data.users.filter(u => u.role === 'GATE_STAFF')
     const gateStaff: IGateStaff[] = gateStaffUsers.map((user, i) => ({
       id: `gs-${user.id}`,
-      tenantId: data.event.tenantId,
+      tenantId: data.events[0].tenantId,
       userId: user.id,
       gateId: data.gates[i % data.gates.length]?.id || data.gates[0]?.id || '',
       shift: (i % 3 === 0 ? 'pagi' : i % 3 === 1 ? 'siang' : 'malam') as ShiftType,
       status: 'active',
-      assignedAt: data.event.createdAt,
+      assignedAt: data.events[0].createdAt,
       user,
       gate: data.gates[i % data.gates.length],
     }))
 
     set({
       users: data.users,
-      event: data.event,
+      events: data.events,
       ticketTypes: data.ticketTypes,
       orders: data.orders,
       tickets: data.tickets,
@@ -312,7 +312,7 @@ export const useMockStore = create<MockState>((set, get) => ({
 
     const redemption: IRedemption = {
       id: generateId('redemption'),
-      tenantId: state.event.tenantId,
+      tenantId: state.events[0].tenantId,
       ticketId: ticket.id,
       counterId,
       staffId,
@@ -399,8 +399,8 @@ export const useMockStore = create<MockState>((set, get) => ({
 
     const gateLog: IGateLog = {
       id: generateId('gatelog'),
-      tenantId: state.event.tenantId,
-      eventId: state.event.id,
+      tenantId: state.events[0].tenantId,
+      eventId: state.events[0].id,
       ticketId: ticket.id,
       gateId,
       staffId,
@@ -449,8 +449,8 @@ export const useMockStore = create<MockState>((set, get) => ({
         wristbandCode: ticket.wristbandCode,
         wristbandColor,
         price: tt?.price || 0,
-        eventName: state.event.title || '',
-        eventDate: state.event.date || '',
+        eventName: state.events[0].title || '',
+        eventDate: state.events[0].date || '',
       },
     }
   },
@@ -565,7 +565,7 @@ export const useMockStore = create<MockState>((set, get) => ({
 
       items.push({
         id: orderItemId,
-        tenantId: state.event.tenantId || 'tenant-1',
+        tenantId: state.events[0].tenantId || 'tenant-1',
         orderId: '',
         ticketTypeId: item.ticketTypeId,
         quantity: item.quantity,
@@ -578,7 +578,7 @@ export const useMockStore = create<MockState>((set, get) => ({
         const ticketCode = `SHL${Date.now().toString(36).toUpperCase()}${Math.random().toString(36).slice(2, 6).toUpperCase()}`
         tickets.push({
           id: generateId('ticket'),
-          tenantId: state.event.tenantId || 'tenant-1',
+          tenantId: state.events[0].tenantId || 'tenant-1',
           eventId: data.eventId,
           ticketCode,
           orderId: '',
@@ -587,7 +587,7 @@ export const useMockStore = create<MockState>((set, get) => ({
           attendeeEmail: item.attendeeEmail,
           qrData: ticketCode,
           status: 'pending',
-          eventTitle: state.event.title || '',
+          eventTitle: state.events[0].title || '',
           ticketTypeName: tt.name,
           createdAt: now,
           updatedAt: now,
@@ -606,7 +606,7 @@ export const useMockStore = create<MockState>((set, get) => ({
 
     const order: IOrder = {
       id: orderId,
-      tenantId: state.event.tenantId || 'tenant-1',
+      tenantId: state.events[0].tenantId || 'tenant-1',
       orderCode,
       userId: 'user-participant',
       eventId: data.eventId,
@@ -687,7 +687,7 @@ export const useMockStore = create<MockState>((set, get) => ({
       // Add payment log
       const paymentLog: IPaymentLog = {
         id: `mock-plog-${orderId}`,
-        eventId: currentState.event.id,
+        eventId: currentState.events[0].id,
         orderId,
         orderCode: order.orderCode,
         transactionId: dokuTxnId,
@@ -774,7 +774,7 @@ export const useMockStore = create<MockState>((set, get) => ({
 
     const fee = Math.round(amount * (feeConfig?.feePercent || 5) / 100)
     const netAmount = amount - fee
-    const event = state.event
+    const event = state.events[0]
 
     const withdrawal: IWithdrawalRequest = {
       id: generateId('withdrawal'),
@@ -1003,7 +1003,8 @@ export const useMockStore = create<MockState>((set, get) => ({
   // ─── QUERY: GET DASHBOARD KPIs ──────────────────────────────────────────
   getDashboardKPIs: () => {
     const state = get()
-    const { tickets, orders, users, ticketTypes, event, redemptions } = state
+    const { tickets, orders, users, ticketTypes, events, redemptions } = state
+    const event = events[0]
 
     const totalRevenue = orders.filter((o) => o.status === 'paid').reduce((sum, o) => sum + o.totalAmount, 0)
 
@@ -1102,7 +1103,7 @@ export const useMockStore = create<MockState>((set, get) => ({
     const activeCounters = counters.filter((c) => c.status === 'active').length
     const activeGates = gates.filter((g) => g.status === 'active').length
 
-    const occupancyRate = state.event.capacity > 0 ? Math.round((totalInside / state.event.capacity) * 10000) / 100 : 0
+    const occupancyRate = state.events[0].capacity > 0 ? Math.round((totalInside / state.events[0].capacity) * 10000) / 100 : 0
 
     const totalRevenue = orders.filter((o) => o.status === 'paid').reduce((sum, o) => sum + o.totalAmount, 0)
 

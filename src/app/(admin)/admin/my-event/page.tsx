@@ -10,20 +10,66 @@ import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Calendar, Clock, MapPin, Edit2, Save, X, Plus, ImageIcon } from 'lucide-react'
 import { cn, formatDateTime } from '@/lib/utils'
+import { useAuthStore } from '@/lib/auth-store'
+import { MOCK_EVENTS, DEFAULT_EVENT_SLUG } from '@/lib/mock-events'
 
-// ─── Mock event data (in production, fetched via useOrganizerEvent hook) ──────
-const MOCK_EVENT = {
-  id: 'evt-001',
-  title: 'Sheila On 7 — Melompat Lebih Tinggi',
-  slug: 'sheila-on-7-melompat-lebih-tinggi',
-  description: 'Konser spesial Sheila On 7 dalam rangka tur "Melompat Lebih Tinggi" di Jakarta.',
-  date: '2025-06-22',
-  time: '19:00',
-  venue: 'GBK Madya',
-  city: 'Jakarta',
-  address: 'Jl. Gerbang Pemuda, Senayan, Tanah Abang, Jakarta Pusat',
-  posterUrl: '/images/poster-placeholder.png',
-  status: 'published' as 'draft' | 'pending_approval' | 'published' | 'completed',
+// ─── Full event detail map (slug → event data) ────────────────────────────────
+const EVENT_DETAILS: Record<string, {
+  id: string
+  title: string
+  slug: string
+  description: string
+  date: string
+  time: string
+  venue: string
+  city: string
+  address: string
+  posterUrl: string
+  status: 'draft' | 'pending_approval' | 'published' | 'completed'
+}> = {
+  'sheila-on-7-melompat-lebih-tinggi': {
+    id: 'evt-sheila-on7-jakarta-001',
+    title: 'Sheila On 7 — Melompat Lebih Tinggi',
+    slug: 'sheila-on-7-melompat-lebih-tinggi',
+    description: 'Konser spesial Sheila On 7 dalam rangka tur "Melompat Lebih Tinggi" di Jakarta.',
+    date: '2025-06-22',
+    time: '19:00',
+    venue: 'GBK Madya',
+    city: 'Jakarta',
+    address: 'Jl. Gerbang Pemuda, Senayan, Tanah Abang, Jakarta Pusat',
+    posterUrl: '/images/poster-placeholder.png',
+    status: 'published',
+  },
+  'sheila-on-7-bandung-2026': {
+    id: 'evt-sheila-on7-bandung-001',
+    title: 'Sheila On 7 — Bandung',
+    slug: 'sheila-on-7-bandung-2026',
+    description: 'Konser Sheila On 7 di Bandung sebagai bagian tur nasional.',
+    date: '2025-08-15',
+    time: '20:00',
+    venue: 'GBLA',
+    city: 'Bandung',
+    address: 'Jl. Peta, Bandung',
+    posterUrl: '/images/poster-placeholder.png',
+    status: 'published',
+  },
+  'sheila-on-7-surabaya-2026': {
+    id: 'evt-sheila-on7-surabaya-001',
+    title: 'Sheila On 7 — Surabaya',
+    slug: 'sheila-on-7-surabaya-2026',
+    description: 'Konser Sheila On 7 di Surabaya, penutup tur nasional.',
+    date: '2025-10-10',
+    time: '19:30',
+    venue: 'JXC',
+    city: 'Surabaya',
+    address: 'Jl. Gresik, Surabaya',
+    posterUrl: '/images/poster-placeholder.png',
+    status: 'draft',
+  },
+}
+
+function getEventBySlug(slug: string) {
+  return EVENT_DETAILS[slug] ?? EVENT_DETAILS[DEFAULT_EVENT_SLUG]
 }
 
 const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
@@ -67,8 +113,11 @@ function generateSlug(title: string): string {
 }
 
 export default function MyEventPage() {
+  const selectedEventId = useAuthStore((s) => s.selectedEventId)
+  const currentSlug = MOCK_EVENTS.find((e) => e.id === selectedEventId)?.slug ?? DEFAULT_EVENT_SLUG
+
   const [hasEvent, setHasEvent] = useState(true) // Toggle for demo
-  const [event] = useState(MOCK_EVENT)
+  const [event] = useState(() => getEventBySlug(currentSlug))
   const [isEditing, setIsEditing] = useState(false)
   const [form, setForm] = useState<EventFormData>({
     title: event.title,

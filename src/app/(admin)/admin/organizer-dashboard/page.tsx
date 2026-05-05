@@ -23,11 +23,11 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useOrganizerDashboard, useOrganizerCounters, useOrganizerGates, useOrganizerRedemptions } from '@/hooks/use-api'
+import { useCurrentEventSlug } from '@/hooks/use-current-event'
 import { formatRupiah, formatTime } from '@/lib/utils'
 
-const EVENT_SLUG = 'sheila-on-7-melompat-lebih-tinggi'
-
 export default function DashboardPage() {
+  const EVENT_SLUG = useCurrentEventSlug()
   const { data: dashboardData, isLoading: dashboardLoading } = useOrganizerDashboard(EVENT_SLUG)
   const { data: countersData } = useOrganizerCounters(EVENT_SLUG)
   const { data: gatesData } = useOrganizerGates(EVENT_SLUG)
@@ -74,9 +74,9 @@ export default function DashboardPage() {
   ]
 
   const quickActions = [
-    { title: 'Penukaran Gelang', href: '/organizer/redeem', icon: Shield, desc: 'Tukar tiket jadi gelang' },
-    { title: 'Live Monitor', href: '/organizer/live-monitor', icon: Activity, desc: 'Monitor real-time venue' },
-    { title: 'Cek Tiket', href: '/organizer/check-ticket', icon: Search, desc: 'Cari data peserta' },
+    { title: 'Penukaran Gelang', href: '/admin/redeem', icon: Shield, desc: 'Tukar tiket jadi gelang' },
+    { title: 'Live Monitor', href: '/admin/live-monitor', icon: Activity, desc: 'Monitor real-time venue' },
+    { title: 'Cek Tiket', href: '/admin/check-ticket', icon: Search, desc: 'Cari data peserta' },
   ]
 
   if (dashboardLoading) {

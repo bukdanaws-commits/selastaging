@@ -127,6 +127,7 @@ export const API = {
     LIVE_MONITOR:   '/api/v1/admin/live-monitor',
     CANCEL_TICKET:  (ticketId: string) => `/api/v1/admin/tickets/${ticketId}/cancel`,
     EXPIRE_PENDING: '/api/v1/admin/tickets/expire-pending',
+    VERIFICATIONS:  '/api/v1/admin/verifications',
   },
 
   // Notifications
@@ -572,6 +573,9 @@ export const adminApi = {
 
   getLiveMonitor: (eventId?: string) =>
     apiFetch<unknown>(API.ADMIN.LIVE_MONITOR, { params: eventId ? { eventId } : undefined }),
+
+  getVerifications: (params?: Record<string, string>) =>
+    apiFetch<PaginatedData<unknown>>(API.ADMIN.VERIFICATIONS, { params }),
 
   cancelTicket: (ticketId: string) =>
     apiFetch<void>(API.ADMIN.CANCEL_TICKET(ticketId), { method: 'PATCH' }),

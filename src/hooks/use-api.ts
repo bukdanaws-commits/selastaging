@@ -121,6 +121,7 @@ export const queryKeys = {
     settings: () => ['admin', 'settings'] as const,
     crewGates: (params?: Record<string, string>) => ['admin', 'crewGates', params] as const,
     liveMonitor: (eventId?: string) => ['admin', 'liveMonitor', eventId] as const,
+    verifications: (params?: Record<string, string>) => ['admin', 'verifications', params] as const,
   },
 
   // Notifications

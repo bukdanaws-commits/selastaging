@@ -162,7 +162,7 @@ export async function handleMockRequest<T = unknown>(request: MockRequest): Prom
     const eventMatch = matchRoute('/api/v1/events/:slug', endpoint)
     if (eventMatch && !endpoint.includes('/ticket-types')) {
       const store = useMockStore.getState()
-      const event = store.event
+      const event = store.events.find((e: IEvent) => e.slug === slug || e.id === slug) || store.events[0]
       if (!event || !event.id) throw new Error('Event not found')
       const ticketTypes = store.ticketTypes.filter((tt: ITicketType) => tt.eventId === event.id)
       return { event, ticketTypes } as T
@@ -208,7 +208,7 @@ export async function handleMockRequest<T = unknown>(request: MockRequest): Prom
       return {
         ...order,
         tickets: store.tickets.filter((t: ITicket) => t.orderId === order.id),
-        event: store.event && store.event.id === order.eventId ? store.event : null,
+        event: store.events.find((e: IEvent) => e.id === order.eventId) || null,
         user: store.users.find((u: IUser) => u.id === order.userId),
       } as T
     }
@@ -329,7 +329,7 @@ export async function handleMockRequest<T = unknown>(request: MockRequest): Prom
   if (endpoint === '/api/v1/organizer/balance' && method === 'GET') {
     const user = getCurrentUser()
     const store = useMockStore.getState()
-    const eventId = params?.eventId || store.event.id
+    const eventId = params?.eventId || store.events[0].id
     const balance = store.getOrganizerBalance(user?.id || '', eventId)
     if (!balance) throw new Error('Balance not found')
     return balance as T
@@ -363,7 +363,7 @@ export async function handleMockRequest<T = unknown>(request: MockRequest): Prom
     const b = body as Record<string, unknown>
     return store.requestWithdrawal(
       user?.id || '',
-      String(b.eventId || store.event.id),
+      String(b.eventId || store.events[0].id),
       Number(b.amount || 0),
       String(b.bankAccountId || ''),
     ) as T
@@ -380,7 +380,7 @@ export async function handleMockRequest<T = unknown>(request: MockRequest): Prom
   // GET /api/v1/organizer/payment-logs
   if (endpoint === '/api/v1/organizer/payment-logs' && method === 'GET') {
     const store = useMockStore.getState()
-    const eventId = params?.eventId || store.event.id
+    const eventId = params?.eventId || store.events[0].id
     const logs = store.getPaymentLogs(eventId)
     const { page, perPage } = extractPagination(params)
     return paginate(logs, page, perPage) as T
@@ -494,10 +494,10 @@ export async function handleMockRequest<T = unknown>(request: MockRequest): Prom
       ...kpis, ...liveStats,
       recentOrders: store.orders.slice(0, 10),
       recentRedemptions: store.redemptions.slice(0, 10),
-      eventsSummary: store.event && store.event.id ? [{
-        id: store.event.id, title: store.event.title, status: store.event.status,
-        ticketCount: store.tickets.filter((t: ITicket) => t.eventId === store.event.id).length,
-      }] : [],
+      eventsSummary: store.events.length > 0 ? store.events.map((e: IEvent) => ({
+        id: e.id, title: e.title, status: e.status,
+        ticketCount: store.tickets.filter((t: ITicket) => t.eventId === e.id).length,
+      })) : [],
       pendingWithdrawals: store.getPendingWithdrawals().length,
       platformRevenue: store.getPlatformRevenue(),
     } as T
@@ -506,16 +506,16 @@ export async function handleMockRequest<T = unknown>(request: MockRequest): Prom
   if (endpoint === '/api/v1/admin/analytics' && method === 'GET') {
     const store = useMockStore.getState()
     const kpis = store.getDashboardKPIs()
-    const event = store.event
-    const eventAnalytics = event && event.id ? [{
-      eventId: event.id, eventTitle: event.title,
+    const event = store.events[0]
+    const eventAnalytics = store.events.length > 0 ? store.events.map((e: IEvent) => ({
+      eventId: e.id, eventTitle: e.title,
       totalTickets: store.tickets.length,
       soldTickets: store.tickets.filter((t: ITicket) => ['active', 'redeemed', 'inside', 'outside'].includes(t.status)).length,
       redeemedTickets: store.redemptions.length,
       revenue: store.orders.filter((o: IOrder) => o.status === 'paid').reduce((sum: number, o: IOrder) => sum + o.totalAmount, 0),
       gateEntries: store.gateLogs.filter((gl: IGateLog) => gl.action === 'entry').length,
-      gateExits: store.gateLogs.filter((gl: IGateLog) => gl.action === 'exit').length,
-    }] : []
+      gateExits: store.gateLogs.filter((gl: IGateLog) => gl.action === 'exit' && gl.eventId === e.id).length,
+    })) : []
     return {
       ...kpis, events: eventAnalytics,
       hourlyData: generateHourlyData(store),
@@ -551,8 +551,7 @@ export async function handleMockRequest<T = unknown>(request: MockRequest): Prom
 
   if (endpoint === '/api/v1/admin/events' && method === 'GET') {
     const store = useMockStore.getState()
-    const events = store.event && store.event.id ? [store.event] : []
-    return events as T
+    return store.events as T
   }
 
   if (endpoint === '/api/v1/admin/tickets' && method === 'GET') {
@@ -742,7 +741,7 @@ export async function handleMockRequest<T = unknown>(request: MockRequest): Prom
 
   if (endpoint === '/api/v1/admin/seats' && method === 'GET') {
     const store = useMockStore.getState()
-    const eventId = params?.eventId || store.event?.id
+    const eventId = params?.eventId || store.events[0]?.id
     if (!eventId) return { sections: [] } as T
     const ticketTypes = store.ticketTypes.filter((tt: ITicketType) => tt.eventId === eventId)
     const sections = ticketTypes.filter((tt: ITicketType) => tt.tier === 'tribun').map((tt: ITicketType) => ({

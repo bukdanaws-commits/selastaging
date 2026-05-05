@@ -31,6 +31,7 @@ import {
   Filter,
 } from 'lucide-react'
 import { useOrganizerRedemptions } from '@/hooks/use-api'
+import { useCurrentEventSlug } from '@/hooks/use-current-event'
 import { formatDateTimeShort } from '@/lib/utils'
 
 function getStatusBadge(status: string) {
@@ -55,7 +56,8 @@ export function RedeemHistoryPage() {
   const [statusFilter, setStatusFilter] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
 
-  const { data: redemptionsData, isLoading } = useOrganizerRedemptions('sheila-on-7-melompat-lebih-tinggi')
+  const eventSlug = useCurrentEventSlug()
+  const { data: redemptionsData, isLoading } = useOrganizerRedemptions(eventSlug)
 
   // Extract redemptions from paginated response
   const redemptions = useMemo(() => {

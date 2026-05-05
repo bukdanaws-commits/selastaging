@@ -35,7 +35,7 @@ import type {
 
 export interface MockDataBundle {
   users: IUser[]
-  event: IEvent
+  events: IEvent[]
   ticketTypes: ITicketType[]
   orders: IOrder[]
   orderItems: IOrderItem[]
@@ -585,23 +585,79 @@ export function generateAllMockData(): MockDataBundle {
   const now = new Date().toISOString()
   const baseDate = '2026-03-01T00:00:00.000+07:00'
 
-  // ── 1. EVENT ─────────────────────────────────────────────────────────────
-  const event: IEvent = {
-    id: EVENT_ID,
-    tenantId: TENANT_ID,
-    slug: 'sheila-on-7-melompat-lebih-tinggi-jakarta-2026',
-    title: 'Sheila On 7 "Melompat Lebih Tinggi"',
-    subtitle: 'Konser Spesial 25 Tahun Sheila On 7',
-    date: `${EVENT_DATE}T19:00:00.000${WIB_OFFSET}`,
-    doorsOpen: DOORS_OPEN,
-    venue: 'GBK Madya Stadium',
-    city: 'Jakarta',
-    address: 'Jl. Pintu Senayan, Gelora Bung Karno, Senayan, Kebayoran Baru, Jakarta Selatan',
-    capacity: 18800,
-    status: 'published',
-    createdAt: baseDate,
-    updatedAt: now,
-  }
+  // ── 1. EVENTS (multiple cities) ──────────────────────────────────────────
+  const events: IEvent[] = [
+    {
+      id: EVENT_ID,
+      tenantId: TENANT_ID,
+      organizerId: ORGANIZER_ID,
+      slug: 'sheila-on-7-melompat-lebih-tinggi-jakarta-2026',
+      title: 'Sheila On 7 "Melompat Lebih Tinggi"',
+      subtitle: 'Konser Spesial 25 Tahun Sheila On 7',
+      date: `${EVENT_DATE}T19:00:00.000${WIB_OFFSET}`,
+      doorsOpen: DOORS_OPEN,
+      venue: 'GBK Madya Stadium',
+      city: 'Jakarta',
+      address: 'Jl. Pintu Senayan, Gelora Bung Karno, Senayan, Kebayoran Baru, Jakarta Selatan',
+      capacity: 18800,
+      status: 'published',
+      createdAt: baseDate,
+      updatedAt: now,
+    },
+    {
+      id: 'evt-sheila-on7-bandung-001',
+      tenantId: TENANT_ID,
+      organizerId: ORGANIZER_ID,
+      slug: 'sheila-on-7-melompat-lebih-tinggi-bandung-2026',
+      title: 'Sheila On 7 "Melompat Lebih Tinggi" — Bandung',
+      subtitle: 'Konser Spesial 25 Tahun Sheila On 7 (Bandung)',
+      date: '2026-07-20T19:00:00.000+07:00',
+      doorsOpen: '17:00',
+      venue: 'Stadion Gelora Bandung Lautan Api',
+      city: 'Bandung',
+      address: 'Jl. Sedat Serang, Kota Bandung, Jawa Barat',
+      capacity: 15000,
+      status: 'published',
+      createdAt: '2026-04-01T00:00:00.000+07:00',
+      updatedAt: now,
+    },
+    {
+      id: 'evt-sheila-on7-surabaya-001',
+      tenantId: TENANT_ID,
+      organizerId: ORGANIZER_ID,
+      slug: 'sheila-on-7-melompat-lebih-tinggi-surabaya-2026',
+      title: 'Sheila On 7 "Melompat Lebih Tinggi" — Surabaya',
+      subtitle: 'Konser Spesial 25 Tahun Sheila On 7 (Surabaya)',
+      date: '2026-08-15T19:00:00.000+07:00',
+      doorsOpen: '17:00',
+      venue: 'Stadion Gelora Bung Tomo',
+      city: 'Surabaya',
+      address: 'Jl. Ahmad Yani No.1, Kenjeran, Surabaya, Jawa Timur',
+      capacity: 12000,
+      status: 'published',
+      createdAt: '2026-04-15T00:00:00.000+07:00',
+      updatedAt: now,
+    },
+    {
+      id: 'evt-sheila-on7-yogyakarta-001',
+      tenantId: TENANT_ID,
+      organizerId: ORGANIZER_ID,
+      slug: 'sheila-on-7-melompat-lebih-tinggi-yogyakarta-2026',
+      title: 'Sheila On 7 "Melompat Lebih Tinggi" — Yogyakarta',
+      subtitle: 'Konser Spesial 25 Tahun Sheila On 7 (Yogyakarta)',
+      date: '2026-09-05T18:30:00.000+07:00',
+      doorsOpen: '16:30',
+      venue: 'Stadion Maguwoharjo',
+      city: 'Yogyakarta',
+      address: 'Jl. Maguwoharjo, Depok, Sleman, Daerah Istimewa Yogyakarta',
+      capacity: 8000,
+      status: 'draft',
+      createdAt: '2026-05-01T00:00:00.000+07:00',
+      updatedAt: now,
+    },
+  ]
+
+  const event = events[0]
 
   // ── 2. TICKET TYPES ──────────────────────────────────────────────────────
   const ticketTypes: ITicketType[] = TICKET_TYPE_DEFS.map((def) => ({
@@ -1174,7 +1230,7 @@ export function generateAllMockData(): MockDataBundle {
 
   return {
     users: allUsers,
-    event,
+    events,
     ticketTypes,
     orders,
     orderItems,
