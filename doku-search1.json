@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://docs.doku.com/accept-payments/no-integration-products/payment-link/create-payment-link",
+    "name": "Create Payment Link",
+    "snippet": "17 Oct 2025 — Payment Description: Allows merchants to specify a fixed amount and a short description to describe the purpose of the payment . Read more",
+    "host_name": "docs.doku.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.doku.com/get-started/manage-business/manage-payment-methods",
+    "name": "Manage Payment Methods",
+    "snippet": "4 Mar 2026 — You can activate payment methods for your business by following the steps below: Log in to DOKU Dashboard , and then access the side navigation bar. Read more",
+    "host_name": "docs.doku.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.doku.com/accept-payments/integration-tools/doku-mcp-server",
+    "name": "DOKU MCP Server",
+    "snippet": "21 Feb 2026 — DOKU MCP Server is a gateway that connects DOKU's payment APIs with AI-powered applications. Built using the Model Context Protocol (MCP), ... Read more",
+    "host_name": "docs.doku.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.doku.com/accept-payments/no-integration-products/paychat/accept-order",
+    "name": "Accept Order",
+    "snippet": "12 Jan 2026 — Define the exact payment amount that customers need to pay during checkout. This ensures a consistent and accurate pricing experience. Read more",
+    "host_name": "docs.doku.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.doku.com/accept-payments/integration-tools/doku-checkout/manage-checkout-orders",
+    "name": "Manage Checkout Orders",
+    "snippet": "12 Jan 2026 — On the Order Details tab, you can see general information such as transaction amount, transaction status, and customer Information. On the ... Read more",
+    "host_name": "docs.doku.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.doku.com/miscellaneous/glossary",
+    "name": "Glossary",
+    "snippet": "13 Jan 2026 — Direct API Direct API is an integration method provided by DOKU, where it allows merchants to create customized payment flows and integrate ... Read more",
+    "host_name": "docs.doku.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.doku.com/get-started/manage-business/manage-reports/transaction-report",
+    "name": "Transaction Report",
+    "snippet": "14 Jan 2026 — Transaction is waiting to be paid by the customer. NO. Wait for HTTP Notification or Call Check Status API to get final status. Read more",
+    "host_name": "docs.doku.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.doku.com/accept-payments/no-integration-products/paychat/whatsapp-business-waba",
+    "name": "WhatsApp Business (WABA)",
+    "snippet": "12 Jan 2026 — How It Works ... PayChat broadcasts the payment request to all customers . Each customer receives: Personalized greeting. Total amount to be paid. Read more",
+    "host_name": "docs.doku.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.doku.com/miscellaneous/snap-migration",
+    "name": "SNAP Migration",
+    "snippet": "27 Jan 2026 — SNAP is the National Open API Payment Standard established by Bank Indonesia to boost integration, interconnection and interoperability, ... Read more",
+    "host_name": "docs.doku.com",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.doku.com/accept-payments/no-integration-products/virtual-terminal",
+    "name": "Virtual Terminal",
+    "snippet": "8 Jul 2024 — Virtual Terminal by DOKU is a feature that allows businesses to accept payments over the phone, through email, or in person without needing a physical card ... Read more",
+    "host_name": "docs.doku.com",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

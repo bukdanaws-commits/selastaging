@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://developers.doku.com/wallet-as-a-service/embedded-wallet",
+    "name": "Embedded Wallet | API Reference",
+    "snippet": "This API is ideal for scenarios where payment verification is required before final processing. ... client_ID or Partner_ID from DOKU.",
+    "host_name": "developers.doku.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/accept-payments/direct-api/snap/integration-guide/get-token-api/b2b2c",
+    "name": "B2B2C | API Reference",
+    "snippet": "Merchant to DOKU : client_id merchant. Copy Acquirer to DOKU : client_key given by DOKU. Copy DOKU to Acquirer : client_key given by acquirer. Missing: gateway shared_key",
+    "host_name": "developers.doku.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/developer-kit/libraries-and-sdk",
+    "name": "Libraries and SDK | API Reference",
+    "snippet": "Our new library provides access to the DOKU APIs and ensures compliance with the new Bank Indonesia (BI) regulations.",
+    "host_name": "developers.doku.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/TokenEx/tokenex.github.io/blob/master/content/gateway.md",
+    "name": "gateway.md - GitHub",
+    "snippet": "The Federated gateway does not support a test API. You must enable or disable test mode on an account by account basis with Federated Payments.",
+    "host_name": "github.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.planyo.com/docs/edit-calendar.php",
+    "name": "Planyo Help :: Configuration page: Settings - Edit",
+    "snippet": "Please check VR Pay website for supported payment options. Enter your DOKU Mall ID followed by a slash and Shared Key, e.g. '1111/D2cT4nAe1De1'. For test ...",
+    "host_name": "www.planyo.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.doku.com/API/index.html",
+    "name": "Introduction – DOKU Payment API Documentation",
+    "snippet": "The DOKU API supports two methods of payment processing – namely, merchant-hosted and DOKU-hosted. ... You can see your shared key in DOKU Merchant dashboard. Missing: client_id | Show results with: client_id\nThe DOKU API supports two methods of payment processing – namely, merchant-hosted and DOKU -hosted. See below for features of each service: DOKU Hosted (DH) ...",
+    "host_name": "www.doku.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.duitku.com/snap-api/id",
+    "name": "Perkenalan – SNAP - Duitku",
+    "snippet": "Saat ini Duitku sebagai salah satu payment gateway ... Payment API. Untuk melakukan pembayaran kita memerlukan API, misalnya kita menggunakan express js.",
+    "host_name": "docs.duitku.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.scribd.com/document/775736599/RXg-Operation-Manual-15643",
+    "name": "RXG Operation Manual 15643 | PDF - Scribd",
+    "snippet": "Authentication scaffold configures the rXg for multi-Factor Authentication. The name field is an arbitrary string descriptor used only for administrative ...",
+    "host_name": "www.scribd.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://huggingface.co/kcarnold/codeparrot/resolve/main/merges.txt?download=true",
+    "name": "2.09 MB - Hugging Face",
+    "snippet": "... api k lass soft tabstop Ġappe ars w ers Ġb lack Ġd raft ĠS R am b Ġj inja aa ... Authentication Error ĠCertificate Error Syn apse Private Key ĠClean up ...",
+    "host_name": "huggingface.co",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://library.oapen.org/bitstream/20.500.12657/61030/1/9783110767377.pdf",
+    "name": "[PDF] CLARIN - OAPEN Library",
+    "snippet": "In November 2020 we published a call for contributions documenting CLARIN's organization and its members, its goals and its functioning, the tools and resources ...",
+    "host_name": "library.oapen.org",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

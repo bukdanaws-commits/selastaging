@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://dashboard.doku.com/docs/docs/getting-started/retrieve-credential",
+    "name": "Retrieve Client ID & Secret Key",
+    "snippet": "You can retrieve your Client ID & Secret Key through DOKU Back Office by simply go to Business Account > Service.",
+    "host_name": "dashboard.doku.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/wallet-as-a-service/embedded-wallet",
+    "name": "Embedded Wallet | API Reference",
+    "snippet": "Mar 10, 2026 — Credential client ID from DOKU . Example: BRN-0256-1676878043376. X-EXTERNAL-IDstringRequired. Reference number that should be unique in the ... Read more",
+    "host_name": "developers.doku.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.doku.com/get-started/manage-business/manage-payment-methods",
+    "name": "Manage Payment Methods",
+    "snippet": "Mar 4, 2026 — QRIS is not supported in DOKU Sandbox . Consequently, QRIS credentials cannot be used in sandbox , and no QRIS transaction simulator is available. Read more",
+    "host_name": "docs.doku.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.doku.com/get-started/manage-business/set-up-integration",
+    "name": "Set Up Integration",
+    "snippet": "Jan 20, 2026 — This guide also applies to retrieving the Client ID and Secret Key on DOKU Sandbox (staging environment ). Regenerate Secret Key . Regenerating ... Read more",
+    "host_name": "docs.doku.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/get-started-with-doku-api/retrieve-payment-credential",
+    "name": "Retrieve Payment Credential - Get Started with DOKU API",
+    "snippet": "Jul 7, 2025 — To communicate with any DOKU API, make sure you have Client ID and Secret Key . Follow the outlined steps to obtain the Client ID and Secret Key. Read more",
+    "host_name": "developers.doku.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/developer-kit/libraries-and-sdk",
+    "name": "Libraries and SDK | API Reference",
+    "snippet": "Feb 26, 2025 — Obtain our credentials ( Client ID and Secret Key ) from the Integration > API Keys menu. Generate a public/ private key pair using SHA256 with ... Read more",
+    "host_name": "developers.doku.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/accept-payments/doku-mcp-server",
+    "name": "DOKU MCP Server | API Reference",
+    "snippet": "Dec 21, 2025 — This guide provides end-to-end instructions for integrating with the DOKU MCP Server, covering system requirements, a step-by-step ... Read more",
+    "host_name": "developers.doku.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/get-started-with-doku-api/user-registration",
+    "name": "User Registration | API Reference - Get Started with DOKU API",
+    "snippet": "Fill the registration form by entering your full name, business name, business email address, and password. Read more",
+    "host_name": "developers.doku.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://sandbox.doku.com/integration/simulator",
+    "name": "Payment Simulator | Jokul by DOKU",
+    "snippet": "Payment Simulator . Choose your simulator and follow the flows. VIRTUAL ACCOUNT CREDIT CARD DIRECT DEBIT E MONEY ONLINE TO OFFLINE DIRECT TRANSFER REKENING ... Read more",
+    "host_name": "sandbox.doku.com",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com",
+    "name": "Get Started with DOKU API | API Reference",
+    "snippet": "Dec 17, 2025 — Test in Sandbox : Utilize our sandbox environment to test your integration before going live. It's the perfect playground to ensure ... Read more",
+    "host_name": "developers.doku.com",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

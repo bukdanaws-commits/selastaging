@@ -1,0 +1,92 @@
+# =============================================================================
+#  SELEVENT — CI/CD Test Docker Compose
+#
+#  Lightweight: postgres + redis only (no app build, no GUIs)
+#  Designed for use in GitHub Actions / Cloud Build / any CI pipeline.
+#
+#  Usage:
+#    docker compose -f docker-compose.test.yml up -d --wait
+#    # ... run tests against localhost:5432 and localhost:6379 ...
+#    docker compose -f docker-compose.test.yml down -v
+#
+#  Features:
+#    - Auto-cleanup via --wait + down -v
+#    - Health checks with short intervals for fast CI startup
+#    - Minimal resource usage (no GUIs, no app build)
+# =============================================================================
+
+services:
+  # ── PostgreSQL 15 ───────────────────────────────────────────────────────
+  postgres-test:
+    image: postgres:15-alpine
+    container_name: selevent-test-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: selevent_test
+      POSTGRES_PASSWORD: test_secret
+      POSTGRES_DB: selevent_test
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - test-pgdata:/var/lib/postgresql/data
+    networks:
+      - selevent-test-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U selevent_test -d selevent_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  # ── Redis 7 ─────────────────────────────────────────────────────────────
+  redis-test:
+    image: redis:7-alpine
+    container_name: selevent-test-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --save "" --appendonly no --maxmemory 64mb --maxmemory-policy allkeys-lru
+    volumes:
+      - test-redisdata:/data
+    networks:
+      - selevent-test-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 3s
+
+  # ── Wait-for-it (one-shot health gate) ──────────────────────────────────
+  # This service exits with code 0 once both postgres and redis are healthy.
+  # CI pipelines can depend on this container to know when services are ready.
+  wait-for-services:
+    image: alpine:3.19
+    container_name: selevent-test-waiter
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+      redis-test:
+        condition: service_healthy
+    command: >
+      sh -c "
+        echo '==> All services are healthy and ready for tests.'
+        echo '    PostgreSQL: postgresql://selevent_test:test_secret@localhost:5432/selevent_test'
+        echo '    Redis:      redis://localhost:6379'
+        exit 0
+      "
+    networks:
+      - selevent-test-network
+
+# =============================================================================
+#  Networks & Volumes
+# =============================================================================
+networks:
+  selevent-test-network:
+    name: selevent-test-network
+    driver: bridge
+
+volumes:
+  test-pgdata:
+    name: selevent-test-pgdata
+  test-redisdata:
+    name: selevent-test-redisdata

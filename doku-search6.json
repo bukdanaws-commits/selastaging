@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://developers.doku.com/accept-payments/direct-api/snap/integration-guide/get-token-api/b2b",
+    "name": "B2B | API Reference",
+    "snippet": "A string representing an authorization issued to the client that used to access protected resources. String. Mandatory. The access token ... Missing: B2C | Show results with: B2C",
+    "host_name": "developers.doku.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/get-started-with-doku-api/signature-component/snap",
+    "name": "SNAP | API Reference - Get Started with DOKU API",
+    "snippet": "X-Signature is a security parameter that must be generated on the merchant's backend to verify the authenticity of the request. Here is the case ... Missing: v1/ B2C authentication",
+    "host_name": "developers.doku.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/accept-payments/direct-api/snap/integration-guide/get-token-api/b2b2c",
+    "name": "B2B2C | API Reference",
+    "snippet": "A random string that can be used by specific client to get a refreshed accessToken to prolong the access to the User's resources. String. Missing: B2C | Show results with: B2C",
+    "host_name": "developers.doku.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://snap-docs.paydia.id/snap-api/access-token-b2b2c/v1.1.0",
+    "name": "Access Token B2B2C | Paydia SNAP & Open API",
+    "snippet": "API Name, B2B2C Access Token Request (Get JWT Token) ; Function, This API is used to retrieves B2B2C (integrasi antara PJP Penyedia Layanan, Pengguna Layanan, ... Missing: endpoint B2C",
+    "host_name": "snap-docs.paydia.id",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/get-started-with-doku-api/check-status-api/snap",
+    "name": "API Reference - SNAP",
+    "snippet": "To get the status of a transaction, you can send a request to DOKU Check Status API. It will response with the transaction status. Missing: B2B B2C",
+    "host_name": "developers.doku.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/accept-payments/direct-api/snap/integration-guide/get-token-api",
+    "name": "Get Token API | API Reference",
+    "snippet": "Get Access Token is an authentication method to ensure confidentiality, system and data integrity, availability of a system, and as a fraud ... Missing: endpoint v1/",
+    "host_name": "developers.doku.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://pakaidonk.id/dokumentasi-api/access-token-b2b",
+    "name": "Access Token B2B - Pakaidonk E-money",
+    "snippet": "API Name, Access Token B2B. Function, API ini berfungsi untuk mendapatkan token yang digunakan dalam header Authorization untuk proses autentikasi. Missing: DOKU B2C",
+    "host_name": "pakaidonk.id",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.astrapay.com/docs/api",
+    "name": "Introduction – AstraPay API Merchant",
+    "snippet": "API yang membutuhkan Signature Auth, Signature Service, Token B2B, dan Token B2B2C sesuai pada sequence diagram, implementasinya dapat dilihat disini. SNAP ...",
+    "host_name": "www.astrapay.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.bri.co.id/en/snap-bi/apidocs-oauth-snap-bi",
+    "name": "APIDOCS Oauth SNAP BI (Internal version v1.1) - BRIAPI",
+    "snippet": "APIDOCS Oauth SNAP BI berfungsi untuk mendapatkan akses token sebagai cara otentikasi saat ingin mengakses API yang lain. Missing: DOKU transaction B2C",
+    "host_name": "developers.bri.co.id",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/archive/snap/virtual-account/danamon-virtual-account",
+    "name": "Danamon Virtual Account | API Reference",
+    "snippet": "DOKU has partnered with various banks and one of them is Danamon to provide Virtual Account Payment. Learn more about how DOKU can help you ... Missing: B2C | Show results with: B2C",
+    "host_name": "developers.doku.com",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

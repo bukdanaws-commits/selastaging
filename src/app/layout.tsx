@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
+import { Providers } from "@/components/providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,24 +14,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Z.ai Code Scaffold - AI-Powered Development",
-  description: "Modern Next.js scaffold optimized for AI-powered development with Z.ai. Built with TypeScript, Tailwind CSS, and shadcn/ui.",
-  keywords: ["Z.ai", "Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui", "AI development", "React"],
-  authors: [{ name: "Z.ai Team" }],
+  title: "Sheila On 7 — Melompat Lebih Tinggi Tour 2026 | Jakarta",
+  description: "Konser Sheila On 7 Melompat Lebih Tinggi Tour 2026 di GBK Madya Stadium Jakarta. 25 April 2026. Dapatkan tiket sekarang — Sobat Duta!",
+  keywords: ["Sheila On 7", "Melompat Lebih Tinggi", "Konser Jakarta", "GBK Madya", "Tiket Konser", "Sobat Duta"],
+  authors: [{ name: "Sheila On 7 Tour 2026" }],
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "/logo.svg",
   },
   openGraph: {
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
-    url: "https://chat.z.ai",
-    siteName: "Z.ai",
+    title: "Sheila On 7 — Melompat Lebih Tinggi Tour 2026 | Jakarta",
+    description: "Konser Sheila On 7 Melompat Lebih Tinggi Tour 2026 di GBK Madya Stadium Jakarta. 25 April 2026.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
+    title: "Sheila On 7 — Melompat Lebih Tinggi Tour 2026",
+    description: "Konser Sheila On 7 Melompat Lebih Tinggi Tour 2026. GBK Madya, 25 April 2026.",
   },
 };
 
@@ -41,12 +39,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="id" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
-        {children}
-        <Toaster />
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

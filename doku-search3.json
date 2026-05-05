@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://docs.doku.com/get-started/manage-business/set-up-integration/webhook-payment-notification",
+    "name": "Webhook / Payment Notification - DOKU Docs",
+    "snippet": "You can configure your payment notification URL for Bank Transfer (Virtual Account) payment methods by following the steps below: Log in to ... Missing: request credit",
+    "host_name": "docs.doku.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/accept-payments/direct-api/snap/integration-guide/virtual-account",
+    "name": "Virtual Account | API Reference",
+    "snippet": "By using this payment channels, your customer can pay their order through bank transfer and DOKU will notify you once the payment is completed ... Missing: credit card webhook",
+    "host_name": "developers.doku.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developerhub.ppro.com/global-api/docs/doku-wallet",
+    "name": "DOKU Wallet",
+    "snippet": "DOKU Wallet is one of Indonesia's first and most established digital wallet platforms, launched in 2007. It enables users to make secure cashless payments ... Missing: ewallet credit QRIS",
+    "host_name": "developerhub.ppro.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.adyen.com/payment-methods/doku/component",
+    "name": "DOKU payment methods Component - Adyen Docs",
+    "snippet": "Before you can accept live payments, you need to submit a request for one or more Indonesian DOKU online banking or convenience store payment methods in your ... Missing: ewallet QRIS notification",
+    "host_name": "docs.adyen.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.ecommpay.com/en/pm_doku.html",
+    "name": "DOKU Wallet | ECOMMPAY Documentation",
+    "snippet": "DOKU Wallet is a payment method which allows to process payments in Indonesian rupiahs by using e-wallets in Indonesia. This method supports purchases and ... Missing: credit QRIS webhook",
+    "host_name": "developers.ecommpay.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.paymentwall.com/payment-method/dokuwallet",
+    "name": "Doku Wallet - Payment Method - Documentation",
+    "snippet": "Doku Wallet is an Indonesian-based virtual e-wallet with a multitude of purposes. Learn all the details about this payment method at Paymentwall. Missing: webhook notification",
+    "host_name": "docs.paymentwall.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/PTNUSASATUINTIARTHA-DOKU/doku-python-library",
+    "name": "PTNUSASATUINTIARTHA-DOKU/doku-python-library - GitHub",
+    "snippet": "This SDK simplifies access to the DOKU API for your Python applications, enabling seamless integration with payment and virtual account services. Missing: credit QRIS webhook",
+    "host_name": "github.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://www.scribd.com/document/407763625/DOKU-API-MERCHANT-v1-10-pdf",
+    "name": "Doku API Merchant Integration Guide | PDF | Credit Card - Scribd",
+    "snippet": "This document provides instructions for merchants to integrate various payment methods through DOKU's merchant-hosted API. Missing: QRIS webhook",
+    "host_name": "www.scribd.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developer.cybersource.com/docs/cybs/en-us/ppro/integration/all/rest/ppro/ppro-doku-intro/ppro-refund-intro-doku/ppro-refund-ex-doku-rest.html",
+    "name": "Example: Requesting an DOKU Refund Using the REST API",
+    "snippet": "Access unified APIs for secure, cross-network agent-initiated payments enabling seamless onboarding, card enrollment, transaction management and more. ... Request Missing: ewallet credit QRIS webhook notification",
+    "host_name": "developer.cybersource.com",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://apps.odoo.com/apps/modules/19.0/doku_payment",
+    "name": "Payment Provider: DOKU - Odoo Apps Store",
+    "snippet": "Sell with DOKU in Odoo 19 using a checkout flow built for delayed payments such as Virtual Account and QRIS, including webhook handling, retry-safe payment ... Missing: API ewallet credit",
+    "host_name": "apps.odoo.com",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

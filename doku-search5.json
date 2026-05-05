@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://developers.doku.com/accept-payments/doku-checkout/supported-payment-methods",
+    "name": "Supported Payment Methods | API Reference",
+    "snippet": "Supported Payment Methods · Virtual Account · Credit Card · Convenience Store · QRIS Payment · E-wallet · Paylater · Direct Debit · Digital Banking.",
+    "host_name": "developers.doku.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/accept-payments/doku-mcp-server",
+    "name": "DOKU MCP Server | API Reference",
+    "snippet": "With DOKU MCP, an AI chatbot can generate a QRIS payment request when a user wants to buy something, send the QR code, poll or receive webhook ...",
+    "host_name": "developers.doku.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/accept-payments/doku-checkout/integration-guide/backend-integration",
+    "name": "Backend Integration | API Reference - Get Started with DOKU API",
+    "snippet": "This basic request only could be implement for selected payment method, such as : Virtual Account. Credit Card. QRIS.",
+    "host_name": "developers.doku.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/archive/non-snap/e-wallet/ovo-recurring",
+    "name": "OVO Recurring | API Reference",
+    "snippet": "Get List Token (OVO). After successful account linkage, merchant can get OVO token that can be used for that customer to payment using OVO.",
+    "host_name": "developers.doku.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/accept-payments/doku-checkout/checkout-settings",
+    "name": "Checkout Settings | API Reference",
+    "snippet": "Login to DOKU Dashboard · Go to Setting > Checkout Page > Payment Method Settings Tab · Click on your chosen payment method by tick on the ...",
+    "host_name": "developers.doku.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/accept-payments/direct-api/snap/integration-guide/kartu-kredit-indonesia-cepat-secure-kki-cpts",
+    "name": "Kartu Kredit Indonesia Cepat Secure(KKI CPTS) | API Reference",
+    "snippet": "In this type, a token (a secure digital representation of the card data) is generated and used for the transaction instead of the actual CPAN ...",
+    "host_name": "developers.doku.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/get-started-with-doku-api/response-code/http-status-and-case-code",
+    "name": "HTTP Status and Case Code - Get Started with DOKU API",
+    "snippet": "Successful responses are indicated with a 200-series HTTP code and a JSON-based payload containing the object(s) requested, created, ...",
+    "host_name": "developers.doku.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.paymentwall.com/payment-method/qris",
+    "name": "QRIS - Payment Method - Documentation - Paymentwall.com",
+    "snippet": "Step2: Enter your email. · Step3: Scan the QR code with the listed mobile or bank applications. Read more",
+    "host_name": "docs.paymentwall.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://docs.antom.com/ac/antomop/qris",
+    "name": "QRIS | Supported payment methods",
+    "snippet": "QRIS is the Indonesia's national gateway, which enables code-scanning payment by using the apps of the mainstream banks in Indonesia. Read more",
+    "host_name": "docs.antom.com",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://norbr.com/payment-methods/qris",
+    "name": "Offer Qris through NORBr's white label payment gateway",
+    "snippet": "QRIS is a payment method used in Indonesia . It is a digital payment system based on QR codes. QRIS stands for “Quick Response Code Indonesian Standard.” Read more",
+    "host_name": "norbr.com",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

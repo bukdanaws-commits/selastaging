@@ -1,12 +1,39 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
   /* config options here */
   typescript: {
     ignoreBuildErrors: true,
   },
   reactStrictMode: false,
+
+  // ─── Cloud Run / Docker Production Build ─────────────────────
+  output: "standalone",
+
+  // ─── Image Optimization (GCS + external) ─────────────────────
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "storage.googleapis.com",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "**.selevent.com",
+      },
+    ],
+  },
+
+  // ─── Experimental: Server Actions ────────────────────────────
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "2mb",
+    },
+  },
 };
 
 export default nextConfig;

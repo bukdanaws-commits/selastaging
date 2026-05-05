@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://github.com/PTNUSASATUINTIARTHA-DOKU/doku-nodejs-library",
+    "name": "PTNUSASATUINTIARTHA-DOKU/doku-nodejs-library - GitHub",
+    "snippet": "This SDK simplifies access to the DOKU API for your server-side NODE JS applications, enabling seamless integration with payment and virtual account services.",
+    "host_name": "github.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/PTNUSASATUINTIARTHA-DOKU/doku-php-library",
+    "name": "PTNUSASATUINTIARTHA-DOKU/doku-php-library - GitHub",
+    "snippet": "This SDK simplifies access to the DOKU API for your server-side PHP applications, enabling seamless integration with payment and virtual account services. Missing: npm | Show results with: npm",
+    "host_name": "github.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/PTNUSASATUINTIARTHA-DOKU/doku-python-library",
+    "name": "PTNUSASATUINTIARTHA-DOKU/doku-python-library - GitHub",
+    "snippet": "This SDK simplifies access to the DOKU API for your Python applications, enabling seamless integration with payment and virtual account services. Missing: npm composer",
+    "host_name": "github.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/PTNUSASATUINTIARTHA-DOKU/doku-java-library",
+    "name": "PTNUSASATUINTIARTHA-DOKU/doku-java-library - GitHub",
+    "snippet": "This SDK simplifies access to the DOKU API for your server-side PHP applications, enabling seamless integration with payment and virtual account services. If ... Missing: npm | Show results with: npm",
+    "host_name": "github.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/developer-kit/libraries-and-sdk",
+    "name": "Libraries and SDK | API Reference",
+    "snippet": "Our new library provides access to the DOKU APIs and ensures compliance with the new Bank Indonesia (BI) regulations. Missing: composer | Show results with: composer",
+    "host_name": "developers.doku.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/ademuk/dokku-nodejs",
+    "name": "GitHub - ademuk/dokku-nodejs: Inject node/npm packages into",
+    "snippet": "dokku-nodejs is a plugin for dokku that injects node, and installs packages specified within your dokku app's package.json file. Suitable for non node.js ... Missing: SDK PHP library composer",
+    "host_name": "github.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://stackoverflow.com/questions/41825912/how-to-install-npm-to-work-on-github",
+    "name": "How to install npm to work on github - node.js - Stack Overflow",
+    "snippet": "Your problem is that one package is using openSSL and need openssl header files to be installed. You need to install openssl AND! the header ...",
+    "host_name": "stackoverflow.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://getcomposer.org",
+    "name": "Composer",
+    "snippet": "Download Documentation, Browse Packages, Issues, GitHub, Authors: Nils Adermann, Jordi Boggiano and many community contributions.",
+    "host_name": "getcomposer.org",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://github.com/PTNUSASATUINTIARTHA-DOKU",
+    "name": "PT Nusa Satu Inti Artha (DOKU) - GitHub",
+    "snippet": "Official repository from DOKU. PT Nusa Satu Inti Artha (DOKU) has 13 repositories available. Follow their code on GitHub. Missing: composer | Show results with: composer",
+    "host_name": "github.com",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.openai.com/api/docs/libraries",
+    "name": "Libraries | OpenAI API",
+    "snippet": "Discover language-specific libraries for using the OpenAI API, including Python, Node.js, .NET, and more. Missing: composer | Show results with: composer",
+    "host_name": "developers.openai.com",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "url": "https://developers.doku.com/accept-payments/direct-api/snap/integration-guide/get-token-api",
+    "name": "Get Token API | API Reference",
+    "snippet": "Get Access Token is an authentication method to ensure confidentiality, system and data integrity, availability of a system, and as a fraud ...",
+    "host_name": "developers.doku.com",
+    "rank": 0,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/accept-payments/direct-api/snap/integration-guide/get-token-api/b2b",
+    "name": "B2B | API Reference - Get Started with DOKU API",
+    "snippet": "Direct API · SNAP · Integration Guide · Get Token API. B2B. How to generate token B2B. API Endpoint. To get access token, you need to hit this ...",
+    "host_name": "developers.doku.com",
+    "rank": 1,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/accept-payments/direct-api/snap/integration-guide",
+    "name": "Integration Guide | API Reference",
+    "snippet": "This document provides an overview of the SNAP format, which has been introduced as part of the new rules mandated by the Bank Indonesia.",
+    "host_name": "developers.doku.com",
+    "rank": 2,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/accept-payments/direct-api/snap/integration-guide/get-token-api/b2b2c",
+    "name": "B2B2C | API Reference",
+    "snippet": "Direct API · SNAP · Integration Guide · Get Token API. B2B2C. API Endpoint. To get access token, you need to hit this API endpoint : Type. Value.",
+    "host_name": "developers.doku.com",
+    "rank": 3,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/accept-payments/direct-api/snap",
+    "name": "API Reference - SNAP",
+    "snippet": "Here is the integration steps for SNAP - Direct API : Hit Get Token API. Hit this API, according to each Payment Channel. Check on this tabs :.",
+    "host_name": "developers.doku.com",
+    "rank": 4,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/developer-kit/libraries-and-sdk",
+    "name": "Libraries and SDK | API Reference",
+    "snippet": "Obtain our credentials (Client ID and Secret Key) from the Integration > API Keys menu · Generate a public/ private key pair using SHA256 with ...",
+    "host_name": "developers.doku.com",
+    "rank": 5,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/accept-payments/direct-api/snap/integration-guide/kartu-kredit-indonesia-cepat-secure-kki-cpts/host-to-host-integration",
+    "name": "Host to Host Integration | API Reference - Get Started with DOKU API",
+    "snippet": "This endpoint is used to unbind a previously binded token compared to the payment with Tokenization API which need to charges some amount to the ...",
+    "host_name": "developers.doku.com",
+    "rank": 6,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/accept-payments/direct-api/snap/integration-guide/e-wallet/ovo",
+    "name": "OVO | API Reference",
+    "snippet": "OVO offers 2 payment types, which are One-Time Payment and Recurring Payment. For both payment types, tokenization must be completed first ...",
+    "host_name": "developers.doku.com",
+    "rank": 7,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/accept-payments/direct-api/snap/integration-guide/virtual-account/bri-virtual-account",
+    "name": "BRI Virtual Account | API Reference",
+    "snippet": "Integration Steps · Get Token API. As client who hit DOKU's API such as Create VA, you need to obtain an access token first. · Generate Signature.",
+    "host_name": "developers.doku.com",
+    "rank": 8,
+    "date": "",
+    "favicon": ""
+  },
+  {
+    "url": "https://developers.doku.com/accept-payments/direct-api/snap/integration-guide/direct-debit",
+    "name": "Direct Debit | API Reference",
+    "snippet": "Tokenization needs a token everytime payment is requested and processed, hence customer needs to input OTP and/or PIN to verify every payment.",
+    "host_name": "developers.doku.com",
+    "rank": 9,
+    "date": "",
+    "favicon": ""
+  }
+]

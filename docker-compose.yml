@@ -1,0 +1,145 @@
+# =============================================================================
+#  SELEVENT — Local Development Docker Compose
+#
+#  Usage:
+#    docker compose up -d                        # Start core services only
+#    docker compose --profile dev up -d           # Start everything (includes GUIs)
+#    docker compose down -v                       # Stop and remove volumes
+#    docker compose logs -f selevent-app          # Tail app logs
+#
+#  Profiles:
+#    (default)  — app + postgres + redis
+#    dev        — adds adminer + redis-insight GUIs
+# =============================================================================
+
+services:
+  # ── Next.js Application ─────────────────────────────────────────────────
+  selevent-app:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: selevent-app
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+      NEXT_TELEMETRY_DISABLED: "1"
+      TZ: Asia/Jakarta
+
+      # Database
+      DATABASE_URL: postgresql://${POSTGRES_USER:-selevent_admin}:${POSTGRES_PASSWORD:-selevent_secret}@postgres:5432/${POSTGRES_DB:-selevent}?schema=public
+
+      # Redis
+      REDIS_URL: redis://redis:6379
+
+      # App config (override via .env)
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8080}
+      NEXT_PUBLIC_USE_MOCK: ${NEXT_PUBLIC_USE_MOCK:-false}
+      NEXT_PUBLIC_DOKU_ENVIRONMENT: ${NEXT_PUBLIC_DOKU_ENVIRONMENT:-sandbox}
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-}
+
+      # Google Cloud (optional, for Cloud Run parity)
+      GOOGLE_CLOUD_REGION: ${GOOGLE_CLOUD_REGION:-asia-southeast2}
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - selevent-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+
+  # ── PostgreSQL 15 ───────────────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: selevent-postgres
+    restart: unless-stopped
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-selevent_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-selevent_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-selevent}
+      PGDATA: /var/lib/postgresql/data/pgdata
+      TZ: Asia/Jakarta
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - selevent-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-selevent_admin} -d ${POSTGRES_DB:-selevent}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ── Redis 7 ─────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: selevent-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redisdata:/data
+    networks:
+      - selevent-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # ── Adminer (Database GUI) — dev profile only ───────────────────────────
+  adminer:
+    image: adminer:latest
+    container_name: selevent-adminer
+    restart: unless-stopped
+    profiles: [dev]
+    ports:
+      - "${ADMINER_PORT:-8080}:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+      ADMINER_DESIGN: pepa-linha
+    depends_on:
+      - postgres
+    networks:
+      - selevent-network
+
+  # ── Redis Insight (Redis GUI) — dev profile only ────────────────────────
+  redis-insight:
+    image: redis/redisinsight:latest
+    container_name: selevent-redis-insight
+    restart: unless-stopped
+    profiles: [dev]
+    ports:
+      - "${REDIS_INSIGHT_PORT:-5540}:5540"
+    depends_on:
+      - redis
+    networks:
+      - selevent-network
+
+# =============================================================================
+#  Networks & Volumes
+# =============================================================================
+networks:
+  selevent-network:
+    name: selevent-network
+    driver: bridge
+
+volumes:
+  pgdata:
+    name: selevent-pgdata
+  redisdata:
+    name: selevent-redisdata
