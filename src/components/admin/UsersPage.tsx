@@ -80,20 +80,20 @@ interface AdminUser {
 const ROLE_CONFIG: Record<string, { label: string; color: string; bgColor: string; icon: React.ElementType }> = {
   SUPER_ADMIN: {
     label: 'Super Admin',
-    color: 'text-[#F8AD3C]',
-    bgColor: 'bg-[rgba(248,173,60,0.15)] border-[rgba(248,173,60,0.3)]',
+    color: 'text-gold',
+    bgColor: 'bg-gold/15 border-gold/30',
     icon: Crown,
   },
   ORGANIZER: {
     label: 'Organizer',
-    color: 'text-[#00A39D]',
-    bgColor: 'bg-[rgba(0,163,157,0.15)] border-[rgba(0,163,157,0.3)]',
+    color: 'text-primary',
+    bgColor: 'bg-primary/15 border-primary/30',
     icon: UserCog,
   },
   PARTICIPANT: {
     label: 'Participant',
-    color: 'text-white',
-    bgColor: 'bg-white/10 border-white/20',
+    color: 'text-foreground',
+    bgColor: 'bg-accent border-input',
     icon: Users,
   },
 };
@@ -233,8 +233,8 @@ export function UsersPage() {
       {/* ═══════════ HEADER ═══════════ */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Users className="w-6 h-6 text-[#00A39D]" />
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <Users className="w-6 h-6 text-primary" />
             Users & Roles
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
@@ -277,7 +277,7 @@ export function UsersPage() {
         ].map((stat) => (
           <Card
             key={stat.label}
-            className="bg-[#111918] border-[rgba(0,163,157,0.1)]"
+            className="bg-card border-border"
           >
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
@@ -289,7 +289,7 @@ export function UsersPage() {
                   <stat.icon className="w-4 h-4" style={{ color: stat.color }} />
                 </div>
               </div>
-              <p className="text-white text-2xl font-bold">{stat.value}</p>
+              <p className="text-foreground text-2xl font-bold">{stat.value}</p>
               <p className="text-muted-foreground text-xs mt-0.5">{stat.description}</p>
             </CardContent>
           </Card>
@@ -297,7 +297,7 @@ export function UsersPage() {
       </div>
 
       {/* ═══════════ FILTERS & SEARCH ═══════════ */}
-      <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+      <Card className="bg-card border-border">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             {/* Tabs */}
@@ -317,8 +317,8 @@ export function UsersPage() {
                   className={cn(
                     'px-3 py-1.5 rounded-lg text-xs font-medium transition-colors',
                     activeTab === tab.key
-                      ? 'bg-[#00A39D] text-[#0A0F0E]'
-                      : 'text-muted-foreground hover:text-white hover:bg-white/5'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                   )}
                 >
                   {tab.label}
@@ -334,7 +334,7 @@ export function UsersPage() {
                 placeholder="Cari nama atau email..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-[#0A0F0E] border-[rgba(0,163,157,0.2)] text-white placeholder:text-muted-foreground/50 pl-9 h-9"
+                className="bg-background border-input text-foreground placeholder:text-muted-foreground/50 pl-9 h-9"
               />
             </div>
           </div>
@@ -342,12 +342,12 @@ export function UsersPage() {
       </Card>
 
       {/* ═══════════ USERS TABLE ═══════════ */}
-      <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+      <Card className="bg-card border-border">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-white text-lg flex items-center gap-2">
-                <Shield className="w-5 h-5 text-[#00A39D]" />
+              <CardTitle className="text-foreground text-lg flex items-center gap-2">
+                <Shield className="w-5 h-5 text-primary" />
                 Daftar Pengguna
               </CardTitle>
               <CardDescription className="text-muted-foreground text-sm mt-1">
@@ -360,7 +360,7 @@ export function UsersPage() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-[rgba(0,163,157,0.1)] hover:bg-transparent">
+                <TableRow className="border-border hover:bg-transparent">
                   <TableHead className="text-muted-foreground font-semibold text-xs uppercase tracking-wider">
                     Pengguna
                   </TableHead>
@@ -411,7 +411,7 @@ export function UsersPage() {
                     return (
                       <TableRow
                         key={user.id}
-                        className="border-[rgba(0,163,157,0.05)] hover:bg-[rgba(0,163,157,0.05)]"
+                        className="border-border hover:bg-primary/5"
                       >
                         {/* Avatar + Name */}
                         <TableCell>
@@ -420,10 +420,10 @@ export function UsersPage() {
                               className={cn(
                                 'w-9 h-9 rounded-full flex items-center justify-center shrink-0 text-xs font-bold',
                                 user.role === 'SUPER_ADMIN'
-                                  ? 'bg-[rgba(248,173,60,0.15)] text-[#F8AD3C]'
+                                  ? 'bg-gold/15 text-gold'
                                   : user.role === 'ORGANIZER'
-                                    ? 'bg-[rgba(0,163,157,0.15)] text-[#00A39D]'
-                                    : 'bg-white/10 text-white'
+                                    ? 'bg-primary/15 text-primary'
+                                    : 'bg-accent text-foreground'
                               )}
                             >
                               {user.name
@@ -434,7 +434,7 @@ export function UsersPage() {
                                 .toUpperCase()}
                             </div>
                             <div>
-                              <p className="text-white font-medium text-sm">
+                              <p className="text-foreground font-medium text-sm">
                                 {user.name}
                               </p>
                               <p className="text-muted-foreground text-xs md:hidden">
@@ -447,7 +447,7 @@ export function UsersPage() {
                         {/* Email */}
                         <TableCell className="hidden sm:table-cell">
                           <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                            <Mail className="w-3 h-3 text-[#00A39D] shrink-0" />
+                            <Mail className="w-3 h-3 text-primary shrink-0" />
                             <span className="truncate max-w-[160px]">
                               {user.email}
                             </span>
@@ -457,7 +457,7 @@ export function UsersPage() {
                         {/* Phone */}
                         <TableCell className="hidden md:table-cell">
                           <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                            <Phone className="w-3 h-3 text-[#00A39D] shrink-0" />
+                            <Phone className="w-3 h-3 text-primary shrink-0" />
                             {user.phone}
                           </div>
                         </TableCell>
@@ -502,7 +502,7 @@ export function UsersPage() {
                         <TableCell className="text-right hidden lg:table-cell">
                           <div className="flex items-center justify-end gap-1.5">
                             <ShoppingCart className="w-3.5 h-3.5 text-muted-foreground" />
-                            <span className="text-white font-medium text-sm">
+                            <span className="text-foreground font-medium text-sm">
                               {user.totalOrders}
                             </span>
                           </div>
@@ -511,8 +511,8 @@ export function UsersPage() {
                         {/* Total Spent */}
                         <TableCell className="text-right hidden lg:table-cell">
                           <div className="flex items-center justify-end gap-1.5">
-                            <DollarSign className="w-3.5 h-3.5 text-[#F8AD3C]" />
-                            <span className="text-[#F8AD3C] font-semibold text-sm">
+                            <DollarSign className="w-3.5 h-3.5 text-gold" />
+                            <span className="text-gold font-semibold text-sm">
                               {user.totalSpent > 0
                                 ? formatRupiah(user.totalSpent)
                                 : '-'}
@@ -534,7 +534,7 @@ export function UsersPage() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="text-[#00A39D] hover:text-[#00BFB8] hover:bg-[rgba(0,163,157,0.1)] h-8 w-8 p-0"
+                              className="text-primary hover:text-primary hover:bg-primary/10 h-8 w-8 p-0"
                               onClick={() => toast.info(`Detail user: ${user.name}`)}
                             >
                               <Eye className="w-4 h-4" />
@@ -543,7 +543,7 @@ export function UsersPage() {
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="text-[#F8AD3C] hover:text-[#FBBF4E] hover:bg-[rgba(248,173,60,0.1)] h-8 w-8 p-0"
+                                className="text-gold hover:text-gold hover:bg-gold/10 h-8 w-8 p-0"
                                 onClick={() => handleRoleChange(user)}
                               >
                                 <Pencil className="w-4 h-4" />
@@ -583,22 +583,22 @@ export function UsersPage() {
 
       {/* ═══════════ ROLE ASSIGNMENT DIALOG ═══════════ */}
       <Dialog open={roleDialogOpen} onOpenChange={setRoleDialogOpen}>
-        <DialogContent className="bg-[#111918] border-[rgba(0,163,157,0.2)] text-white max-w-md">
+        <DialogContent className="bg-card border-input text-foreground max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-white">Ubah Role Pengguna</DialogTitle>
+            <DialogTitle className="text-foreground">Ubah Role Pengguna</DialogTitle>
           </DialogHeader>
           {selectedUser && (
             <div className="space-y-4 pt-2">
               {/* User Info */}
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-[#0A0F0E]">
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-background">
                 <div
                   className={cn(
                     'w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-xs font-bold',
                     selectedUser.role === 'SUPER_ADMIN'
-                      ? 'bg-[rgba(248,173,60,0.15)] text-[#F8AD3C]'
+                      ? 'bg-gold/15 text-gold'
                       : selectedUser.role === 'ORGANIZER'
-                        ? 'bg-[rgba(0,163,157,0.15)] text-[#00A39D]'
-                        : 'bg-white/10 text-white'
+                        ? 'bg-primary/15 text-primary'
+                        : 'bg-accent text-foreground'
                   )}
                 >
                   {selectedUser.name
@@ -609,7 +609,7 @@ export function UsersPage() {
                     .toUpperCase()}
                 </div>
                 <div>
-                  <p className="text-white font-medium text-sm">{selectedUser.name}</p>
+                  <p className="text-foreground font-medium text-sm">{selectedUser.name}</p>
                   <p className="text-muted-foreground text-xs">{selectedUser.email}</p>
                 </div>
               </div>
@@ -635,26 +635,26 @@ export function UsersPage() {
               {/* New Role Select */}
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">
-                  <AlertTriangle className="w-3 h-3 inline mr-1 text-[#F8AD3C]" />
+                  <AlertTriangle className="w-3 h-3 inline mr-1 text-gold" />
                   Ubah Role Ke
                 </label>
                 <Select value={newRole} onValueChange={setNewRole}>
-                  <SelectTrigger className="bg-[#0A0F0E] border-[rgba(0,163,157,0.2)] text-white">
+                  <SelectTrigger className="bg-background border-input text-foreground">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#111918] border-[rgba(0,163,157,0.2)]">
-                    <SelectItem value="PARTICIPANT">Participant</SelectItem>
-                    <SelectItem value="ORGANIZER">Organizer</SelectItem>
-                    <SelectItem value="SUPER_ADMIN">Super Admin</SelectItem>
+                  <SelectContent className="bg-card border-input">
+                    <SelectItem value="PARTICIPANT" className="text-foreground">Participant</SelectItem>
+                    <SelectItem value="ORGANIZER" className="text-foreground">Organizer</SelectItem>
+                    <SelectItem value="SUPER_ADMIN" className="text-foreground">Super Admin</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               {/* Warning */}
               {newRole === 'SUPER_ADMIN' && (
-                <div className="flex items-start gap-2 p-3 rounded-lg bg-[rgba(248,173,60,0.08)] border border-[rgba(248,173,60,0.2)]">
-                  <AlertTriangle className="w-4 h-4 text-[#F8AD3C] shrink-0 mt-0.5" />
-                  <p className="text-xs text-[#F8AD3C] leading-relaxed">
+                <div className="flex items-start gap-2 p-3 rounded-lg bg-gold/10 border border-gold/20">
+                  <AlertTriangle className="w-4 h-4 text-gold shrink-0 mt-0.5" />
+                  <p className="text-xs text-gold leading-relaxed">
                     Super Admin memiliki akses penuh ke seluruh sistem termasuk
                     pengaturan, verifikasi, dan manajemen user. Pastikan pengguna
                     ini terpercaya.
@@ -666,12 +666,12 @@ export function UsersPage() {
                 <Button
                   variant="outline"
                   onClick={() => setRoleDialogOpen(false)}
-                  className="border-white/20 text-white hover:bg-white/5"
+                  className="border-input text-foreground hover:bg-accent"
                 >
                   Batal
                 </Button>
                 <Button
-                  className="bg-[#00A39D] hover:bg-[#00BFB8] text-[#0A0F0E] font-semibold"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
                   onClick={handleSaveRole}
                 >
                   Simpan

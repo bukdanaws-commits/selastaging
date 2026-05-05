@@ -80,7 +80,7 @@ function GateStatCard({ gate }: { gate: GateStats }) {
   const color = gateColors[gate.gateName] || '#00A39D';
 
   return (
-    <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)] hover:border-[rgba(0,163,157,0.3)] transition-all card-hover">
+    <Card className="bg-card border border-primary/10 hover:border-primary/30 transition-all card-hover">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -88,7 +88,7 @@ function GateStatCard({ gate }: { gate: GateStats }) {
               className="w-3 h-3 rounded-full animate-pulse"
               style={{ backgroundColor: color }}
             />
-            <CardTitle className="text-white text-base font-bold">
+            <CardTitle className="text-foreground text-base font-bold">
               {gate.gateName}
             </CardTitle>
           </div>
@@ -105,36 +105,36 @@ function GateStatCard({ gate }: { gate: GateStats }) {
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-lg bg-[rgba(0,163,157,0.06)] p-3">
+          <div className="rounded-lg bg-primary/10 p-3">
             <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
               <ArrowDownToLine className="w-3 h-3 text-green-400" />
               <span className="text-[10px] uppercase tracking-wider">Masuk</span>
             </div>
-            <p className="text-white text-xl font-bold">{gate.totalIn.toLocaleString('id-ID')}</p>
+            <p className="text-foreground text-xl font-bold">{gate.totalIn.toLocaleString('id-ID')}</p>
           </div>
-          <div className="rounded-lg bg-[rgba(0,163,157,0.06)] p-3">
+          <div className="rounded-lg bg-primary/10 p-3">
             <div className="flex items-center gap-1.5 text-muted-foreground mb-1">
               <ArrowUpFromLine className="w-3 h-3 text-blue-400" />
               <span className="text-[10px] uppercase tracking-wider">Keluar</span>
             </div>
-            <p className="text-white text-xl font-bold">{gate.totalOut.toLocaleString('id-ID')}</p>
+            <p className="text-foreground text-xl font-bold">{gate.totalOut.toLocaleString('id-ID')}</p>
           </div>
         </div>
         <div className="flex items-center justify-between pt-1">
           <div className="flex items-center gap-1.5 text-muted-foreground">
-            <Users className="w-3.5 h-3.5 text-[#00A39D]" />
+            <Users className="w-3.5 h-3.5 text-primary" />
             <span className="text-xs">Di dalam venue</span>
           </div>
-          <span className="text-white font-bold text-lg">
+          <span className="text-foreground font-bold text-lg">
             {gate.currentInside.toLocaleString('id-ID')}
           </span>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-muted-foreground">
-            <Activity className="w-3.5 h-3.5 text-[#F8AD3C]" />
+            <Activity className="w-3.5 h-3.5 text-gold" />
             <span className="text-xs">Rate/menit</span>
           </div>
-          <span className="text-[#F8AD3C] font-bold text-lg">{gate.ratePerMinute}</span>
+          <span className="text-gold font-bold text-lg">{gate.ratePerMinute}</span>
         </div>
       </CardContent>
     </Card>
@@ -145,17 +145,17 @@ function GateStatCard({ gate }: { gate: GateStats }) {
 
 function CheckinLogRow({ log }: { log: CheckinLog }) {
   return (
-    <TableRow className="border-b border-[rgba(0,163,157,0.08)] hover:bg-[rgba(0,163,157,0.04)]">
+    <TableRow className="border-b border-primary/10 hover:bg-primary/5">
       <TableCell className="font-mono text-xs text-muted-foreground">
         {log.ticketCode}
       </TableCell>
-      <TableCell className="text-sm text-white font-medium">
+      <TableCell className="text-sm text-foreground font-medium">
         {log.userName}
       </TableCell>
       <TableCell>
         <Badge
           variant="outline"
-          className="text-[10px] border-[rgba(0,163,157,0.3)] text-[#7FB3AE]"
+          className="text-[10px] border-primary/30 text-muted-foreground"
         >
           {log.ticketType}
         </Badge>
@@ -172,7 +172,7 @@ function CheckinLogRow({ log }: { log: CheckinLog }) {
           {log.action === 'IN' ? '↓ MASUK' : '↑ KELUAR'}
         </Badge>
       </TableCell>
-      <TableCell className="text-xs text-white">{log.gateName}</TableCell>
+      <TableCell className="text-xs text-foreground">{log.gateName}</TableCell>
       <TableCell className="text-xs text-muted-foreground">{log.scannedBy}</TableCell>
       <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
         {format(new Date(log.timestamp), 'HH:mm:ss')}
@@ -222,11 +222,11 @@ export function GateMonitoringPage() {
       {/* ═══ LIVE HEADER ═══ */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[rgba(0,163,157,0.1)] flex items-center justify-center">
-            <Radio className="w-5 h-5 text-[#00A39D]" />
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Radio className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
               Gate Monitoring
               <span className="flex items-center gap-1.5 text-[10px] font-medium bg-green-500/15 text-green-400 px-2 py-0.5 rounded-full animate-pulse">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-400" />
@@ -239,14 +239,14 @@ export function GateMonitoringPage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-xs border-[rgba(0,163,157,0.3)] text-[#7FB3AE]">
+          <Badge variant="outline" className="text-xs border-primary/30 text-muted-foreground">
             <Timer className="w-3 h-3 mr-1" />
             Updated: {format(new Date(), 'HH:mm:ss')}
           </Badge>
           <Button
             size="sm"
             variant="outline"
-            className="border-[rgba(0,163,157,0.3)] text-[#00A39D] hover:bg-[rgba(0,163,157,0.1)] hover:text-[#00BFB8] text-xs"
+            className="border-primary/30 text-primary hover:bg-primary/10 hover:text-primary text-xs"
             onClick={handleRefresh}
           >
             <ShieldCheck className="w-3 h-3 mr-1" />
@@ -255,7 +255,7 @@ export function GateMonitoringPage() {
         </div>
       </div>
 
-      <Separator className="bg-[rgba(0,163,157,0.1)]" />
+      <Separator className="bg-primary/10" />
 
       {/* ═══ GATE STAT CARDS ═══ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -265,12 +265,12 @@ export function GateMonitoringPage() {
       </div>
 
       {/* ═══ OCCUPANCY OVERVIEW ═══ */}
-      <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)]">
+      <Card className="bg-card border border-primary/10">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <DoorOpen className="w-4 h-4 text-[#00A39D]" />
-              <CardTitle className="text-white text-sm font-bold">
+              <DoorOpen className="w-4 h-4 text-primary" />
+              <CardTitle className="text-foreground text-sm font-bold">
                 Occupancy Overview
               </CardTitle>
             </div>
@@ -281,7 +281,7 @@ export function GateMonitoringPage() {
                 occupancyPct >= 80
                   ? 'border-red-500/50 text-red-400'
                   : occupancyPct >= 60
-                    ? 'border-[rgba(248,173,60,0.5)] text-[#F8AD3C]'
+                    ? 'border-gold/50 text-gold'
                     : 'border-green-500/50 text-green-400'
               )}
             >
@@ -291,24 +291,24 @@ export function GateMonitoringPage() {
         </CardHeader>
         <CardContent className="space-y-5">
           <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-4 rounded-xl bg-[rgba(0,163,157,0.06)]">
-              <p className="text-2xl font-extrabold text-[#00A39D]">
+            <div className="text-center p-4 rounded-xl bg-primary/10">
+              <p className="text-2xl font-extrabold text-primary">
                 {totalInside.toLocaleString('id-ID')}
               </p>
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">
                 Di Dalam Venue
               </p>
             </div>
-            <div className="text-center p-4 rounded-xl bg-[rgba(0,163,157,0.06)]">
-              <p className="text-2xl font-extrabold text-white">
+            <div className="text-center p-4 rounded-xl bg-primary/10">
+              <p className="text-2xl font-extrabold text-foreground">
                 {maxCapacity.toLocaleString('id-ID')}
               </p>
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">
                 Max Capacity
               </p>
             </div>
-            <div className="text-center p-4 rounded-xl bg-[rgba(0,163,157,0.06)]">
-              <p className="text-2xl font-extrabold text-[#F8AD3C]">
+            <div className="text-center p-4 rounded-xl bg-primary/10">
+              <p className="text-2xl font-extrabold text-gold">
                 {occupancyPct}%
               </p>
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">
@@ -321,23 +321,23 @@ export function GateMonitoringPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground">Total Penonton di Venue</span>
-              <span className="text-white font-semibold">
+              <span className="text-foreground font-semibold">
                 {totalInside.toLocaleString('id-ID')} / {maxCapacity.toLocaleString('id-ID')}
               </span>
             </div>
-            <div className="relative h-6 w-full bg-[#0A0F0E] rounded-full overflow-hidden border border-[rgba(0,163,157,0.1)]">
+            <div className="relative h-6 w-full bg-background rounded-full overflow-hidden border border-primary/10">
               <div
                 className={cn(
                   'h-full rounded-full transition-all duration-1000 flex items-center justify-end pr-2',
                   occupancyPct >= 80
                     ? 'bg-gradient-to-r from-red-500 to-red-400'
                     : occupancyPct >= 60
-                      ? 'bg-gradient-to-r from-[#F8AD3C] to-[#FBBF4E]'
-                      : 'bg-gradient-to-r from-[#00A39D] to-[#00BFB8]'
+                      ? 'bg-gradient-to-r from-gold to-gold/90'
+                      : 'bg-gradient-to-r from-primary to-primary/90'
                 )}
                 style={{ width: `${Math.min(occupancyPct, 100)}%` }}
               >
-                <span className="text-[10px] font-bold text-[#0A0F0E]">
+                <span className="text-[10px] font-bold text-primary-foreground">
                   {occupancyPct}%
                 </span>
               </div>
@@ -355,11 +355,11 @@ export function GateMonitoringPage() {
       </Card>
 
       {/* ═══ CHECK-IN RATE CHART ═══ */}
-      <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)]">
+      <Card className="bg-card border border-primary/10">
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-[#F8AD3C]" />
-            <CardTitle className="text-white text-sm font-bold">
+            <Activity className="w-4 h-4 text-gold" />
+            <CardTitle className="text-foreground text-sm font-bold">
               Check-in Rate (Per Jam)
             </CardTitle>
           </div>
@@ -414,16 +414,16 @@ export function GateMonitoringPage() {
       </Card>
 
       {/* ═══ REAL-TIME CHECK-IN LOG STREAM ═══ */}
-      <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)]">
+      <Card className="bg-card border border-primary/10">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-[#00A39D]" />
-              <CardTitle className="text-white text-sm font-bold">
+              <ShieldCheck className="w-4 h-4 text-primary" />
+              <CardTitle className="text-foreground text-sm font-bold">
                 Real-time Check-in Log
               </CardTitle>
             </div>
-            <Badge variant="outline" className="text-[10px] border-[rgba(0,163,157,0.3)] text-[#7FB3AE]">
+            <Badge variant="outline" className="text-[10px] border-primary/30 text-muted-foreground">
               20 terakhir
             </Badge>
           </div>
@@ -434,11 +434,11 @@ export function GateMonitoringPage() {
         <CardContent>
           <div
             ref={logContainerRef}
-            className="max-h-96 overflow-y-auto rounded-lg border border-[rgba(0,163,157,0.08)]"
+            className="max-h-96 overflow-y-auto rounded-lg border border-primary/10"
           >
             <Table>
               <TableHeader>
-                <TableRow className="border-b border-[rgba(0,163,157,0.15)] hover:bg-transparent">
+                <TableRow className="border-b border-primary/15 hover:bg-transparent">
                   <TableHead className="text-[10px] text-muted-foreground uppercase tracking-wider">
                     Ticket Code
                   </TableHead>

@@ -416,7 +416,7 @@ function HeroSection({ onLoginClick, isAuthenticated, selectedCity }: { onLoginC
       <div className="container mx-auto px-4 relative z-10 text-center py-32">
         {/* Pre-title */}
         <div className="animate-fade-in-down">
-          <div className="inline-flex items-center gap-2 mb-6 mx-auto w-fit px-5 py-2 rounded-full text-base sm:text-lg font-bold tracking-widest uppercase text-white border border-[#00A39D]/50 bg-[#00A39D]/80">
+          <div className="inline-flex items-center gap-2 mb-6 mx-auto w-fit px-5 py-2 rounded-full text-base sm:text-lg font-bold tracking-widest uppercase text-white border border-primary/50 bg-primary/80">
             <Music className="h-4 w-4" />
             Sheila On 7
           </div>
@@ -435,11 +435,11 @@ function HeroSection({ onLoginClick, isAuthenticated, selectedCity }: { onLoginC
 
         {/* Date & Venue */}
         <div className="animate-fade-in-up delay-300 flex items-center justify-center gap-3 text-sm text-white mt-4 flex-wrap">
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-[#00A39D]/50 bg-[#00A39D]/80 animate-pulse-glow">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-primary/50 bg-primary/80 animate-pulse-glow">
             <Calendar className="h-4 w-4 text-white" />
             <span className="font-semibold">{selectedCity.date.toUpperCase()}</span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-[#00A39D]/50 bg-[#00A39D]/80 animate-pulse-glow">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full border border-primary/50 bg-primary/80 animate-pulse-glow">
             <MapPin className="h-4 w-4 text-white" />
             <span className="font-semibold">{selectedCity.venue}</span>
           </div>

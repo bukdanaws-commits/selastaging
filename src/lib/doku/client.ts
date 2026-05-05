@@ -7,7 +7,7 @@
 // ════════════════════════════════════════════════════════════════
 
 export type { DokuConfig } from './config'
-export { DOKU_ENDPOINTS, DOKU_PAYMENT_METHODS, DOKU_PM_GROUPS, DOKU_PM_LABELS, DOKU_RESPONSE_CODES } from './config'
+export { DOKU_ENDPOINTS, DOKU_PAYMENT_METHODS, DOKU_PM_GROUPS, DOKU_PM_LABELS, DOKU_RESPONSE_CODES } from './constants'
 
 // Frontend payment helpers
 export {

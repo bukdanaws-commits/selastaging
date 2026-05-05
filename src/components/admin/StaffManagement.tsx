@@ -70,8 +70,8 @@ type UserRole = 'SUPER_ADMIN' | 'ADMIN' | 'COUNTER_STAFF' | 'GATE_STAFF' | 'ORGA
 
 function getRoleBadgeColor(role: string) {
   switch (role) {
-    case 'SUPER_ADMIN': return 'bg-[#F8AD3C]/15 text-[#F8AD3C] border-[#F8AD3C]/30';
-    case 'ADMIN': return 'bg-[#00A39D]/15 text-[#00A39D] border-[#00A39D]/30';
+    case 'SUPER_ADMIN': return 'bg-gold/15 text-gold border-gold/30';
+    case 'ADMIN': return 'bg-primary/15 text-primary border-primary/30';
     case 'COUNTER_STAFF': return 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30';
     case 'GATE_STAFF': return 'bg-blue-500/15 text-blue-400 border-blue-500/30';
     case 'ORGANIZER': return 'bg-purple-500/15 text-purple-400 border-purple-500/30';
@@ -219,15 +219,15 @@ export function StaffManagement() {
       {/* ═══════════ PAGE HEADER ═══════════ */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-            <UserCog className="w-6 h-6 text-[#00A39D]" />
+          <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <UserCog className="w-6 h-6 text-primary" />
             Kelola Staff &amp; Role
           </h2>
-          <p className="text-[#7FB3AE] text-sm mt-1">
+          <p className="text-muted-foreground text-sm mt-1">
             Manajemen staff, role, shift, dan assignment lokasi
           </p>
         </div>
-        <Button size="sm" onClick={() => setAddDialogOpen(true)} className="bg-[#00A39D] text-white hover:bg-[#00A39D]/90">
+        <Button size="sm" onClick={() => setAddDialogOpen(true)} className="bg-primary text-foreground hover:bg-primary/90">
           <Plus className="w-4 h-4 mr-1.5" />
           Tambah Staff
         </Button>
@@ -236,22 +236,22 @@ export function StaffManagement() {
       {/* ═══════════ STATS ROW ═══════════ */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {[
-          { label: 'Total Staff', value: stats.total, icon: Users, color: 'text-white' },
+          { label: 'Total Staff', value: stats.total, icon: Users, color: 'text-foreground' },
           { label: 'Aktif', value: stats.active, icon: Activity, color: 'text-emerald-400' },
           { label: 'Nonaktif', value: stats.inactive, icon: Users, color: 'text-gray-400' },
           { label: 'Counter Staff', value: stats.counterStaff, icon: MapPin, color: 'text-emerald-400' },
           { label: 'Gate Staff', value: stats.gateStaff, icon: MapPin, color: 'text-blue-400' },
         ].map((stat) => (
-          <Card key={stat.label} className="bg-[#111918] border-[rgba(0,163,157,0.1)] py-4">
+          <Card key={stat.label} className="bg-card border-border py-4">
             <CardContent className="p-4 flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-[rgba(0,163,157,0.08)] flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                 <stat.icon className={cn('w-4 h-4', stat.color)} />
               </div>
               <div className="min-w-0">
                 <p className={cn('text-lg font-bold leading-tight', stat.color)}>
                   {stat.value.toLocaleString('id-ID')}
                 </p>
-                <p className="text-[10px] text-[#7FB3AE] truncate">{stat.label}</p>
+                <p className="text-[10px] text-muted-foreground truncate">{stat.label}</p>
               </div>
             </CardContent>
           </Card>
@@ -270,8 +270,8 @@ export function StaffManagement() {
               className={cn(
                 'text-xs h-8',
                 roleFilter === tab.value
-                  ? 'bg-[#00A39D] text-white hover:bg-[#00A39D]'
-                  : 'text-[#7FB3AE] hover:text-white hover:bg-[rgba(0,163,157,0.1)]'
+                  ? 'bg-primary text-foreground hover:bg-primary'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-primary/10'
               )}
             >
               {tab.label}
@@ -281,16 +281,16 @@ export function StaffManagement() {
 
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#7FB3AE]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="Cari nama atau email..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 bg-[#111918] border-[rgba(0,163,157,0.1)] text-white placeholder:text-[#7FB3AE]/60 h-9"
+              className="pl-9 bg-card border-border text-foreground placeholder:text-muted-foreground/60 h-9"
             />
           </div>
           <div className="flex items-center gap-1.5">
-            <Filter className="w-4 h-4 text-[#7FB3AE]" />
+            <Filter className="w-4 h-4 text-muted-foreground" />
             {['all', 'active', 'inactive'].map((val) => (
               <Button
                 key={val}
@@ -300,8 +300,8 @@ export function StaffManagement() {
                 className={cn(
                   'text-xs h-8',
                   statusFilter === val
-                    ? 'bg-[#00A39D] text-white hover:bg-[#00A39D]'
-                    : 'text-[#7FB3AE] hover:text-white hover:bg-[rgba(0,163,157,0.1)]'
+                    ? 'bg-primary text-foreground hover:bg-primary'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-primary/10'
                 )}
               >
                 {val === 'all' ? 'Semua' : val === 'active' ? 'Aktif' : 'Nonaktif'}
@@ -312,28 +312,28 @@ export function StaffManagement() {
       </div>
 
       {/* ═══════════ STAFF TABLE ═══════════ */}
-      <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)] overflow-hidden">
+      <Card className="bg-card border-border overflow-hidden">
         <CardContent className="p-0">
           <div className="overflow-x-auto max-h-[560px] overflow-y-auto custom-scrollbar">
             <Table>
               <TableHeader>
-                <TableRow className="border-[rgba(0,163,157,0.1)] hover:bg-transparent">
-                  <TableHead className="text-[#7FB3AE] text-xs font-medium">Nama</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-xs font-medium">Email</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-xs font-medium hidden md:table-cell">Phone</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-xs font-medium">Role</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-xs font-medium hidden lg:table-cell">Lokasi</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-xs font-medium hidden lg:table-cell">Shift</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-xs font-medium">Status</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-xs font-medium hidden xl:table-cell">Terakhir Aktif</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-xs font-medium hidden xl:table-cell">Total Scan</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-xs font-medium">Aksi</TableHead>
+                <TableRow className="border-border hover:bg-transparent">
+                  <TableHead className="text-muted-foreground text-xs font-medium">Nama</TableHead>
+                  <TableHead className="text-muted-foreground text-xs font-medium">Email</TableHead>
+                  <TableHead className="text-muted-foreground text-xs font-medium hidden md:table-cell">Phone</TableHead>
+                  <TableHead className="text-muted-foreground text-xs font-medium">Role</TableHead>
+                  <TableHead className="text-muted-foreground text-xs font-medium hidden lg:table-cell">Lokasi</TableHead>
+                  <TableHead className="text-muted-foreground text-xs font-medium hidden lg:table-cell">Shift</TableHead>
+                  <TableHead className="text-muted-foreground text-xs font-medium">Status</TableHead>
+                  <TableHead className="text-muted-foreground text-xs font-medium hidden xl:table-cell">Terakhir Aktif</TableHead>
+                  <TableHead className="text-muted-foreground text-xs font-medium hidden xl:table-cell">Total Scan</TableHead>
+                  <TableHead className="text-muted-foreground text-xs font-medium">Aksi</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredStaff.length === 0 ? (
                   <TableRow className="hover:bg-transparent">
-                    <TableCell colSpan={10} className="text-center py-12 text-[#7FB3AE]">
+                    <TableCell colSpan={10} className="text-center py-12 text-muted-foreground">
                       <Users className="w-8 h-8 mx-auto mb-2 opacity-40" />
                       <p className="text-sm">Tidak ada staff ditemukan</p>
                     </TableCell>
@@ -346,7 +346,7 @@ export function StaffManagement() {
                     return (
                       <TableRow
                         key={String(s.id)}
-                        className="border-[rgba(0,163,157,0.06)] hover:bg-[rgba(0,163,157,0.04)]"
+                        className="border-border hover:bg-primary/5"
                       >
                         <TableCell>
                           <div className="flex items-center gap-2.5">
@@ -354,18 +354,18 @@ export function StaffManagement() {
                               'w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0',
                               s.role === 'COUNTER_STAFF' ? 'bg-emerald-500/10 text-emerald-400' :
                               s.role === 'GATE_STAFF' ? 'bg-blue-500/10 text-blue-400' :
-                              'bg-[rgba(0,163,157,0.1)] text-[#00A39D]'
+                              'bg-primary/10 text-primary'
                             )}>
                               {String(s.name || '').split(' ').map(n => n[0]).join('')}
                             </div>
-                            <span className="text-sm text-white font-medium">{String(s.name || '')}</span>
+                            <span className="text-sm text-foreground font-medium">{String(s.name || '')}</span>
                           </div>
                         </TableCell>
-                        <TableCell className="text-xs text-[#7FB3AE] flex items-center gap-1">
+                        <TableCell className="text-xs text-muted-foreground flex items-center gap-1">
                           <Mail className="w-3 h-3 shrink-0" />
                           {String(s.email || '')}
                         </TableCell>
-                        <TableCell className="text-xs text-[#7FB3AE] hidden md:table-cell flex items-center gap-1">
+                        <TableCell className="text-xs text-muted-foreground hidden md:table-cell flex items-center gap-1">
                           <Phone className="w-3 h-3 shrink-0" />
                           {String(s.phone || '—')}
                         </TableCell>
@@ -374,11 +374,11 @@ export function StaffManagement() {
                             {getRoleLabel(String(s.role || ''))}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-xs text-[#7FB3AE] hidden lg:table-cell flex items-center gap-1">
+                        <TableCell className="text-xs text-muted-foreground hidden lg:table-cell flex items-center gap-1">
                           <MapPin className="w-3 h-3 shrink-0" />
                           {String(s.assignedLocation || '—')}
                         </TableCell>
-                        <TableCell className="text-xs text-[#7FB3AE] hidden lg:table-cell flex items-center gap-1">
+                        <TableCell className="text-xs text-muted-foreground hidden lg:table-cell flex items-center gap-1">
                           <Clock className="w-3 h-3 shrink-0" />
                           {String(s.shift || '—')}
                         </TableCell>
@@ -387,10 +387,10 @@ export function StaffManagement() {
                             {s.status === 'active' ? 'Aktif' : 'Nonaktif'}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-xs text-[#7FB3AE] hidden xl:table-cell">
+                        <TableCell className="text-xs text-muted-foreground hidden xl:table-cell">
                           {s.lastActive ? formatDateTimeShort(String(s.lastActive)) : '—'}
                         </TableCell>
-                        <TableCell className="text-xs text-white font-medium hidden xl:table-cell">
+                        <TableCell className="text-xs text-foreground font-medium hidden xl:table-cell">
                           {Number(s.totalScans || 0).toLocaleString('id-ID')}
                         </TableCell>
                         <TableCell>
@@ -400,8 +400,8 @@ export function StaffManagement() {
                             className={cn(
                               'h-7 w-7',
                               sa
-                                ? 'text-[#7FB3AE]/30 cursor-not-allowed'
-                                : 'text-[#7FB3AE] hover:text-white hover:bg-[rgba(0,163,157,0.1)]'
+                                ? 'text-muted-foreground/30 cursor-not-allowed'
+                                : 'text-muted-foreground hover:text-foreground hover:bg-primary/10'
                             )}
                             disabled={sa}
                             onClick={() => handleEditStaff(s)}
@@ -418,8 +418,8 @@ export function StaffManagement() {
             </Table>
           </div>
 
-          <div className="px-4 py-3 border-t border-[rgba(0,163,157,0.1)]">
-            <p className="text-xs text-[#7FB3AE]">
+          <div className="px-4 py-3 border-t border-border">
+            <p className="text-xs text-muted-foreground">
               Menampilkan {filteredStaff.length} dari {staff.length} staff
             </p>
           </div>
@@ -428,58 +428,58 @@ export function StaffManagement() {
 
       {/* ═══════════ ADD STAFF DIALOG ═══════════ */}
       <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
-        <DialogContent className="bg-[#111918] border-[rgba(0,163,157,0.2)] max-w-md">
+        <DialogContent className="bg-card border-input max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-white">Tambah Staff Baru</DialogTitle>
-            <DialogDescription className="text-[#7FB3AE]">
+            <DialogTitle className="text-foreground">Tambah Staff Baru</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
               Masukkan Google email dan role untuk staff baru
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label className="text-[#7FB3AE] text-sm">Google Email</Label>
+              <Label className="text-muted-foreground text-sm">Google Email</Label>
               <Input
                 type="email"
                 value={addForm.email}
                 onChange={(e) => setAddForm({ ...addForm, email: e.target.value })}
                 placeholder="staff@gmail.com"
-                className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white placeholder:text-[#7FB3AE]/50"
+                className="bg-background border-input text-foreground placeholder:text-muted-foreground/50"
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[#7FB3AE] text-sm">Role</Label>
+              <Label className="text-muted-foreground text-sm">Role</Label>
               <Select
                 value={addForm.role}
                 onValueChange={(v) => setAddForm({ ...addForm, role: v as UserRole, assignedLocation: '' })}
               >
-                <SelectTrigger className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white">
+                <SelectTrigger className="bg-background border-input text-foreground">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#111918] border-[rgba(0,163,157,0.2)]">
+                <SelectContent className="bg-card border-input">
                   <SelectItem value="COUNTER_STAFF">Counter Staff</SelectItem>
                   <SelectItem value="GATE_STAFF">Gate Staff</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-[#7FB3AE] text-sm">Assign ke {addForm.role === 'COUNTER_STAFF' ? 'Counter' : 'Gate'}</Label>
+              <Label className="text-muted-foreground text-sm">Assign ke {addForm.role === 'COUNTER_STAFF' ? 'Counter' : 'Gate'}</Label>
               <Input
                 value={addForm.assignedLocation}
                 onChange={(e) => setAddForm({ ...addForm, assignedLocation: e.target.value })}
                 placeholder="Masukkan lokasi..."
-                className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white placeholder:text-[#7FB3AE]/50"
+                className="bg-background border-input text-foreground placeholder:text-muted-foreground/50"
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[#7FB3AE] text-sm">Shift</Label>
+              <Label className="text-muted-foreground text-sm">Shift</Label>
               <Select
                 value={addForm.shift}
                 onValueChange={(v) => setAddForm({ ...addForm, shift: v })}
               >
-                <SelectTrigger className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white">
+                <SelectTrigger className="bg-background border-input text-foreground">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-[#111918] border-[rgba(0,163,157,0.2)]">
+                <SelectContent className="bg-card border-input">
                   <SelectItem value="pagi">Pagi (08:00 – 15:00)</SelectItem>
                   <SelectItem value="malam">Malam (15:00 – 22:00)</SelectItem>
                   <SelectItem value="full">Full Day (08:00 – 22:00)</SelectItem>
@@ -488,35 +488,35 @@ export function StaffManagement() {
             </div>
           </div>
           <DialogFooter className="gap-2">
-            <Button variant="ghost" onClick={() => setAddDialogOpen(false)} className="text-[#7FB3AE] hover:text-white hover:bg-[rgba(0,163,157,0.1)]">Batal</Button>
-            <Button onClick={handleAddStaff} className="bg-[#00A39D] text-white hover:bg-[#00A39D]/90">Tambah</Button>
+            <Button variant="ghost" onClick={() => setAddDialogOpen(false)} className="text-muted-foreground hover:text-foreground hover:bg-primary/10">Batal</Button>
+            <Button onClick={handleAddStaff} className="bg-primary text-foreground hover:bg-primary/90">Tambah</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* ═══════════ EDIT STAFF DIALOG ═══════════ */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="bg-[#111918] border-[rgba(0,163,157,0.2)] max-w-md">
+        <DialogContent className="bg-card border-input max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-white">Edit Staff — {selectedStaff ? String(selectedStaff.name || '') : ''}</DialogTitle>
-            <DialogDescription className="text-[#7FB3AE]">
+            <DialogTitle className="text-foreground">Edit Staff — {selectedStaff ? String(selectedStaff.name || '') : ''}</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
               {selectedStaff ? String(selectedStaff.email || '') : ''}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             {selectedStaff && (
               <>
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-[#0A0F0E] border border-[rgba(0,163,157,0.08)]">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-background border border-border">
                   <div className={cn(
                     'w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold',
                     selectedStaff.role === 'COUNTER_STAFF' ? 'bg-emerald-500/10 text-emerald-400' :
                     selectedStaff.role === 'GATE_STAFF' ? 'bg-blue-500/10 text-blue-400' :
-                    'bg-[rgba(0,163,157,0.1)] text-[#00A39D]'
+                    'bg-primary/10 text-primary'
                   )}>
                     {String(selectedStaff.name || '').split(' ').map(n => n[0]).join('')}
                   </div>
                   <div>
-                    <p className="text-sm text-white font-medium">{String(selectedStaff.name || '')}</p>
+                    <p className="text-sm text-foreground font-medium">{String(selectedStaff.name || '')}</p>
                     <Badge variant="outline" className={cn('text-[10px] font-semibold mt-1', getRoleBadgeColor(String(selectedStaff.role || '')))}>
                       {getRoleLabel(String(selectedStaff.role || ''))}
                     </Badge>
@@ -526,15 +526,15 @@ export function StaffManagement() {
                 {!isSuperAdmin(String(selectedStaff.role || '')) && (
                   <>
                     <div className="space-y-2">
-                      <Label className="text-[#7FB3AE] text-sm">Role</Label>
+                      <Label className="text-muted-foreground text-sm">Role</Label>
                       <Select
                         value={editForm.role}
                         onValueChange={(v) => setEditForm({ ...editForm, role: v as UserRole })}
                       >
-                        <SelectTrigger className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white">
+                        <SelectTrigger className="bg-background border-input text-foreground">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#111918] border-[rgba(0,163,157,0.2)]">
+                        <SelectContent className="bg-card border-input">
                           <SelectItem value="COUNTER_STAFF">Counter Staff</SelectItem>
                           <SelectItem value="GATE_STAFF">Gate Staff</SelectItem>
                           <SelectItem value="ORGANIZER">Organizer</SelectItem>
@@ -543,24 +543,24 @@ export function StaffManagement() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[#7FB3AE] text-sm">Assign Lokasi</Label>
+                      <Label className="text-muted-foreground text-sm">Assign Lokasi</Label>
                       <Input
                         value={editForm.assignedLocation}
                         onChange={(e) => setEditForm({ ...editForm, assignedLocation: e.target.value })}
                         placeholder="Kosongkan = unassign"
-                        className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white"
+                        className="bg-background border-input text-foreground"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[#7FB3AE] text-sm">Status</Label>
+                      <Label className="text-muted-foreground text-sm">Status</Label>
                       <Select
                         value={editForm.status}
                         onValueChange={(v) => setEditForm({ ...editForm, status: v as 'active' | 'inactive' })}
                       >
-                        <SelectTrigger className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white">
+                        <SelectTrigger className="bg-background border-input text-foreground">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#111918] border-[rgba(0,163,157,0.2)]">
+                        <SelectContent className="bg-card border-input">
                           <SelectItem value="active">Aktif</SelectItem>
                           <SelectItem value="inactive">Nonaktif</SelectItem>
                         </SelectContent>
@@ -572,8 +572,8 @@ export function StaffManagement() {
             )}
           </div>
           <DialogFooter className="gap-2">
-            <Button variant="ghost" onClick={() => setEditDialogOpen(false)} className="text-[#7FB3AE] hover:text-white hover:bg-[rgba(0,163,157,0.1)]">Batal</Button>
-            <Button onClick={handleSaveEdit} disabled={isSuperAdmin(selectedStaff?.role as string || 'PARTICIPANT')} className="bg-[#00A39D] text-white hover:bg-[#00A39D]/90 disabled:opacity-40 disabled:cursor-not-allowed">Simpan</Button>
+            <Button variant="ghost" onClick={() => setEditDialogOpen(false)} className="text-muted-foreground hover:text-foreground hover:bg-primary/10">Batal</Button>
+            <Button onClick={handleSaveEdit} disabled={isSuperAdmin(selectedStaff?.role as string || 'PARTICIPANT')} className="bg-primary text-foreground hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed">Simpan</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

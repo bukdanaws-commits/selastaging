@@ -53,7 +53,7 @@
   --card-foreground: #e8f0ee;
   --popover: #111918;
   --popover-foreground: #e8f0ee;
-  --primary: #F8AD3C;
+  --primary: #00A39D;
   --primary-foreground: #0a0f0e;
   --secondary: #1a2524;
   --secondary-foreground: #e8f0ee;
@@ -64,7 +64,7 @@
   --destructive: oklch(0.704 0.191 22.216);
   --border: rgba(255,255,255,0.08);
   --input: rgba(255,255,255,0.12);
-  --ring: #F8AD3C;
+  --ring: #00A39D;
   --gold: #F8AD3C;
   --gold-foreground: #0a0f0e;
   --chart-1: #00A39D;
@@ -74,12 +74,12 @@
   --chart-5: #5a8a85;
   --sidebar: #0d1413;
   --sidebar-foreground: #e8f0ee;
-  --sidebar-primary: #F8AD3C;
+  --sidebar-primary: #00A39D;
   --sidebar-primary-foreground: #0a0f0e;
   --sidebar-accent: #1a2524;
   --sidebar-accent-foreground: #e8f0ee;
   --sidebar-border: rgba(255,255,255,0.08);
-  --sidebar-ring: #F8AD3C;
+  --sidebar-ring: #00A39D;
 }
 
 /* ── BASE ─────────────────────────────────────────── */

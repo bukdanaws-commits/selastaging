@@ -68,17 +68,17 @@ export default function ETicketPage() {
   // ─── Loading state ─────────────────────────────────────────
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0B0B0F] flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-green-400 animate-spin" />
-        <span className="ml-3 text-gray-400">Memuat tiket...</span>
+        <span className="ml-3 text-muted-foreground">Memuat tiket...</span>
       </div>
     );
   }
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-[#0B0B0F] flex items-center justify-center">
-        <p className="text-gray-500">Order tidak ditemukan</p>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Order tidak ditemukan</p>
       </div>
     );
   }
@@ -104,19 +104,19 @@ export default function ETicketPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0B0F]">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-[#0B0B0F]/95 backdrop-blur-md border-b border-[#2A2A35]">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
           <Button
             variant="ghost"
             size="icon"
-            className="text-gray-400 hover:text-white hover:bg-[#16161D]"
+            className="text-muted-foreground hover:text-foreground hover:bg-card"
             onClick={() => navigateTo("my-orders")}
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-white font-semibold text-lg flex-1">
+          <h1 className="text-foreground font-semibold text-lg flex-1">
             E-Tiket
           </h1>
           <Badge className="bg-green-500/20 text-green-400 border-0 text-xs">
@@ -128,12 +128,12 @@ export default function ETicketPage() {
 
       <main className="max-w-lg mx-auto px-4 py-6 space-y-4">
         {/* Order info */}
-        <Card className="bg-[#16161D] border-[#2A2A35]">
+        <Card className="bg-card border-border">
           <CardContent className="pt-4 space-y-2">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-white font-semibold">{eventTitle}</h2>
-                <p className="text-gray-400 text-sm">
+                <h2 className="text-foreground font-semibold">{eventTitle}</h2>
+                <p className="text-muted-foreground text-sm">
                   {eventDate} • {eventCity}
                 </p>
               </div>
@@ -152,12 +152,12 @@ export default function ETicketPage() {
             {/* Ticket tabs */}
             {tickets.length > 1 && (
               <Tabs value={activeTab} onValueChange={setActiveTab}>
-                <TabsList className="w-full bg-[#16161D] border border-[#2A2A35] h-auto p-1">
+                <TabsList className="w-full bg-card border border-border h-auto p-1">
                   {tickets.map((t, i) => (
                     <TabsTrigger
                       key={t.id}
                       value={String(i)}
-                      className="flex-1 data-[state=active]:bg-green-500 data-[state=active]:text-white text-gray-400 text-xs py-2"
+                      className="flex-1 data-[state=active]:bg-green-500 data-[state=active]:text-white text-muted-foreground text-xs py-2"
                     >
                       {t.ticketTypeName} #{i + 1}
                     </TabsTrigger>
@@ -168,7 +168,7 @@ export default function ETicketPage() {
 
             {/* Ticket card */}
             {activeTicket && (
-              <Card className="bg-[#16161D] border-[#2A2A35] overflow-hidden">
+              <Card className="bg-card border-border overflow-hidden">
                 {/* Top colored bar */}
                 <div className="h-1 bg-gradient-to-r from-green-500 to-green-400" />
 
@@ -176,10 +176,10 @@ export default function ETicketPage() {
                   {/* Attendee info */}
                   <div className="text-center space-y-1">
                     <div className="flex items-center justify-center gap-1">
-                      <User className="w-4 h-4 text-gray-500" />
-                      <span className="text-gray-400 text-sm">Peserta</span>
+                      <User className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-muted-foreground text-sm">Peserta</span>
                     </div>
-                    <h3 className="text-white text-xl font-bold">
+                    <h3 className="text-foreground text-xl font-bold">
                       {activeTicket.attendeeName}
                     </h3>
                     <div className="flex items-center justify-center gap-2">
@@ -200,7 +200,7 @@ export default function ETicketPage() {
                     </div>
                   </div>
 
-                  <Separator className="bg-[#2A2A35]" />
+                  <Separator className="bg-border" />
 
                   {/* QR Code */}
                   <div className="flex justify-center py-4">
@@ -218,15 +218,15 @@ export default function ETicketPage() {
 
                   {/* Ticket code */}
                   <div className="text-center space-y-1">
-                    <p className="text-gray-500 text-xs">Kode Tiket</p>
+                    <p className="text-muted-foreground text-xs">Kode Tiket</p>
                     <div className="flex items-center justify-center gap-1">
-                      <p className="text-white font-mono text-sm font-bold">
+                      <p className="text-foreground font-mono text-sm font-bold">
                         {activeTicket.ticketCode}
                       </p>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-6 w-6 text-gray-500 hover:text-white"
+                        className="h-6 w-6 text-muted-foreground hover:text-foreground"
                         onClick={() => {
                           navigator.clipboard.writeText(
                             activeTicket.ticketCode
@@ -239,7 +239,7 @@ export default function ETicketPage() {
                     </div>
                   </div>
 
-                  <Separator className="bg-[#2A2A35]" />
+                  <Separator className="bg-border" />
 
                   {/* Action buttons */}
                   <div className="flex gap-2">
@@ -252,7 +252,7 @@ export default function ETicketPage() {
                     </Button>
                     <Button
                       variant="outline"
-                      className="border-[#2A2A35] text-gray-300 hover:bg-[#16161D] hover:text-white"
+                      className="border-border text-foreground/80 hover:bg-card hover:text-foreground"
                       onClick={handleShare}
                     >
                       <Share2 className="w-4 h-4" />
@@ -262,13 +262,13 @@ export default function ETicketPage() {
 
                 {/* Bottom dashed line effect */}
                 <div className="relative">
-                  <Separator className="bg-[#2A2A35]" />
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-[#0B0B0F]" />
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-6 h-6 rounded-full bg-[#0B0B0F]" />
+                  <Separator className="bg-border" />
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-background" />
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-6 h-6 rounded-full bg-background" />
                 </div>
 
                 <CardContent className="pb-4">
-                  <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <MapPin className="w-3 h-3" />
                       {eventCity}
@@ -281,11 +281,11 @@ export default function ETicketPage() {
             )}
           </>
         ) : (
-          <Card className="bg-[#16161D] border-[#2A2A35]">
+          <Card className="bg-card border-border">
             <CardContent className="py-12 text-center">
-              <Ticket className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-              <p className="text-gray-400">E-tiket belum tersedia</p>
-              <p className="text-gray-600 text-sm mt-1">
+              <Ticket className="w-12 h-12 text-muted-foreground/70 mx-auto mb-3" />
+              <p className="text-muted-foreground">E-tiket belum tersedia</p>
+              <p className="text-muted-foreground/70 text-sm mt-1">
                 Menunggu pembayaran diverifikasi
               </p>
             </CardContent>
@@ -293,12 +293,12 @@ export default function ETicketPage() {
         )}
 
         {/* Instructions */}
-        <Card className="bg-[#16161D] border-[#2A2A35]">
+        <Card className="bg-card border-border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-white text-sm">
+            <CardTitle className="text-foreground text-sm">
               Petunjuk di Hari H
             </CardTitle>
-            <CardDescription className="text-gray-500 text-xs">
+            <CardDescription className="text-muted-foreground text-xs">
               Ikuti langkah-langkah berikut untuk masuk venue
             </CardDescription>
           </CardHeader>
@@ -315,7 +315,7 @@ export default function ETicketPage() {
                       <span className="text-green-500 font-bold text-sm">
                         {i + 1}.
                       </span>
-                      <span className="text-gray-300 text-sm">
+                      <span className="text-foreground/80 text-sm">
                         {inst.text}
                       </span>
                     </div>
@@ -329,7 +329,7 @@ export default function ETicketPage() {
         {/* Back button */}
         <Button
           variant="outline"
-          className="w-full border-[#2A2A35] text-gray-300 hover:bg-[#16161D] hover:text-white h-12 mb-8"
+          className="w-full border-border text-foreground/80 hover:bg-card hover:text-foreground h-12 mb-8"
           onClick={() => navigateTo("home")}
         >
           <Home className="w-4 h-4 mr-2" />

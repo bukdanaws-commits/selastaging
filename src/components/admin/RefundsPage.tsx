@@ -119,36 +119,36 @@ function ProcessRefundDialog({ refund }: { refund: RefundItem }) {
           Process
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-[#111918] border-[rgba(0,163,157,0.15)] text-white max-w-sm">
+      <DialogContent className="bg-card border-primary/15 text-foreground max-w-sm">
         <DialogHeader>
-          <DialogTitle className="text-base font-bold text-white flex items-center gap-2">
+          <DialogTitle className="text-base font-bold text-foreground flex items-center gap-2">
             <RefreshCcw className="w-5 h-5 text-emerald-400" />
             Process Refund
           </DialogTitle>
           <DialogDescription className="text-muted-foreground text-sm">
-            Proses refund untuk pesanan <span className="font-mono text-[#00A39D]">{refund.orderCode}</span>
+            Proses refund untuk pesanan <span className="font-mono text-primary">{refund.orderCode}</span>
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3 mt-3">
-          <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5 space-y-2">
+          <div className="p-3 rounded-lg bg-background border border-border space-y-2">
             <div className="flex items-center gap-2">
               <User className="w-3.5 h-3.5 text-muted-foreground" />
-              <span className="text-sm text-white">{refund.customerName}</span>
+              <span className="text-sm text-foreground">{refund.customerName}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">Refund Amount</span>
-              <span className="text-[#F8AD3C] text-sm font-bold">{formatRupiah(refund.amount)}</span>
+              <span className="text-gold text-sm font-bold">{formatRupiah(refund.amount)}</span>
             </div>
             {refund.paymentMethod && (
               <div className="flex items-center justify-between">
                 <span className="text-xs text-muted-foreground">Payment Method</span>
-                <span className="text-xs text-white">{refund.paymentMethod}</span>
+                <span className="text-xs text-foreground">{refund.paymentMethod}</span>
               </div>
             )}
           </div>
           <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/15">
             <p className="text-xs text-amber-400 font-medium mb-1">Reason:</p>
-            <p className="text-sm text-white">{refund.reason}</p>
+            <p className="text-sm text-foreground">{refund.reason}</p>
           </div>
           <div>
             <label className="text-xs text-muted-foreground font-medium mb-1.5 block">
@@ -156,14 +156,14 @@ function ProcessRefundDialog({ refund }: { refund: RefundItem }) {
             </label>
             <Textarea
               placeholder="Catatan proses refund..."
-              className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white placeholder:text-muted-foreground/50 min-h-[60px] resize-none text-sm"
+              className="bg-background border-primary/15 text-foreground placeholder:text-muted-foreground/50 min-h-[60px] resize-none text-sm"
               value={note}
               onChange={(e) => setNote(e.target.value)}
             />
           </div>
         </div>
         <DialogFooter className="gap-2">
-          <Button variant="outline" className="border-[rgba(0,163,157,0.2)] text-muted-foreground hover:text-white" onClick={() => setOpen(false)}>
+          <Button variant="outline" className="border-primary/20 text-muted-foreground hover:text-foreground" onClick={() => setOpen(false)}>
             Batal
           </Button>
           <Button className="bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25" onClick={handleProcess} disabled={processing}>
@@ -181,25 +181,25 @@ function RefundDetailDialog({ refund }: { refund: RefundItem }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="text-[#00A39D] hover:text-[#00BFB8] hover:bg-[rgba(0,163,157,0.1)] h-8 px-2">
+        <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10 h-8 px-2">
           <Eye className="w-4 h-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-[#111918] border-[rgba(0,163,157,0.15)] text-white max-w-md">
+      <DialogContent className="bg-card border-primary/15 text-foreground max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-base font-bold text-white flex items-center gap-2">
-            <FileText className="w-5 h-5 text-[#00A39D]" />
+          <DialogTitle className="text-base font-bold text-foreground flex items-center gap-2">
+            <FileText className="w-5 h-5 text-primary" />
             Detail Refund
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">{refund.orderCode}</DialogDescription>
         </DialogHeader>
         <div className="space-y-3 mt-3">
           <div className="grid grid-cols-2 gap-3">
-            <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5">
+            <div className="p-3 rounded-lg bg-background border border-border">
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Amount</p>
-              <p className="text-[#F8AD3C] text-sm font-bold mt-1">{formatRupiah(refund.amount)}</p>
+              <p className="text-gold text-sm font-bold mt-1">{formatRupiah(refund.amount)}</p>
             </div>
-            <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5">
+            <div className="p-3 rounded-lg bg-background border border-border">
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Status</p>
               <div className="mt-1">{getRefundStatusBadge(refund.status)}</div>
             </div>
@@ -207,7 +207,7 @@ function RefundDetailDialog({ refund }: { refund: RefundItem }) {
           <div className="space-y-2">
             <div className="flex items-center gap-2">
               <User className="w-3.5 h-3.5 text-muted-foreground" />
-              <span className="text-sm text-white">{refund.customerName}</span>
+              <span className="text-sm text-foreground">{refund.customerName}</span>
             </div>
             <div className="flex items-center gap-2">
               <Clock className="w-3.5 h-3.5 text-muted-foreground" />
@@ -226,9 +226,9 @@ function RefundDetailDialog({ refund }: { refund: RefundItem }) {
               </div>
             )}
           </div>
-          <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5">
+          <div className="p-3 rounded-lg bg-background border border-border">
             <p className="text-xs text-muted-foreground font-medium mb-1">Reason</p>
-            <p className="text-sm text-white">{refund.reason}</p>
+            <p className="text-sm text-foreground">{refund.reason}</p>
           </div>
         </div>
       </DialogContent>
@@ -269,8 +269,8 @@ export function RefundsPage() {
   const pendingRefunds = refunds.filter((r) => r.status === 'pending').length;
 
   const stats = [
-    { label: 'Total Refunds', value: totalRefunds, icon: RefreshCcw, color: 'text-[#00A39D]', bg: 'bg-[rgba(0,163,157,0.1)]' },
-    { label: 'Refund Amount', value: formatRupiah(totalRefundAmount), icon: DollarSign, color: 'text-[#F8AD3C]', bg: 'bg-[rgba(248,173,60,0.1)]' },
+    { label: 'Total Refunds', value: totalRefunds, icon: RefreshCcw, color: 'text-primary', bg: 'bg-primary/10' },
+    { label: 'Refund Amount', value: formatRupiah(totalRefundAmount), icon: DollarSign, color: 'text-gold', bg: 'bg-gold/10' },
     { label: 'Pending Refunds', value: pendingRefunds, icon: Clock, color: 'text-amber-400', bg: 'bg-amber-500/10' },
     { label: 'Completed', value: refunds.filter((r) => r.status === 'completed').length, icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
   ];
@@ -291,11 +291,11 @@ export function RefundsPage() {
     <div className="space-y-6">
       {/* ═══ HEADER ═══ */}
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-[rgba(0,163,157,0.1)] flex items-center justify-center">
-          <RefreshCcw className="w-5 h-5 text-[#00A39D]" />
+        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+          <RefreshCcw className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-white">Refund Management</h2>
+          <h2 className="text-xl font-bold text-foreground">Refund Management</h2>
           <p className="text-muted-foreground text-xs">Kelola refund dan proses pengembalian dana</p>
         </div>
       </div>
@@ -303,7 +303,7 @@ export function RefundsPage() {
       {/* ═══ STATS ═══ */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {stats.map((stat) => (
-          <Card key={stat.label} className="bg-[#111918] border-[rgba(0,163,157,0.1)] hover:border-[rgba(0,163,157,0.25)] transition-all">
+          <Card key={stat.label} className="bg-card border-primary/10 hover:border-primary/25 transition-all">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className={cn('w-9 h-9 rounded-lg flex items-center justify-center shrink-0', stat.bg)}>
@@ -320,7 +320,7 @@ export function RefundsPage() {
       </div>
 
       {/* ═══ FILTER ═══ */}
-      <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+      <Card className="bg-card border-primary/10">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 min-w-0">
@@ -328,7 +328,7 @@ export function RefundsPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Cari order code atau nama customer..."
-                  className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white placeholder:text-muted-foreground/50 pl-9 h-9"
+                  className="bg-background border-primary/15 text-foreground placeholder:text-muted-foreground/50 pl-9 h-9"
                   value={searchQuery}
                   onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                 />
@@ -336,15 +336,15 @@ export function RefundsPage() {
             </div>
             <div className="w-full sm:w-44">
               <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
-                <SelectTrigger className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white h-9">
+                <SelectTrigger className="bg-background border-primary/15 text-foreground h-9">
                   <SelectValue placeholder="Semua Status" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#111918] border-[rgba(0,163,157,0.15)]">
-                  <SelectItem value="all" className="text-white">Semua Status</SelectItem>
-                  <SelectItem value="pending" className="text-white">Pending</SelectItem>
-                  <SelectItem value="processing" className="text-white">Processing</SelectItem>
-                  <SelectItem value="completed" className="text-white">Completed</SelectItem>
-                  <SelectItem value="failed" className="text-white">Failed</SelectItem>
+                <SelectContent className="bg-card border-primary/15">
+                  <SelectItem value="all" className="text-foreground">Semua Status</SelectItem>
+                  <SelectItem value="pending" className="text-foreground">Pending</SelectItem>
+                  <SelectItem value="processing" className="text-foreground">Processing</SelectItem>
+                  <SelectItem value="completed" className="text-foreground">Completed</SelectItem>
+                  <SelectItem value="failed" className="text-foreground">Failed</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -353,11 +353,11 @@ export function RefundsPage() {
       </Card>
 
       {/* ═══ TABLE ═══ */}
-      <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+      <Card className="bg-card border-primary/10">
         <CardHeader className="pb-3">
           <div>
-            <CardTitle className="text-white text-base flex items-center gap-2">
-              <RefreshCcw className="w-4 h-4 text-[#00A39D]" />
+            <CardTitle className="text-foreground text-base flex items-center gap-2">
+              <RefreshCcw className="w-4 h-4 text-primary" />
               Daftar Refund
             </CardTitle>
             <CardDescription className="text-muted-foreground text-xs mt-1">
@@ -376,7 +376,7 @@ export function RefundsPage() {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-[rgba(0,163,157,0.08)] hover:bg-transparent">
+                  <TableRow className="border-primary/10 hover:bg-transparent">
                     <TableHead className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold h-10 px-4">Order Code</TableHead>
                     <TableHead className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold h-10 px-4">Customer</TableHead>
                     <TableHead className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold h-10 px-4 text-right">Amount</TableHead>
@@ -388,7 +388,7 @@ export function RefundsPage() {
                 </TableHeader>
                 <TableBody>
                   {paged.length === 0 ? (
-                    <TableRow className="border-[rgba(0,163,157,0.05)]">
+                    <TableRow className="border-primary/5">
                       <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
                         <Search className="w-8 h-8 mx-auto mb-2 opacity-30" />
                         <p className="text-sm">Tidak ada refund ditemukan</p>
@@ -396,16 +396,16 @@ export function RefundsPage() {
                     </TableRow>
                   ) : (
                     paged.map((refund) => (
-                      <TableRow key={refund.id} className="border-[rgba(0,163,157,0.05)] hover:bg-[rgba(0,163,157,0.04)] transition-colors">
+                      <TableRow key={refund.id} className="border-primary/5 hover:bg-primary/5 transition-colors">
                         <TableCell className="px-4 py-3">
-                          <span className="font-mono text-xs font-semibold text-[#00A39D]">{refund.orderCode.slice(-8)}</span>
+                          <span className="font-mono text-xs font-semibold text-primary">{refund.orderCode.slice(-8)}</span>
                         </TableCell>
                         <TableCell className="px-4 py-3">
-                          <p className="text-sm text-white font-medium truncate max-w-[140px]">{refund.customerName}</p>
+                          <p className="text-sm text-foreground font-medium truncate max-w-[140px]">{refund.customerName}</p>
                           <p className="text-[10px] text-muted-foreground truncate max-w-[140px]">{refund.customerEmail}</p>
                         </TableCell>
                         <TableCell className="px-4 py-3 text-right">
-                          <span className="text-sm text-[#F8AD3C] font-semibold">{formatRupiah(refund.amount)}</span>
+                          <span className="text-sm text-gold font-semibold">{formatRupiah(refund.amount)}</span>
                         </TableCell>
                         <TableCell className="px-4 py-3">
                           <p className="text-xs text-muted-foreground truncate max-w-[150px]">{refund.reason}</p>
@@ -430,12 +430,12 @@ export function RefundsPage() {
 
           {/* ═══ PAGINATION ═══ */}
           {filtered.length > PAGE_SIZE && (
-            <div className="flex items-center justify-between px-4 py-3 border-t border-[rgba(0,163,157,0.08)]">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-primary/10">
               <p className="text-xs text-muted-foreground">
                 {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)} dari {filtered.length}
               </p>
               <div className="flex items-center gap-1">
-                <Button variant="outline" size="sm" className="h-8 px-3 border-[rgba(0,163,157,0.15)] text-muted-foreground hover:text-white hover:bg-[rgba(0,163,157,0.1)]" disabled={safePage <= 1} onClick={() => setCurrentPage((p) => p - 1)}>
+                <Button variant="outline" size="sm" className="h-8 px-3 border-primary/15 text-muted-foreground hover:text-foreground hover:bg-primary/10" disabled={safePage <= 1} onClick={() => setCurrentPage((p) => p - 1)}>
                   <ChevronLeft className="w-4 h-4 mr-1" /> Prev
                 </Button>
                 {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
@@ -446,14 +446,14 @@ export function RefundsPage() {
                   else pn = safePage - 3 + i;
                   return (
                     <Button key={pn} variant={safePage === pn ? 'default' : 'outline'} size="sm"
-                      className={cn('h-8 w-8 p-0 text-xs font-semibold', safePage === pn ? 'bg-[#00A39D] text-[#0A0F0E] hover:bg-[#00BFB8]' : 'border-[rgba(0,163,157,0.15)] text-muted-foreground hover:text-white hover:bg-[rgba(0,163,157,0.1)]')}
+                      className={cn('h-8 w-8 p-0 text-xs font-semibold', safePage === pn ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'border-primary/15 text-muted-foreground hover:text-foreground hover:bg-primary/10')}
                       onClick={() => setCurrentPage(pn)}
                     >
                       {pn}
                     </Button>
                   );
                 })}
-                <Button variant="outline" size="sm" className="h-8 px-3 border-[rgba(0,163,157,0.15)] text-muted-foreground hover:text-white hover:bg-[rgba(0,163,157,0.1)]" disabled={safePage >= totalPages} onClick={() => setCurrentPage((p) => p + 1)}>
+                <Button variant="outline" size="sm" className="h-8 px-3 border-primary/15 text-muted-foreground hover:text-foreground hover:bg-primary/10" disabled={safePage >= totalPages} onClick={() => setCurrentPage((p) => p + 1)}>
                   Next <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </div>

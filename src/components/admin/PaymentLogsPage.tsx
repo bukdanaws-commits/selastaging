@@ -92,14 +92,14 @@ function DokuResponseDialog({ log }: { log: PaymentLogItem }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="text-[#00A39D] hover:text-[#00BFB8] hover:bg-[rgba(0,163,157,0.1)] h-8 px-2">
+        <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10 h-8 px-2">
           <Eye className="w-4 h-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-[#111918] border-[rgba(0,163,157,0.15)] text-white max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="bg-card border-input text-foreground max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-base font-bold text-white flex items-center gap-2">
-            <FileText className="w-5 h-5 text-[#00A39D]" />
+          <DialogTitle className="text-base font-bold text-foreground flex items-center gap-2">
+            <FileText className="w-5 h-5 text-primary" />
             DOKU Response Data
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
@@ -108,26 +108,26 @@ function DokuResponseDialog({ log }: { log: PaymentLogItem }) {
         </DialogHeader>
         <div className="space-y-4 mt-3">
           <div className="grid grid-cols-2 gap-3">
-            <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5">
+            <div className="p-3 rounded-lg bg-background border border-border">
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Order Code</p>
-              <p className="text-sm text-white font-mono font-semibold mt-1">{log.orderCode}</p>
+              <p className="text-sm text-foreground font-mono font-semibold mt-1">{log.orderCode}</p>
             </div>
-            <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5">
+            <div className="p-3 rounded-lg bg-background border border-border">
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Transaction ID</p>
-              <p className="text-sm text-white font-mono font-semibold mt-1">{log.transactionId}</p>
+              <p className="text-sm text-foreground font-mono font-semibold mt-1">{log.transactionId}</p>
             </div>
-            <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5">
+            <div className="p-3 rounded-lg bg-background border border-border">
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Payment Method</p>
-              <p className="text-sm text-white font-medium mt-1">{log.paymentMethod}</p>
+              <p className="text-sm text-foreground font-medium mt-1">{log.paymentMethod}</p>
             </div>
-            <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5">
+            <div className="p-3 rounded-lg bg-background border border-border">
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Amount</p>
-              <p className="text-sm text-[#F8AD3C] font-bold mt-1">{formatRupiah(log.amount)}</p>
+              <p className="text-sm text-gold font-bold mt-1">{formatRupiah(log.amount)}</p>
             </div>
           </div>
-          <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5">
+          <div className="p-3 rounded-lg bg-background border border-border">
             <p className="text-xs text-muted-foreground font-medium mb-2">Full DOKU Response</p>
-            <pre className="text-xs text-[#7FB3AE] font-mono overflow-x-auto whitespace-pre-wrap max-h-60">
+            <pre className="text-xs text-muted-foreground font-mono overflow-x-auto whitespace-pre-wrap max-h-60">
               {JSON.stringify(log.dokuResponse || { status: log.status, transactionId: log.transactionId }, null, 2)}
             </pre>
           </div>
@@ -173,9 +173,9 @@ export function PaymentLogsPage() {
   const totalVolume = paymentLogs.filter((l) => l.status === 'success').reduce((s, l) => s + l.amount, 0);
 
   const stats = [
-    { label: 'Total Payments', value: totalCount, icon: CreditCard, color: 'text-[#00A39D]', bg: 'bg-[rgba(0,163,157,0.1)]' },
+    { label: 'Total Payments', value: totalCount, icon: CreditCard, color: 'text-primary', bg: 'bg-primary/10' },
     { label: 'Success Rate', value: `${successRate}%`, icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-    { label: 'Total Volume', value: formatRupiah(totalVolume), icon: DollarSign, color: 'text-[#F8AD3C]', bg: 'bg-[rgba(248,173,60,0.1)]' },
+    { label: 'Total Volume', value: formatRupiah(totalVolume), icon: DollarSign, color: 'text-gold', bg: 'bg-gold/10' },
     { label: 'Failed', value: paymentLogs.filter((l) => l.status === 'failed').length, icon: XCircle, color: 'text-red-400', bg: 'bg-red-500/10' },
   ];
 
@@ -196,17 +196,17 @@ export function PaymentLogsPage() {
       {/* ═══ HEADER ═══ */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[rgba(0,163,157,0.1)] flex items-center justify-center">
-            <CreditCard className="w-5 h-5 text-[#00A39D]" />
+          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <CreditCard className="w-5 h-5 text-primary" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white">Payment Logs</h2>
+            <h2 className="text-xl font-bold text-foreground">Payment Logs</h2>
             <p className="text-muted-foreground text-xs">View all DOKU payment transactions</p>
           </div>
         </div>
         <Button
           variant="outline"
-          className="border-[rgba(0,163,157,0.2)] text-[#00A39D] hover:text-white hover:bg-[rgba(0,163,157,0.1)] text-xs"
+          className="border-input text-primary hover:text-foreground hover:bg-primary/10 text-xs"
           onClick={() => toast.info('Export feature coming soon')}
         >
           <Download className="w-4 h-4 mr-1" /> Export CSV
@@ -216,7 +216,7 @@ export function PaymentLogsPage() {
       {/* ═══ STATS ═══ */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {stats.map((stat) => (
-          <Card key={stat.label} className="bg-[#111918] border-[rgba(0,163,157,0.1)] hover:border-[rgba(0,163,157,0.25)] transition-all">
+          <Card key={stat.label} className="bg-card border-border hover:border-primary/25 transition-all">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className={cn('w-9 h-9 rounded-lg flex items-center justify-center shrink-0', stat.bg)}>
@@ -233,7 +233,7 @@ export function PaymentLogsPage() {
       </div>
 
       {/* ═══ FILTER ═══ */}
-      <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+      <Card className="bg-card border-border">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 min-w-0">
@@ -241,7 +241,7 @@ export function PaymentLogsPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Cari order code atau transaction ID..."
-                  className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white placeholder:text-muted-foreground/50 pl-9 h-9"
+                  className="bg-background border-input text-foreground placeholder:text-muted-foreground/50 pl-9 h-9"
                   value={searchQuery}
                   onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                 />
@@ -249,28 +249,28 @@ export function PaymentLogsPage() {
             </div>
             <div className="w-full sm:w-40">
               <Select value={methodFilter} onValueChange={(v) => { setMethodFilter(v); setCurrentPage(1); }}>
-                <SelectTrigger className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white h-9">
+                <SelectTrigger className="bg-background border-input text-foreground h-9">
                   <SelectValue placeholder="Payment Method" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#111918] border-[rgba(0,163,157,0.15)]">
-                  <SelectItem value="all" className="text-white">Semua Method</SelectItem>
+                <SelectContent className="bg-card border-input">
+                  <SelectItem value="all" className="text-foreground">Semua Method</SelectItem>
                   {uniqueMethods.map((m) => (
-                    <SelectItem key={m} value={m} className="text-white">{m}</SelectItem>
+                    <SelectItem key={m} value={m} className="text-foreground">{m}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="w-full sm:w-36">
               <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
-                <SelectTrigger className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white h-9">
+                <SelectTrigger className="bg-background border-input text-foreground h-9">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#111918] border-[rgba(0,163,157,0.15)]">
-                  <SelectItem value="all" className="text-white">Semua Status</SelectItem>
-                  <SelectItem value="success" className="text-white">Success</SelectItem>
-                  <SelectItem value="pending" className="text-white">Pending</SelectItem>
-                  <SelectItem value="failed" className="text-white">Failed</SelectItem>
-                  <SelectItem value="refunded" className="text-white">Refunded</SelectItem>
+                <SelectContent className="bg-card border-input">
+                  <SelectItem value="all" className="text-foreground">Semua Status</SelectItem>
+                  <SelectItem value="success" className="text-foreground">Success</SelectItem>
+                  <SelectItem value="pending" className="text-foreground">Pending</SelectItem>
+                  <SelectItem value="failed" className="text-foreground">Failed</SelectItem>
+                  <SelectItem value="refunded" className="text-foreground">Refunded</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -279,11 +279,11 @@ export function PaymentLogsPage() {
       </Card>
 
       {/* ═══ TABLE ═══ */}
-      <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+      <Card className="bg-card border-border">
         <CardHeader className="pb-3">
           <div>
-            <CardTitle className="text-white text-base flex items-center gap-2">
-              <CreditCard className="w-4 h-4 text-[#00A39D]" />
+            <CardTitle className="text-foreground text-base flex items-center gap-2">
+              <CreditCard className="w-4 h-4 text-primary" />
               Daftar Payment Log
             </CardTitle>
             <CardDescription className="text-muted-foreground text-xs mt-1">
@@ -302,7 +302,7 @@ export function PaymentLogsPage() {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-[rgba(0,163,157,0.08)] hover:bg-transparent">
+                  <TableRow className="border-border hover:bg-transparent">
                     <TableHead className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold h-10 px-4">Order Code</TableHead>
                     <TableHead className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold h-10 px-4">Transaction ID</TableHead>
                     <TableHead className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold h-10 px-4">Payment Method</TableHead>
@@ -314,7 +314,7 @@ export function PaymentLogsPage() {
                 </TableHeader>
                 <TableBody>
                   {paged.length === 0 ? (
-                    <TableRow className="border-[rgba(0,163,157,0.05)]">
+                    <TableRow className="border-border">
                       <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
                         <Search className="w-8 h-8 mx-auto mb-2 opacity-30" />
                         <p className="text-sm">Tidak ada payment log ditemukan</p>
@@ -322,20 +322,20 @@ export function PaymentLogsPage() {
                     </TableRow>
                   ) : (
                     paged.map((log) => (
-                      <TableRow key={log.id} className="border-[rgba(0,163,157,0.05)] hover:bg-[rgba(0,163,157,0.04)] transition-colors">
+                      <TableRow key={log.id} className="border-border hover:bg-primary/5 transition-colors">
                         <TableCell className="px-4 py-3">
-                          <span className="font-mono text-xs font-semibold text-[#00A39D]">{log.orderCode.slice(-8)}</span>
+                          <span className="font-mono text-xs font-semibold text-primary">{log.orderCode.slice(-8)}</span>
                         </TableCell>
                         <TableCell className="px-4 py-3">
                           <span className="font-mono text-xs text-muted-foreground truncate max-w-[140px] block">{log.transactionId}</span>
                         </TableCell>
                         <TableCell className="px-4 py-3">
-                          <Badge variant="outline" className="text-[10px] bg-[rgba(0,163,157,0.06)] border-[rgba(0,163,157,0.2)] text-[#7FB3AE]">
+                          <Badge variant="outline" className="text-[10px] bg-primary/5 border-input text-muted-foreground">
                             {log.paymentMethod}
                           </Badge>
                         </TableCell>
                         <TableCell className="px-4 py-3 text-right">
-                          <span className="text-sm text-[#F8AD3C] font-semibold">{formatRupiah(log.amount)}</span>
+                          <span className="text-sm text-gold font-semibold">{formatRupiah(log.amount)}</span>
                         </TableCell>
                         <TableCell className="px-4 py-3">{getPaymentStatusBadge(log.status)}</TableCell>
                         <TableCell className="px-4 py-3">
@@ -354,12 +354,12 @@ export function PaymentLogsPage() {
 
           {/* ═══ PAGINATION ═══ */}
           {filtered.length > PAGE_SIZE && (
-            <div className="flex items-center justify-between px-4 py-3 border-t border-[rgba(0,163,157,0.08)]">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-border">
               <p className="text-xs text-muted-foreground">
                 {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)} dari {filtered.length}
               </p>
               <div className="flex items-center gap-1">
-                <Button variant="outline" size="sm" className="h-8 px-3 border-[rgba(0,163,157,0.15)] text-muted-foreground hover:text-white hover:bg-[rgba(0,163,157,0.1)]" disabled={safePage <= 1} onClick={() => setCurrentPage((p) => p - 1)}>
+                <Button variant="outline" size="sm" className="h-8 px-3 border-input text-muted-foreground hover:text-foreground hover:bg-primary/10" disabled={safePage <= 1} onClick={() => setCurrentPage((p) => p - 1)}>
                   <ChevronLeft className="w-4 h-4 mr-1" /> Prev
                 </Button>
                 {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
@@ -370,14 +370,14 @@ export function PaymentLogsPage() {
                   else pn = safePage - 3 + i;
                   return (
                     <Button key={pn} variant={safePage === pn ? 'default' : 'outline'} size="sm"
-                      className={cn('h-8 w-8 p-0 text-xs font-semibold', safePage === pn ? 'bg-[#00A39D] text-[#0A0F0E] hover:bg-[#00BFB8]' : 'border-[rgba(0,163,157,0.15)] text-muted-foreground hover:text-white hover:bg-[rgba(0,163,157,0.1)]')}
+                      className={cn('h-8 w-8 p-0 text-xs font-semibold', safePage === pn ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'border-input text-muted-foreground hover:text-foreground hover:bg-primary/10')}
                       onClick={() => setCurrentPage(pn)}
                     >
                       {pn}
                     </Button>
                   );
                 })}
-                <Button variant="outline" size="sm" className="h-8 px-3 border-[rgba(0,163,157,0.15)] text-muted-foreground hover:text-white hover:bg-[rgba(0,163,157,0.1)]" disabled={safePage >= totalPages} onClick={() => setCurrentPage((p) => p + 1)}>
+                <Button variant="outline" size="sm" className="h-8 px-3 border-input text-muted-foreground hover:text-foreground hover:bg-primary/10" disabled={safePage >= totalPages} onClick={() => setCurrentPage((p) => p + 1)}>
                   Next <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </div>

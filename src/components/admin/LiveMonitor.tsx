@@ -157,7 +157,7 @@ export function LiveMonitor() {
     { label: 'Total Sudah Tukar', value: liveStats.totalRedeemed, color: 'text-amber-400', bg: 'from-amber-500/10 to-amber-500/5', border: 'border-amber-500/20', icon: Watch },
     { label: 'Total Belum Tukar', value: liveStats.totalNotRedeemed, color: 'text-gray-400', bg: 'from-gray-500/10 to-gray-500/5', border: 'border-gray-500/20', icon: Users },
     { label: 'Total Re-entry', value: liveStats.totalReentries, color: 'text-purple-400', bg: 'from-purple-500/10 to-purple-500/5', border: 'border-purple-500/20', icon: RefreshCw },
-    { label: 'Gate Scans', value: liveStats.totalGateScans, color: 'text-[#00A39D]', bg: 'from-[#00A39D]/10 to-[#00A39D]/5', border: 'border-[#00A39D]/20', icon: ScanLine },
+    { label: 'Gate Scans', value: liveStats.totalGateScans, color: 'text-primary', bg: 'from-primary/10 to-primary/5', border: 'border-primary/20', icon: ScanLine },
   ];
 
   if (isLoading) return <div className="p-6 space-y-4"><Skeleton className="h-8 w-64" /><Skeleton className="h-40 w-full" /></div>;
@@ -168,8 +168,8 @@ export function LiveMonitor() {
       {/* ═══════════ PAGE HEADER ═══════════ */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
-          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Activity className="w-6 h-6 text-[#00A39D]" />
+          <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <Activity className="w-6 h-6 text-primary" />
             Live Monitor
           </h2>
           {/* Pulsing LIVE indicator */}
@@ -181,7 +181,7 @@ export function LiveMonitor() {
             <span className="text-xs font-bold text-red-400">LIVE</span>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-xs text-[#7FB3AE]">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <Clock className="w-4 h-4" />
           <span>D-Day: 24 Mei 2025</span>
         </div>
@@ -196,7 +196,7 @@ export function LiveMonitor() {
               <p className={cn('text-2xl md:text-3xl font-bold', stat.color)}>
                 {stat.value.toLocaleString('id-ID')}
               </p>
-              <p className="text-[10px] text-[#7FB3AE] mt-1">{stat.label}</p>
+              <p className="text-[10px] text-muted-foreground mt-1">{stat.label}</p>
             </CardContent>
           </Card>
         ))}
@@ -206,12 +206,12 @@ export function LiveMonitor() {
         {/* ═══════════ LEFT COLUMN: Gates + Activity Feed ═══════════ */}
         <div className="lg:col-span-2 space-y-6">
           {/* ═══════════ GATE OVERVIEW ═══════════ */}
-          <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+          <Card className="bg-card border-border">
             <CardHeader className="pb-3">
-              <CardTitle className="text-white text-base flex items-center gap-2">
-                <ScanLine className="w-4 h-4 text-[#00A39D]" />
+              <CardTitle className="text-foreground text-base flex items-center gap-2">
+                <ScanLine className="w-4 h-4 text-primary" />
                 Gate Overview
-                <Badge variant="outline" className="text-[10px] text-[#00A39D] border-[#00A39D]/30 ml-auto">
+                <Badge variant="outline" className="text-[10px] text-primary border-primary/30 ml-auto">
                   {liveStats.activeGates}/{liveGates.length} aktif
                 </Badge>
               </CardTitle>
@@ -224,28 +224,28 @@ export function LiveMonitor() {
                   return (
                     <div
                       key={gate.id}
-                      className="p-3 rounded-lg bg-[#0A0F0E]/60 border border-[rgba(0,163,157,0.08)] hover:border-[rgba(0,163,157,0.15)] transition-colors"
+                      className="p-3 rounded-lg bg-background/60 border border-border hover:border-input transition-colors"
                     >
                       <div className="flex items-center gap-2 mb-2">
                         <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                        <p className="text-sm text-white font-medium">{gate.name}</p>
+                        <p className="text-sm text-foreground font-medium">{gate.name}</p>
                       </div>
                       <div className="grid grid-cols-2 gap-2 mb-2">
                         <div className="text-center p-1.5 rounded bg-emerald-500/5">
                           <p className="text-sm font-bold text-emerald-400">{gate.totalIn.toLocaleString('id-ID')}</p>
-                          <p className="text-[9px] text-[#7FB3AE]">IN</p>
+                          <p className="text-[9px] text-muted-foreground">IN</p>
                         </div>
                         <div className="text-center p-1.5 rounded bg-blue-500/5">
                           <p className="text-sm font-bold text-blue-400">{gate.totalOut.toLocaleString('id-ID')}</p>
-                          <p className="text-[9px] text-[#7FB3AE]">OUT</p>
+                          <p className="text-[9px] text-muted-foreground">OUT</p>
                         </div>
                       </div>
                       <div className="flex items-center justify-between text-[10px]">
                         <Badge variant="outline" className={cn('text-[9px] py-0', typeBadge.color)}>
                           {typeBadge.label}
                         </Badge>
-                        <span className="text-[#7FB3AE]">{rate}/min</span>
-                        <span className="text-[#7FB3AE]">
+                        <span className="text-muted-foreground">{rate}/min</span>
+                        <span className="text-muted-foreground">
                           {gate.lastScan ? formatTime(gate.lastScan) : '—'}
                         </span>
                       </div>
@@ -257,14 +257,14 @@ export function LiveMonitor() {
           </Card>
 
           {/* ═══════════ RECENT ACTIVITY FEED ═══════════ */}
-          <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+          <Card className="bg-card border-border">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-white text-base flex items-center gap-2">
-                  <Activity className="w-4 h-4 text-[#00A39D]" />
+                <CardTitle className="text-foreground text-base flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-primary" />
                   Aktivitas Terkini
                 </CardTitle>
-                <Badge variant="outline" className="text-[10px] text-[#7FB3AE] border-[#7FB3AE]/20">
+                <Badge variant="outline" className="text-[10px] text-muted-foreground border-muted-foreground/20">
                   Live stream
                 </Badge>
               </div>
@@ -275,7 +275,7 @@ export function LiveMonitor() {
                   {gateLogs.slice(0, 50).map((log) => (
                     <div
                       key={log.id}
-                      className="flex items-center gap-3 p-2.5 rounded-lg bg-[#0A0F0E]/60 border border-[rgba(0,163,157,0.06)] hover:border-[rgba(0,163,157,0.12)] transition-colors"
+                      className="flex items-center gap-3 p-2.5 rounded-lg bg-background/60 border border-border hover:border-primary/15 transition-colors"
                     >
                       <div className={cn(
                         'w-8 h-8 rounded-full flex items-center justify-center shrink-0',
@@ -290,7 +290,7 @@ export function LiveMonitor() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm text-white font-medium truncate">{log.userName}</span>
+                          <span className="text-sm text-foreground font-medium truncate">{log.userName}</span>
                           <Badge variant="outline" className={cn(
                             'text-[9px] px-1.5 py-0 shrink-0',
                             log.action === 'IN'
@@ -305,7 +305,7 @@ export function LiveMonitor() {
                             </Badge>
                           )}
                         </div>
-                        <div className="flex items-center gap-2 text-[10px] text-[#7FB3AE] mt-0.5">
+                        <div className="flex items-center gap-2 text-[10px] text-muted-foreground mt-0.5">
                           <span className="font-mono">{log.ticketCode}</span>
                           <span>•</span>
                           <span>{log.gateName}</span>
@@ -313,7 +313,7 @@ export function LiveMonitor() {
                           <span>{log.staffName}</span>
                         </div>
                       </div>
-                      <span className="text-[10px] text-[#7FB3AE] shrink-0 flex items-center gap-1">
+                      <span className="text-[10px] text-muted-foreground shrink-0 flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {formatTime(log.timestamp)}
                       </span>
@@ -328,16 +328,16 @@ export function LiveMonitor() {
         {/* ═══════════ RIGHT COLUMN: Search + Wristband + Counters ═══════════ */}
         <div className="space-y-6">
           {/* ═══════════ ATTENDEE SEARCH ═══════════ */}
-          <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+          <Card className="bg-card border-border">
             <CardHeader className="pb-3">
-              <CardTitle className="text-white text-sm flex items-center gap-2">
-                <Search className="w-4 h-4 text-[#00A39D]" />
+              <CardTitle className="text-foreground text-sm flex items-center gap-2">
+                <Search className="w-4 h-4 text-primary" />
                 Cari Peserta
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-0 space-y-3">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#7FB3AE]" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Nama atau kode tiket..."
                   value={searchQuery}
@@ -345,7 +345,7 @@ export function LiveMonitor() {
                     setSearchQuery(e.target.value);
                     setSelectedAttendee(null);
                   }}
-                  className="pl-9 bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white placeholder:text-[#7FB3AE]/50 h-9"
+                  className="pl-9 bg-background border-input text-foreground placeholder:text-muted-foreground/50 h-9"
                 />
               </div>
 
@@ -356,15 +356,15 @@ export function LiveMonitor() {
                     return (
                       <button
                         key={a.ticketCode}
-                        className="w-full flex items-center gap-2.5 p-2.5 rounded-lg bg-[#0A0F0E] border border-[rgba(0,163,157,0.08)] hover:border-[rgba(0,163,157,0.15)] text-left transition-colors"
+                        className="w-full flex items-center gap-2.5 p-2.5 rounded-lg bg-background border border-border hover:border-input text-left transition-colors"
                         onClick={() => setSelectedAttendee(a.ticketCode)}
                       >
-                        <div className="w-8 h-8 rounded-full bg-[rgba(0,163,157,0.1)] flex items-center justify-center text-xs text-[#00A39D] font-bold shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs text-primary font-bold shrink-0">
                           {a.userName.split(' ').map(n => n[0]).join('')}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm text-white font-medium truncate">{a.userName}</p>
-                          <p className="text-[10px] text-[#7FB3AE] font-mono">{a.ticketCode}</p>
+                          <p className="text-sm text-foreground font-medium truncate">{a.userName}</p>
+                          <p className="text-[10px] text-muted-foreground font-mono">{a.ticketCode}</p>
                         </div>
                         <Badge variant="outline" className={cn('text-[9px] shrink-0', badge.color)}>
                           {badge.label}
@@ -381,53 +381,53 @@ export function LiveMonitor() {
                 const badge = getAttendeeStatusBadge(a.currentStatus);
                 const wbConfig = wristbandConfigs.find(w => w.ticketTypeName === a.ticketType);
                 return (
-                  <div className="p-3 rounded-lg bg-[#0A0F0E] border border-[rgba(0,163,157,0.15)] space-y-3">
+                  <div className="p-3 rounded-lg bg-background border border-input space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-10 h-10 rounded-full bg-[rgba(0,163,157,0.1)] flex items-center justify-center text-sm text-[#00A39D] font-bold">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm text-primary font-bold">
                           {a.userName.split(' ').map(n => n[0]).join('')}
                         </div>
                         <div>
-                          <p className="text-sm text-white font-medium">{a.userName}</p>
-                          <p className="text-[10px] text-[#7FB3AE] font-mono">{a.ticketCode}</p>
+                          <p className="text-sm text-foreground font-medium">{a.userName}</p>
+                          <p className="text-[10px] text-muted-foreground font-mono">{a.ticketCode}</p>
                         </div>
                       </div>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 text-[#7FB3AE] hover:text-white"
+                        className="h-7 w-7 text-muted-foreground hover:text-foreground"
                         onClick={() => setSelectedAttendee(null)}
                       >
                         <Eye className="w-3.5 h-3.5" />
                       </Button>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="p-2 rounded bg-[rgba(0,163,157,0.05)]">
-                        <p className="text-[#7FB3AE]">Tipe Tiket</p>
-                        <p className="text-white font-medium">{a.ticketType}</p>
+                      <div className="p-2 rounded bg-primary/5">
+                        <p className="text-muted-foreground">Tipe Tiket</p>
+                        <p className="text-foreground font-medium">{a.ticketType}</p>
                       </div>
-                      <div className="p-2 rounded bg-[rgba(0,163,157,0.05)]">
-                        <p className="text-[#7FB3AE]">Status</p>
+                      <div className="p-2 rounded bg-primary/5">
+                        <p className="text-muted-foreground">Status</p>
                         <Badge variant="outline" className={cn('text-[10px] mt-0.5', badge.color)}>
                           {badge.label}
                         </Badge>
                       </div>
-                      <div className="p-2 rounded bg-[rgba(0,163,157,0.05)]">
-                        <p className="text-[#7FB3AE]">Gelang</p>
-                        <p className="text-white font-mono text-xs">{a.wristbandCode || '—'}</p>
+                      <div className="p-2 rounded bg-primary/5">
+                        <p className="text-muted-foreground">Gelang</p>
+                        <p className="text-foreground font-mono text-xs">{a.wristbandCode || '—'}</p>
                       </div>
-                      <div className="p-2 rounded bg-[rgba(0,163,157,0.05)]">
-                        <p className="text-[#7FB3AE]">Re-entry</p>
-                        <p className="text-white font-medium">{a.reentryCount}x</p>
+                      <div className="p-2 rounded bg-primary/5">
+                        <p className="text-muted-foreground">Re-entry</p>
+                        <p className="text-foreground font-medium">{a.reentryCount}x</p>
                       </div>
                     </div>
-                    <div className="text-xs text-[#7FB3AE] flex items-center gap-1">
+                    <div className="text-xs text-muted-foreground flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       {a.lastAction} — {formatTime(a.lastActionAt)}
                     </div>
                     {a.gateUsed && (
-                      <div className="text-xs text-[#7FB3AE]">
-                        Gate: <span className="text-white">{a.gateUsed}</span>
+                      <div className="text-xs text-muted-foreground">
+                        Gate: <span className="text-foreground">{a.gateUsed}</span>
                       </div>
                     )}
                   </div>
@@ -437,13 +437,13 @@ export function LiveMonitor() {
           </Card>
 
           {/* ═══════════ WRISTBAND COLOR LEGEND ═══════════ */}
-          <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+          <Card className="bg-card border-border">
             <CardHeader className="pb-3">
-              <CardTitle className="text-white text-sm flex items-center gap-2">
-                <Watch className="w-4 h-4 text-[#F8AD3C]" />
+              <CardTitle className="text-foreground text-sm flex items-center gap-2">
+                <Watch className="w-4 h-4 text-gold" />
                 Warna Gelang
               </CardTitle>
-              <CardDescription className="text-xs text-[#7FB3AE]">
+              <CardDescription className="text-xs text-muted-foreground">
                 Pemetaan warna gelang per tipe tiket
               </CardDescription>
             </CardHeader>
@@ -452,14 +452,14 @@ export function LiveMonitor() {
                 {wristbandConfigs.map((wb) => (
                   <div
                     key={wb.ticketTypeId}
-                    className="flex items-center gap-2.5 p-2 rounded-lg bg-[#0A0F0E]/60 border border-[rgba(0,163,157,0.06)]"
+                    className="flex items-center gap-2.5 p-2 rounded-lg bg-background/60 border border-border"
                   >
                     <div
-                      className="w-5 h-5 rounded-full shrink-0 border-2 border-white/10"
+                      className="w-5 h-5 rounded-full shrink-0 border-2 border-input"
                       style={{ backgroundColor: wb.wristbandColorHex }}
                     />
-                    <span className="text-[11px] text-white font-medium flex-1">{wb.ticketTypeName}</span>
-                    <span className="text-[10px] text-[#7FB3AE]">{wb.emoji} {wb.wristbandColor}</span>
+                    <span className="text-[11px] text-foreground font-medium flex-1">{wb.ticketTypeName}</span>
+                    <span className="text-[10px] text-muted-foreground">{wb.emoji} {wb.wristbandColor}</span>
                   </div>
                 ))}
               </div>
@@ -467,12 +467,12 @@ export function LiveMonitor() {
           </Card>
 
           {/* ═══════════ ACTIVE COUNTERS ═══════════ */}
-          <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+          <Card className="bg-card border-border">
             <CardHeader className="pb-3">
-              <CardTitle className="text-white text-sm flex items-center gap-2">
-                <Store className="w-4 h-4 text-[#00A39D]" />
+              <CardTitle className="text-foreground text-sm flex items-center gap-2">
+                <Store className="w-4 h-4 text-primary" />
                 Counter Aktif
-                <Badge variant="outline" className="text-[10px] text-[#00A39D] border-[#00A39D]/30 ml-auto">
+                <Badge variant="outline" className="text-[10px] text-primary border-primary/30 ml-auto">
                   {liveStats.activeCounters} aktif
                 </Badge>
               </CardTitle>
@@ -484,25 +484,25 @@ export function LiveMonitor() {
                   return (
                     <div
                       key={counter.id}
-                      className="p-2.5 rounded-lg bg-[#0A0F0E]/60 border border-[rgba(0,163,157,0.06)]"
+                      className="p-2.5 rounded-lg bg-background/60 border border-border"
                     >
                       <div className="flex items-center justify-between mb-1.5">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 rounded-full bg-emerald-400" />
-                          <span className="text-xs text-white font-medium">{counter.name}</span>
+                          <span className="text-xs text-foreground font-medium">{counter.name}</span>
                         </div>
-                        <span className="text-xs text-[#7FB3AE]">{counter.redeemedToday}/{counter.capacity}</span>
+                        <span className="text-xs text-muted-foreground">{counter.redeemedToday}/{counter.capacity}</span>
                       </div>
-                      <div className="w-full h-1.5 rounded-full bg-[rgba(0,163,157,0.1)]">
+                      <div className="w-full h-1.5 rounded-full bg-primary/10">
                         <div
                           className={cn(
                             'h-full rounded-full transition-all',
-                            pct >= 90 ? 'bg-red-400' : pct >= 70 ? 'bg-[#F8AD3C]' : 'bg-[#00A39D]'
+                            pct >= 90 ? 'bg-red-400' : pct >= 70 ? 'bg-gold' : 'bg-primary'
                           )}
                           style={{ width: `${Math.min(pct, 100)}%` }}
                         />
                       </div>
-                      <p className="text-[10px] text-[#7FB3AE] mt-1">
+                      <p className="text-[10px] text-muted-foreground mt-1">
                         {counter.location} • {pct}% redeemed
                       </p>
                     </div>

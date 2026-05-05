@@ -167,17 +167,17 @@ export default function PaymentPage() {
   // ─── Loading state ──────────────────────────────────────────
   if (orderLoading) {
     return (
-      <div className="min-h-screen bg-[#0B0B0F] flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-green-400 animate-spin" />
-        <span className="ml-3 text-gray-400">Memuat pesanan...</span>
+        <span className="ml-3 text-muted-foreground">Memuat pesanan...</span>
       </div>
     );
   }
 
   if (!order) {
     return (
-      <div className="min-h-screen bg-[#0B0B0F] flex items-center justify-center">
-        <p className="text-gray-500">Order tidak ditemukan</p>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Order tidak ditemukan</p>
       </div>
     );
   }
@@ -191,19 +191,19 @@ export default function PaymentPage() {
   const showPaymentPanel = paymentResult && (paymentResult.vaNumber || paymentResult.qrContent);
 
   return (
-    <div className="min-h-screen bg-[#0B0B0F]">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-[#0B0B0F]/95 backdrop-blur-md border-b border-[#2A2A35]">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
           <Button
             variant="ghost"
             size="icon"
-            className="text-gray-400 hover:text-white hover:bg-[#16161D]"
+            className="text-muted-foreground hover:text-foreground hover:bg-card"
             onClick={() => paymentResult ? navigateTo("home") : navigateTo("home")}
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-white font-semibold text-lg flex-1">
+          <h1 className="text-foreground font-semibold text-lg flex-1">
             Pembayaran
           </h1>
           <Badge
@@ -232,35 +232,35 @@ export default function PaymentPage() {
 
       <main className="max-w-lg mx-auto px-4 py-6 pb-28 space-y-4">
         {/* Order summary */}
-        <Card className="bg-[#16161D] border-[#2A2A35]">
+        <Card className="bg-card border-border">
           <CardContent className="pt-4 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-gray-400 text-sm">Kode Pesanan</span>
+              <span className="text-muted-foreground text-sm">Kode Pesanan</span>
               <div className="flex items-center gap-1">
-                <span className="text-white font-mono text-sm">
+                <span className="text-foreground font-mono text-sm">
                   {order.orderCode}
                 </span>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-6 w-6 text-gray-500 hover:text-white"
+                  className="h-6 w-6 text-muted-foreground hover:text-foreground"
                   onClick={() => copyToClipboard(order.orderCode, "code")}
                 >
                   <Copy className="w-3 h-3" />
                 </Button>
               </div>
             </div>
-            <Separator className="bg-[#2A2A35]" />
+            <Separator className="bg-border" />
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white font-semibold">{eventTitle}</p>
-                <p className="text-gray-400 text-xs">{eventDate}</p>
+                <p className="text-foreground font-semibold">{eventTitle}</p>
+                <p className="text-muted-foreground text-xs">{eventDate}</p>
               </div>
               <div className="text-right">
                 <p className="text-green-400 font-bold text-xl">
                   {formatRupiah(order.totalAmount)}
                 </p>
-                <p className="text-gray-500 text-xs">
+                <p className="text-muted-foreground text-xs">
                   {totalTickets} tiket
                 </p>
               </div>
@@ -270,10 +270,10 @@ export default function PaymentPage() {
 
         {/* ─── PAYMENT RESULT PANEL (VA / QRIS) ──────────────── */}
         {showPaymentPanel && paymentResult && (
-          <Card className="bg-[#16161D] border-green-500/30">
+          <Card className="bg-card border-green-500/30">
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-white text-sm flex items-center gap-2">
+                <CardTitle className="text-foreground text-sm flex items-center gap-2">
                   {paymentResult.vaNumber ? (
                     <>
                       <Building2 className="w-4 h-4 text-green-400" />
@@ -291,7 +291,7 @@ export default function PaymentPage() {
                   DOKU
                 </Badge>
               </div>
-              <CardDescription className="text-gray-400 text-xs">
+              <CardDescription className="text-muted-foreground text-xs">
                 {selectedMethodInfo?.label || paymentResult.paymentMethod}
               </CardDescription>
             </CardHeader>
@@ -299,9 +299,9 @@ export default function PaymentPage() {
               {/* VA Number Display */}
               {paymentResult.vaNumber && (
                 <div className="space-y-3">
-                  <div className="bg-[#0B0B0F] rounded-lg p-4 text-center">
-                    <p className="text-gray-500 text-xs mb-2">Nomor Virtual Account</p>
-                    <p className="text-white font-mono text-xl font-bold tracking-wider">
+                  <div className="bg-background rounded-lg p-4 text-center">
+                    <p className="text-muted-foreground text-xs mb-2">Nomor Virtual Account</p>
+                    <p className="text-foreground font-mono text-xl font-bold tracking-wider">
                       {formatVANumber(paymentResult.vaNumber)}
                     </p>
                     <Button
@@ -325,9 +325,9 @@ export default function PaymentPage() {
                   </div>
 
                   {/* Amount */}
-                  <div className="bg-[#0B0B0F] rounded-lg p-3">
+                  <div className="bg-background rounded-lg p-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-500 text-sm">Total Bayar</span>
+                      <span className="text-muted-foreground text-sm">Total Bayar</span>
                       <span className="text-green-400 font-bold text-lg">
                         {formatRupiah(order.totalAmount)}
                       </span>
@@ -356,8 +356,8 @@ export default function PaymentPage() {
                     </div>
                   </div>
 
-                  <div className="bg-[#0B0B0F] rounded-lg p-3 text-center">
-                    <p className="text-gray-500 text-xs mb-1">Total Pembayaran</p>
+                  <div className="bg-background rounded-lg p-3 text-center">
+                    <p className="text-muted-foreground text-xs mb-1">Total Pembayaran</p>
                     <p className="text-green-400 font-bold text-lg">
                       {formatRupiah(order.totalAmount)}
                     </p>
@@ -379,24 +379,24 @@ export default function PaymentPage() {
                     className="flex items-center justify-between w-full text-left"
                     onClick={() => setShowInstructions(!showInstructions)}
                   >
-                    <span className="text-gray-400 text-sm flex items-center gap-1">
+                    <span className="text-muted-foreground text-sm flex items-center gap-1">
                       <Info className="w-3 h-3" />
                       Cara Pembayaran
                     </span>
                     {showInstructions ? (
-                      <ChevronUp className="w-4 h-4 text-gray-500" />
+                      <ChevronUp className="w-4 h-4 text-muted-foreground" />
                     ) : (
-                      <ChevronDown className="w-4 h-4 text-gray-500" />
+                      <ChevronDown className="w-4 h-4 text-muted-foreground" />
                     )}
                   </button>
                   {showInstructions && (
-                    <div className="bg-[#0B0B0F] rounded-lg p-3 space-y-2">
+                    <div className="bg-background rounded-lg p-3 space-y-2">
                       {getPaymentInstructions(selectedMethod).map((step, i) => (
                         <div key={i} className="flex items-start gap-2">
                           <span className="w-5 h-5 rounded-full bg-green-500/20 text-green-400 text-xs flex items-center justify-center shrink-0 mt-0.5">
                             {i + 1}
                           </span>
-                          <span className="text-gray-300 text-sm">{step}</span>
+                          <span className="text-foreground/80 text-sm">{step}</span>
                         </div>
                       ))}
                     </div>
@@ -412,7 +412,7 @@ export default function PaymentPage() {
           <>
             {/* Category tabs */}
             <div className="space-y-3">
-              <h2 className="text-white font-semibold text-sm flex items-center gap-2">
+              <h2 className="text-foreground font-semibold text-sm flex items-center gap-2">
                 <CreditCard className="w-4 h-4 text-green-400" />
                 Pilih Metode Pembayaran
               </h2>
@@ -435,7 +435,7 @@ export default function PaymentPage() {
                           "flex-shrink-0 flex items-center gap-2 px-3 py-2 rounded-lg border transition-all text-sm",
                           isActive
                             ? "bg-green-500/20 border-green-500/50 text-green-400"
-                            : "bg-[#16161D] border-[#2A2A35] text-gray-400 hover:border-gray-500"
+                            : "bg-card border-border text-muted-foreground hover:border-muted-foreground"
                         )}
                       >
                         <CatIcon className="w-4 h-4" />
@@ -448,13 +448,13 @@ export default function PaymentPage() {
             </div>
 
             {/* Methods in selected category */}
-            <Card className="bg-[#16161D] border-[#2A2A35] overflow-hidden">
+            <Card className="bg-card border-border overflow-hidden">
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-white text-sm">
+                  <CardTitle className="text-foreground text-sm">
                     {paymentGroups.find((g) => g.key === selectedCategory)?.label || ""}
                   </CardTitle>
-                  <p className="text-gray-500 text-xs">
+                  <p className="text-muted-foreground text-xs">
                     {paymentGroups.find((g) => g.key === selectedCategory)?.methods.length || 0} metode
                   </p>
                 </div>
@@ -473,7 +473,7 @@ export default function PaymentPage() {
                           "w-full flex items-center gap-3 p-3 rounded-lg border transition-all text-left",
                           isSelected
                             ? "bg-green-500/10 border-green-500/50"
-                            : "bg-[#0B0B0F] border-[#2A2A35] hover:border-gray-500"
+                            : "bg-background border-border hover:border-muted-foreground"
                         )}
                       >
                         {/* Method icon */}
@@ -491,11 +491,11 @@ export default function PaymentPage() {
                         <div className="flex-1 min-w-0">
                           <p className={cn(
                             "text-sm font-medium truncate",
-                            isSelected ? "text-green-400" : "text-white"
+                            isSelected ? "text-green-400" : "text-foreground"
                           )}>
                             {info.label}
                           </p>
-                          <p className="text-gray-500 text-xs truncate">
+                          <p className="text-muted-foreground text-xs truncate">
                             {PAYMENT_CATEGORY_CONFIG[selectedCategory]?.description || ""}
                           </p>
                         </div>
@@ -503,9 +503,9 @@ export default function PaymentPage() {
                         {/* Selection indicator */}
                         <div className={cn(
                           "w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors",
-                          isSelected ? "border-green-500 bg-green-500" : "border-[#2A2A35]"
+                          isSelected ? "border-green-500 bg-green-500" : "border-border"
                         )}>
-                          {isSelected && <CheckCircle2 className="w-3 h-3 text-white" />}
+                          {isSelected && <CheckCircle2 className="w-3 h-3 text-primary-foreground" />}
                         </div>
                       </button>
                     );
@@ -515,12 +515,12 @@ export default function PaymentPage() {
 
             {/* Amount display */}
             {selectedMethod && (
-              <Card className="bg-[#0B0B0F] border-green-500/30">
+              <Card className="bg-background border-green-500/30">
                 <CardContent className="py-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <span className="text-gray-400 text-sm">Total Pembayaran</span>
-                      <p className="text-gray-500 text-xs mt-0.5">
+                      <span className="text-muted-foreground text-sm">Total Pembayaran</span>
+                      <p className="text-muted-foreground text-xs mt-0.5">
                         via {selectedMethodInfo?.label || selectedMethod}
                       </p>
                     </div>
@@ -538,13 +538,13 @@ export default function PaymentPage() {
       </main>
 
       {/* Fixed bottom bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-[#0B0B0F]/95 backdrop-blur-md border-t border-[#2A2A35] p-4 z-50">
+      <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border p-4 z-50">
         <div className="max-w-lg mx-auto">
           {showPaymentPanel ? (
             <div className="flex items-center gap-3">
               <Button
                 variant="outline"
-                className="flex-1 border-[#2A2A35] text-gray-300 hover:bg-[#16161D] hover:text-white h-12"
+                className="flex-1 border-border text-foreground/80 hover:bg-card hover:text-foreground h-12"
                 onClick={() => {
                   setPaymentResult(null);
                   setShowInstructions(false);

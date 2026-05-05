@@ -74,9 +74,9 @@ export function CounterLayout({ children }: CounterLayoutProps) {
     .toUpperCase()
 
   return (
-    <div className="min-h-screen bg-[#0A0F0E] flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* ── Compact Top Header ── */}
-      <header className="sticky top-0 z-40 bg-[#111918]/95 backdrop-blur border-b border-border/50">
+      <header className="sticky top-0 z-40 bg-card/95 backdrop-blur border-b border-border/50">
         <div className="flex items-center justify-between h-14 px-4">
           {/* Left: Brand + Counter info */}
           <div className="flex items-center gap-3">
@@ -118,7 +118,7 @@ export function CounterLayout({ children }: CounterLayoutProps) {
                   <LogOut className="h-4 w-4" />
                 </Button>
               </AlertDialogTrigger>
-              <AlertDialogContent className="bg-[#111918] border-border/50">
+              <AlertDialogContent className="bg-card border-border/50">
                 <AlertDialogHeader>
                   <AlertDialogTitle>Keluar dari sesi?</AlertDialogTitle>
                   <AlertDialogDescription>
@@ -145,7 +145,7 @@ export function CounterLayout({ children }: CounterLayoutProps) {
       <main className="flex-1 overflow-y-auto pb-20">{children}</main>
 
       {/* ── Bottom Navigation Bar ── */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#111918]/98 backdrop-blur border-t border-border/50">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-card/98 backdrop-blur border-t border-border/50">
         <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
           {navItems.map((item) => {
             const active = isActive(item.href)

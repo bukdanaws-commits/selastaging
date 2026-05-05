@@ -118,15 +118,15 @@ function OrderDetailDialog({ order }: { order: Record<string, unknown> }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="text-[#00A39D] hover:text-[#00BFB8] hover:bg-[rgba(0,163,157,0.1)] h-8 px-2">
+        <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10 h-8 px-2">
           <Eye className="w-4 h-4 mr-1" />
           Detail
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-[#111918] border-[rgba(0,163,157,0.15)] text-white max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="bg-card border-primary/15 text-foreground max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-lg font-bold text-white flex items-center gap-2">
-            <FileText className="w-5 h-5 text-[#00A39D]" />
+          <DialogTitle className="text-lg font-bold text-foreground flex items-center gap-2">
+            <FileText className="w-5 h-5 text-primary" />
             Detail Pesanan
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
@@ -139,7 +139,7 @@ function OrderDetailDialog({ order }: { order: Record<string, unknown> }) {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Kode Pesanan</p>
-              <p className="text-base font-mono font-bold text-[#00A39D]">{String(order.orderCode || order.id || '')}</p>
+              <p className="text-base font-mono font-bold text-primary">{String(order.orderCode || order.id || '')}</p>
             </div>
             <div className="text-right">
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Status</p>
@@ -148,36 +148,36 @@ function OrderDetailDialog({ order }: { order: Record<string, unknown> }) {
           </div>
 
           {/* Order Items */}
-          <Card className="bg-[#0A0F0E] border-[rgba(0,163,157,0.08)]">
+          <Card className="bg-background border-primary/10">
             <CardHeader className="pb-2 pt-4 px-4">
-              <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
-                <ShoppingCart className="w-4 h-4 text-[#00A39D]" />
+              <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <ShoppingCart className="w-4 h-4 text-primary" />
                 Item Pesanan
               </CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4">
-              <div className="flex items-center justify-between rounded-lg bg-[rgba(0,163,157,0.05)] p-3">
+              <div className="flex items-center justify-between rounded-lg bg-primary/5 p-3">
                 <div>
-                  <p className="text-white font-medium text-sm">{String(order.ticketType || (order.items as Record<string, unknown>[])?.[0]?.ticketType || 'N/A')}</p>
+                  <p className="text-foreground font-medium text-sm">{String(order.ticketType || (order.items as Record<string, unknown>[])?.[0]?.ticketType || 'N/A')}</p>
                   <p className="text-muted-foreground text-xs mt-0.5">{formatRupiah(Number(order.pricePerTicket || 0))} / tiket</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-white font-semibold">x{Number(order.quantity || 0)}</p>
-                  <p className="text-[#F8AD3C] font-bold text-sm mt-0.5">{formatRupiah(Number(order.totalAmount || 0))}</p>
+                  <p className="text-foreground font-semibold">x{Number(order.quantity || 0)}</p>
+                  <p className="text-gold font-bold text-sm mt-0.5">{formatRupiah(Number(order.totalAmount || 0))}</p>
                 </div>
               </div>
-              <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/5">
+              <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
                 <p className="text-muted-foreground text-sm font-medium">Total Pembayaran</p>
-                <p className="text-white font-bold text-lg">{formatRupiah(Number(order.totalAmount || 0))}</p>
+                <p className="text-foreground font-bold text-lg">{formatRupiah(Number(order.totalAmount || 0))}</p>
               </div>
             </CardContent>
           </Card>
 
           {/* Buyer Details */}
-          <Card className="bg-[#0A0F0E] border-[rgba(0,163,157,0.08)]">
+          <Card className="bg-background border-primary/10">
             <CardHeader className="pb-2 pt-4 px-4">
-              <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
-                <User className="w-4 h-4 text-[#00A39D]" />
+              <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <User className="w-4 h-4 text-primary" />
                 Data Pembeli
               </CardTitle>
             </CardHeader>
@@ -186,31 +186,31 @@ function OrderDetailDialog({ order }: { order: Record<string, unknown> }) {
                 <User className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                 <div>
                   <p className="text-xs text-muted-foreground">Nama</p>
-                  <p className="text-white text-sm font-medium">{String((order.user as Record<string, unknown>)?.name || order.userName || '—')}</p>
+                  <p className="text-foreground text-sm font-medium">{String((order.user as Record<string, unknown>)?.name || order.userName || '—')}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                 <div>
                   <p className="text-xs text-muted-foreground">Email</p>
-                  <p className="text-white text-sm font-medium">{String((order.user as Record<string, unknown>)?.email || order.userEmail || '—')}</p>
+                  <p className="text-foreground text-sm font-medium">{String((order.user as Record<string, unknown>)?.email || order.userEmail || '—')}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <Calendar className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                 <div>
                   <p className="text-xs text-muted-foreground">Tanggal Order</p>
-                  <p className="text-white text-sm font-medium">{formatDateTime(String(order.createdAt || ''))}</p>
+                  <p className="text-foreground text-sm font-medium">{formatDateTime(String(order.createdAt || ''))}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Payment Info */}
-          <Card className="bg-[#0A0F0E] border-[rgba(0,163,157,0.08)]">
+          <Card className="bg-background border-primary/10">
             <CardHeader className="pb-2 pt-4 px-4">
-              <CardTitle className="text-sm font-semibold text-white flex items-center gap-2">
-                <CreditCard className="w-4 h-4 text-[#00A39D]" />
+              <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-2">
+                <CreditCard className="w-4 h-4 text-primary" />
                 Informasi Pembayaran
               </CardTitle>
             </CardHeader>
@@ -219,7 +219,7 @@ function OrderDetailDialog({ order }: { order: Record<string, unknown> }) {
                 <CreditCard className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                 <div>
                   <p className="text-xs text-muted-foreground">Metode Pembayaran</p>
-                  <p className="text-white text-sm font-medium">{String(order.paymentMethod || order.paymentType || '—')}</p>
+                  <p className="text-foreground text-sm font-medium">{String(order.paymentMethod || order.paymentType || '—')}</p>
                 </div>
               </div>
               {order.paidAt != null && (
@@ -227,7 +227,7 @@ function OrderDetailDialog({ order }: { order: Record<string, unknown> }) {
                   <CircleDot className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                   <div>
                     <p className="text-xs text-muted-foreground">Tanggal Bayar</p>
-                    <p className="text-white text-sm font-medium">{formatDateTime(String(order.paidAt))}</p>
+                    <p className="text-foreground text-sm font-medium">{formatDateTime(String(order.paidAt))}</p>
                   </div>
                 </div>
               )}
@@ -238,7 +238,7 @@ function OrderDetailDialog({ order }: { order: Record<string, unknown> }) {
         <DialogFooter className="mt-4">
           <Button
             variant="outline"
-            className="border-[rgba(0,163,157,0.2)] text-muted-foreground hover:text-white hover:bg-[rgba(0,163,157,0.1)]"
+            className="border-primary/20 text-muted-foreground hover:text-foreground hover:bg-primary/10"
             onClick={() => toast.info('Fitur export sedang dalam pengembangan')}
           >
             Export PDF
@@ -262,12 +262,12 @@ function TimelineItem({
   active?: boolean;
   color?: string;
 }) {
-  const dotColor = color || (active ? 'bg-[#00A39D]' : 'bg-gray-600');
-  const textColor = color || (active ? 'text-white' : 'text-muted-foreground');
+  const dotColor = color || (active ? 'bg-primary' : 'bg-gray-600');
+  const textColor = color || (active ? 'text-foreground' : 'text-muted-foreground');
 
   return (
     <div className="relative flex items-start gap-3 pl-3">
-      <div className={cn('absolute -left-3 top-1.5 w-3 h-3 rounded-full border-2 border-[#111918]', dotColor)} />
+      <div className={cn('absolute -left-3 top-1.5 w-3 h-3 rounded-full border-2 border-card', dotColor)} />
       <div className="flex-1">
         <p className={cn('text-xs font-medium', textColor)}>{label}</p>
         <p className="text-[10px] text-muted-foreground mt-0.5">{formatDateTime(time)}</p>
@@ -327,8 +327,8 @@ export function OrdersPage() {
       label: 'Total Orders',
       value: allOrders.length,
       icon: ShoppingCart,
-      color: 'text-[#00A39D]',
-      bg: 'bg-[rgba(0,163,157,0.1)]',
+      color: 'text-primary',
+      bg: 'bg-primary/10',
     },
     {
       label: 'Paid',
@@ -355,8 +355,8 @@ export function OrdersPage() {
       label: 'Total Revenue',
       value: formatRupiah(totalRevenue),
       icon: DollarSign,
-      color: 'text-[#F8AD3C]',
-      bg: 'bg-[rgba(248,173,60,0.1)]',
+      color: 'text-gold',
+      bg: 'bg-gold/10',
     },
   ];
 
@@ -376,8 +376,8 @@ export function OrdersPage() {
     <div className="space-y-6">
       {/* ═══ PAGE HEADER ═══ */}
       <div>
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-          <ShoppingCart className="w-6 h-6 text-[#00A39D]" />
+        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+          <ShoppingCart className="w-6 h-6 text-primary" />
           Orders &amp; Payments
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
@@ -390,7 +390,7 @@ export function OrdersPage() {
         {stats.map((stat) => (
           <Card
             key={stat.label}
-            className="bg-[#111918] border-[rgba(0,163,157,0.1)] hover:border-[rgba(0,163,157,0.25)] transition-all"
+            className="bg-card border-primary/10 hover:border-primary/25 transition-all"
           >
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
@@ -409,31 +409,31 @@ export function OrdersPage() {
 
       {/* ═══ PAYMENT SUMMARY ═══ */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+        <Card className="bg-card border-primary/10">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[rgba(0,163,157,0.1)] flex items-center justify-center shrink-0">
-              <QrCode className="w-5 h-5 text-[#00A39D]" />
+            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <QrCode className="w-5 h-5 text-primary" />
             </div>
             <div>
               <p className="text-xs text-muted-foreground">QRIS</p>
-              <p className="text-white font-bold text-lg">{allOrders.filter(o => String(o.paymentType || o.paymentMethod || '').includes('QRIS')).length}</p>
+              <p className="text-foreground font-bold text-lg">{allOrders.filter(o => String(o.paymentType || o.paymentMethod || '').includes('QRIS')).length}</p>
               <p className="text-[10px] text-muted-foreground">transaksi</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+        <Card className="bg-card border-primary/10">
           <CardContent className="p-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[rgba(248,173,60,0.1)] flex items-center justify-center shrink-0">
-              <Building2 className="w-5 h-5 text-[#F8AD3C]" />
+            <div className="w-10 h-10 rounded-lg bg-gold/10 flex items-center justify-center shrink-0">
+              <Building2 className="w-5 h-5 text-gold" />
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Transfer Bank</p>
-              <p className="text-white font-bold text-lg">{allOrders.filter(o => String(o.paymentType || o.paymentMethod || '').includes('Transfer') || String(o.paymentType || o.paymentMethod || '').includes('bank')).length}</p>
+              <p className="text-foreground font-bold text-lg">{allOrders.filter(o => String(o.paymentType || o.paymentMethod || '').includes('Transfer') || String(o.paymentType || o.paymentMethod || '').includes('bank')).length}</p>
               <p className="text-[10px] text-muted-foreground">transaksi</p>
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+        <Card className="bg-card border-primary/10">
           <CardContent className="p-4 flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center shrink-0">
               <TrendingUp className="w-5 h-5 text-emerald-400" />
@@ -453,7 +453,7 @@ export function OrdersPage() {
       </div>
 
       {/* ═══ FILTER ROW ═══ */}
-      <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+      <Card className="bg-card border-primary/10">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 min-w-0">
@@ -464,7 +464,7 @@ export function OrdersPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Cari kode pesanan atau nama pembeli..."
-                  className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white placeholder:text-muted-foreground/50 pl-9 h-9"
+                  className="bg-background border-primary/15 text-foreground placeholder:text-muted-foreground/50 pl-9 h-9"
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
@@ -482,16 +482,16 @@ export function OrdersPage() {
                   setCurrentPage(1);
                 }}
               >
-                <SelectTrigger className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white h-9">
+                <SelectTrigger className="bg-background border-primary/15 text-foreground h-9">
                   <SelectValue placeholder="Semua Status" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#111918] border-[rgba(0,163,157,0.15)]">
-                  <SelectItem value="all" className="text-white">Semua Status</SelectItem>
-                  <SelectItem value="paid" className="text-white">Paid</SelectItem>
-                  <SelectItem value="pending" className="text-white">Pending</SelectItem>
-                  <SelectItem value="rejected" className="text-white">Rejected</SelectItem>
-                  <SelectItem value="cancelled" className="text-white">Cancelled</SelectItem>
-                  <SelectItem value="expired" className="text-white">Expired</SelectItem>
+                <SelectContent className="bg-card border-primary/15">
+                  <SelectItem value="all" className="text-foreground">Semua Status</SelectItem>
+                  <SelectItem value="paid" className="text-foreground">Paid</SelectItem>
+                  <SelectItem value="pending" className="text-foreground">Pending</SelectItem>
+                  <SelectItem value="rejected" className="text-foreground">Rejected</SelectItem>
+                  <SelectItem value="cancelled" className="text-foreground">Cancelled</SelectItem>
+                  <SelectItem value="expired" className="text-foreground">Expired</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -504,13 +504,13 @@ export function OrdersPage() {
                   setCurrentPage(1);
                 }}
               >
-                <SelectTrigger className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white h-9">
+                <SelectTrigger className="bg-background border-primary/15 text-foreground h-9">
                   <SelectValue placeholder="Semua Tipe" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#111918] border-[rgba(0,163,157,0.15)]">
-                  <SelectItem value="all" className="text-white">Semua Tipe</SelectItem>
+                <SelectContent className="bg-card border-primary/15">
+                  <SelectItem value="all" className="text-foreground">Semua Tipe</SelectItem>
                   {TICKET_TYPES.map((t) => (
-                    <SelectItem key={t} value={t} className="text-white">{t}</SelectItem>
+                    <SelectItem key={t} value={t} className="text-foreground">{t}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -520,12 +520,12 @@ export function OrdersPage() {
       </Card>
 
       {/* ═══ ORDERS TABLE ═══ */}
-      <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+      <Card className="bg-card border-primary/10">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-white text-base flex items-center gap-2">
-                <ArrowUpDown className="w-4 h-4 text-[#00A39D]" />
+              <CardTitle className="text-foreground text-base flex items-center gap-2">
+                <ArrowUpDown className="w-4 h-4 text-primary" />
                 Daftar Pesanan
               </CardTitle>
               <CardDescription className="text-muted-foreground text-xs mt-1">
@@ -545,7 +545,7 @@ export function OrdersPage() {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-[rgba(0,163,157,0.08)] hover:bg-transparent">
+                  <TableRow className="border-primary/10 hover:bg-transparent">
                     <TableHead className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold h-10 px-4">Kode Order</TableHead>
                     <TableHead className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold h-10 px-4">Pembeli</TableHead>
                     <TableHead className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold h-10 px-4">Tipe Tiket</TableHead>
@@ -559,7 +559,7 @@ export function OrdersPage() {
                 </TableHeader>
                 <TableBody>
                   {pagedOrders.length === 0 ? (
-                    <TableRow className="border-[rgba(0,163,157,0.05)]">
+                    <TableRow className="border-primary/5">
                       <TableCell colSpan={9} className="text-center py-12 text-muted-foreground">
                         <Search className="w-8 h-8 mx-auto mb-2 opacity-30" />
                         <p className="text-sm">Tidak ada pesanan ditemukan</p>
@@ -572,15 +572,15 @@ export function OrdersPage() {
                     pagedOrders.map((order) => (
                       <TableRow
                         key={String(order.id)}
-                        className="border-[rgba(0,163,157,0.05)] hover:bg-[rgba(0,163,157,0.04)] transition-colors"
+                        className="border-primary/5 hover:bg-primary/5 transition-colors"
                       >
                         <TableCell className="px-4 py-3">
-                          <span className="font-mono text-xs font-semibold text-[#00A39D]">
+                          <span className="font-mono text-xs font-semibold text-primary">
                             {String(order.orderCode || order.id || '').slice(-8)}
                           </span>
                         </TableCell>
                         <TableCell className="px-4 py-3">
-                          <p className="text-sm text-white font-medium truncate max-w-[140px]">
+                          <p className="text-sm text-foreground font-medium truncate max-w-[140px]">
                             {String((order.user as Record<string, unknown>)?.name || order.userName || '—')}
                           </p>
                           <p className="text-[10px] text-muted-foreground truncate max-w-[140px]">
@@ -590,16 +590,16 @@ export function OrdersPage() {
                         <TableCell className="px-4 py-3">
                           <Badge
                             variant="outline"
-                            className="text-[10px] bg-[rgba(0,163,157,0.06)] border-[rgba(0,163,157,0.2)] text-[#7FB3AE]"
+                            className="text-[10px] bg-primary/10 border-primary/20 text-muted-foreground"
                           >
                             {String(order.ticketType || (order.items as Record<string, unknown>[])?.[0]?.ticketType || '—')}
                           </Badge>
                         </TableCell>
                         <TableCell className="px-4 py-3 text-center">
-                          <span className="text-sm text-white font-semibold">{Number(order.quantity || (order.items as Record<string, unknown>[])?.length || 0)}</span>
+                          <span className="text-sm text-foreground font-semibold">{Number(order.quantity || (order.items as Record<string, unknown>[])?.length || 0)}</span>
                         </TableCell>
                         <TableCell className="px-4 py-3 text-right">
-                          <span className="text-sm text-white font-semibold">
+                          <span className="text-sm text-foreground font-semibold">
                             {formatRupiah(Number(order.totalAmount || 0))}
                           </span>
                         </TableCell>
@@ -625,7 +625,7 @@ export function OrdersPage() {
 
           {/* ═══ PAGINATION ═══ */}
           {filteredOrders.length > PAGE_SIZE && (
-            <div className="flex items-center justify-between px-4 py-3 border-t border-[rgba(0,163,157,0.08)]">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-primary/10">
               <p className="text-xs text-muted-foreground">
                 {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filteredOrders.length)} dari{' '}
                 {filteredOrders.length}
@@ -634,7 +634,7 @@ export function OrdersPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-8 px-3 border-[rgba(0,163,157,0.15)] text-muted-foreground hover:text-white hover:bg-[rgba(0,163,157,0.1)]"
+                  className="h-8 px-3 border-primary/15 text-muted-foreground hover:text-foreground hover:bg-primary/10"
                   disabled={safePage <= 1}
                   onClick={() => setCurrentPage((p) => p - 1)}
                 >
@@ -660,8 +660,8 @@ export function OrdersPage() {
                       className={cn(
                         'h-8 w-8 p-0 text-xs font-semibold',
                         safePage === pageNum
-                          ? 'bg-[#00A39D] text-[#0A0F0E] hover:bg-[#00BFB8]'
-                          : 'border-[rgba(0,163,157,0.15)] text-muted-foreground hover:text-white hover:bg-[rgba(0,163,157,0.1)]'
+                          ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                          : 'border-primary/15 text-muted-foreground hover:text-foreground hover:bg-primary/10'
                       )}
                       onClick={() => setCurrentPage(pageNum)}
                     >
@@ -672,7 +672,7 @@ export function OrdersPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="h-8 px-3 border-[rgba(0,163,157,0.15)] text-muted-foreground hover:text-white hover:bg-[rgba(0,163,157,0.1)]"
+                  className="h-8 px-3 border-primary/15 text-muted-foreground hover:text-foreground hover:bg-primary/10"
                   disabled={safePage >= totalPages}
                   onClick={() => setCurrentPage((p) => p + 1)}
                 >

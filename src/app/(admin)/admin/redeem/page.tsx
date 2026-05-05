@@ -1,4 +1,4 @@
-import { RedeemPage } from '@/components/organizer/RedeemPage'
+import { RedeemPage } from '@/components/admin/RedeemPage'
 export default function RedeemRoute() {
   return <RedeemPage />
 }

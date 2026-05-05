@@ -140,16 +140,16 @@ function SetFeeDialog({
         <Button
           variant="ghost"
           size="sm"
-          className="text-[#00A39D] hover:text-[#00BFB8] hover:bg-[rgba(0,163,157,0.1)] h-8 px-2 text-xs"
+          className="text-primary hover:text-primary hover:bg-primary/10 h-8 px-2 text-xs"
         >
           <Percent className="w-3.5 h-3.5 mr-1" />
           Set Fee
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-[#111918] border-[rgba(0,163,157,0.15)] text-white max-w-sm">
+      <DialogContent className="bg-card border-input text-foreground max-w-sm">
         <DialogHeader>
-          <DialogTitle className="text-base font-bold text-white flex items-center gap-2">
-            <Percent className="w-5 h-5 text-[#00A39D]" />
+          <DialogTitle className="text-base font-bold text-foreground flex items-center gap-2">
+            <Percent className="w-5 h-5 text-primary" />
             Set Platform Fee
           </DialogTitle>
           <DialogDescription className="text-muted-foreground text-sm">
@@ -168,7 +168,7 @@ function SetFeeDialog({
               step="0.5"
               value={fee}
               onChange={(e) => setFee(e.target.value)}
-              className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white text-sm h-10"
+              className="bg-background border-input text-foreground text-sm h-10"
             />
             <p className="text-[10px] text-muted-foreground">
               Fee antara 1% - 10%. Saat ini: {currentFee}%
@@ -178,13 +178,13 @@ function SetFeeDialog({
         <DialogFooter className="gap-2">
           <Button
             variant="outline"
-            className="border-[rgba(0,163,157,0.2)] text-muted-foreground hover:text-white"
+            className="border-input text-muted-foreground hover:text-foreground"
             onClick={() => setOpen(false)}
           >
             Batal
           </Button>
           <Button
-            className="bg-[#00A39D] hover:bg-[#00BFB8] text-[#0A0F0E] font-semibold"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
             onClick={handleSave}
             disabled={setOrganizerFee.isPending}
           >
@@ -207,15 +207,15 @@ function OrganizerDetailDialog({ org }: { org: OrganizerItem }) {
         <Button
           variant="ghost"
           size="sm"
-          className="text-[#00A39D] hover:text-[#00BFB8] hover:bg-[rgba(0,163,157,0.1)] h-8 px-2"
+          className="text-primary hover:text-primary hover:bg-primary/10 h-8 px-2"
         >
           <Eye className="w-4 h-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-[#111918] border-[rgba(0,163,157,0.15)] text-white max-w-lg max-h-[80vh] overflow-y-auto">
+      <DialogContent className="bg-card border-input text-foreground max-w-lg max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-base font-bold text-white flex items-center gap-2">
-            <Users className="w-5 h-5 text-[#00A39D]" />
+          <DialogTitle className="text-base font-bold text-foreground flex items-center gap-2">
+            <Users className="w-5 h-5 text-primary" />
             Detail Organizer
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
@@ -225,41 +225,41 @@ function OrganizerDetailDialog({ org }: { org: OrganizerItem }) {
         <div className="space-y-4 mt-3">
           {/* Basic Info */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5">
+            <div className="p-3 rounded-lg bg-background border border-border">
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Status</p>
               <div className="mt-1">{getOrgStatusBadge(org.status)}</div>
             </div>
-            <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5">
+            <div className="p-3 rounded-lg bg-background border border-border">
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Platform Fee</p>
-              <p className="text-white text-sm font-bold mt-1">{org.feePercent}%</p>
+              <p className="text-foreground text-sm font-bold mt-1">{org.feePercent}%</p>
             </div>
-            <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5">
+            <div className="p-3 rounded-lg bg-background border border-border">
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Total Revenue</p>
-              <p className="text-[#F8AD3C] text-sm font-bold mt-1">{formatRupiah(org.totalRevenue)}</p>
+              <p className="text-gold text-sm font-bold mt-1">{formatRupiah(org.totalRevenue)}</p>
             </div>
-            <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5">
+            <div className="p-3 rounded-lg bg-background border border-border">
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Balance</p>
               <p className="text-emerald-400 text-sm font-bold mt-1">{formatRupiah(org.balance)}</p>
             </div>
           </div>
 
-          <Separator className="bg-[rgba(0,163,157,0.1)]" />
+          <Separator className="bg-primary/10" />
 
           {/* Events */}
           <div>
-            <h4 className="text-sm font-semibold text-white flex items-center gap-2 mb-2">
-              <EventIcon className="w-4 h-4 text-[#00A39D]" />
+            <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
+              <EventIcon className="w-4 h-4 text-primary" />
               Events ({org.events?.length || 0})
             </h4>
             <div className="space-y-2 max-h-40 overflow-y-auto">
               {org.events && org.events.length > 0 ? (
                 org.events.map((event) => (
-                  <div key={event.id} className="flex items-center justify-between p-2 rounded-lg bg-[#0A0F0E] border border-white/5">
+                  <div key={event.id} className="flex items-center justify-between p-2 rounded-lg bg-background border border-border">
                     <div className="min-w-0">
-                      <p className="text-sm text-white font-medium truncate">{event.title}</p>
+                      <p className="text-sm text-foreground font-medium truncate">{event.title}</p>
                       <p className="text-xs text-muted-foreground">{event.date}</p>
                     </div>
-                    <Badge variant="outline" className="text-[10px] bg-[rgba(0,163,157,0.06)] border-[rgba(0,163,157,0.2)] text-[#7FB3AE] shrink-0 ml-2">
+                    <Badge variant="outline" className="text-[10px] bg-primary/5 border-input text-muted-foreground shrink-0 ml-2">
                       {event.status}
                     </Badge>
                   </div>
@@ -270,20 +270,20 @@ function OrganizerDetailDialog({ org }: { org: OrganizerItem }) {
             </div>
           </div>
 
-          <Separator className="bg-[rgba(0,163,157,0.1)]" />
+          <Separator className="bg-primary/10" />
 
           {/* Withdrawal History */}
           <div>
-            <h4 className="text-sm font-semibold text-white flex items-center gap-2 mb-2">
-              <Wallet className="w-4 h-4 text-[#F8AD3C]" />
+            <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
+              <Wallet className="w-4 h-4 text-gold" />
               Withdrawal History ({org.withdrawalHistory?.length || 0})
             </h4>
             <div className="space-y-2 max-h-40 overflow-y-auto">
               {org.withdrawalHistory && org.withdrawalHistory.length > 0 ? (
                 org.withdrawalHistory.map((wd) => (
-                  <div key={wd.id} className="flex items-center justify-between p-2 rounded-lg bg-[#0A0F0E] border border-white/5">
+                  <div key={wd.id} className="flex items-center justify-between p-2 rounded-lg bg-background border border-border">
                     <div>
-                      <p className="text-sm text-white font-semibold">{formatRupiah(wd.amount)}</p>
+                      <p className="text-sm text-foreground font-semibold">{formatRupiah(wd.amount)}</p>
                       <p className="text-xs text-muted-foreground">{wd.createdAt}</p>
                     </div>
                     <Badge
@@ -349,10 +349,10 @@ export function OrganizersPage() {
   const totalRevenue = organizers.reduce((sum, o) => sum + o.totalRevenue, 0);
 
   const stats = [
-    { label: 'Total Organizers', value: totalOrganizers, icon: Users, color: 'text-[#00A39D]', bg: 'bg-[rgba(0,163,157,0.1)]' },
+    { label: 'Total Organizers', value: totalOrganizers, icon: Users, color: 'text-primary', bg: 'bg-primary/10' },
     { label: 'Active', value: activeCount, icon: UserCheck, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
     { label: 'Pending Approval', value: pendingCount, icon: UserX, color: 'text-amber-400', bg: 'bg-amber-500/10' },
-    { label: 'Total Platform Revenue', value: formatRupiah(totalRevenue), icon: TrendingUp, color: 'text-[#F8AD3C]', bg: 'bg-[rgba(248,173,60,0.1)]' },
+    { label: 'Total Platform Revenue', value: formatRupiah(totalRevenue), icon: TrendingUp, color: 'text-gold', bg: 'bg-gold/10' },
   ];
 
   const handleToggleStatus = (org: OrganizerItem) => {
@@ -382,11 +382,11 @@ export function OrganizersPage() {
     <div className="space-y-6">
       {/* ═══ HEADER ═══ */}
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-[rgba(0,163,157,0.1)] flex items-center justify-center">
-          <Users className="w-5 h-5 text-[#00A39D]" />
+        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+          <Users className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-white">Organizer Management</h2>
+          <h2 className="text-xl font-bold text-foreground">Organizer Management</h2>
           <p className="text-muted-foreground text-xs">Kelola organizer, set fee, dan pantau revenue</p>
         </div>
       </div>
@@ -394,7 +394,7 @@ export function OrganizersPage() {
       {/* ═══ STATS ═══ */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {stats.map((stat) => (
-          <Card key={stat.label} className="bg-[#111918] border-[rgba(0,163,157,0.1)] hover:border-[rgba(0,163,157,0.25)] transition-all">
+          <Card key={stat.label} className="bg-card border-border hover:border-primary/25 transition-all">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className={cn('w-9 h-9 rounded-lg flex items-center justify-center shrink-0', stat.bg)}>
@@ -411,7 +411,7 @@ export function OrganizersPage() {
       </div>
 
       {/* ═══ FILTER ═══ */}
-      <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+      <Card className="bg-card border-border">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 min-w-0">
@@ -419,7 +419,7 @@ export function OrganizersPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Cari nama atau email organizer..."
-                  className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white placeholder:text-muted-foreground/50 pl-9 h-9"
+                  className="bg-background border-input text-foreground placeholder:text-muted-foreground/50 pl-9 h-9"
                   value={searchQuery}
                   onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                 />
@@ -427,14 +427,14 @@ export function OrganizersPage() {
             </div>
             <div className="w-full sm:w-44">
               <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
-                <SelectTrigger className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white h-9">
+                <SelectTrigger className="bg-background border-input text-foreground h-9">
                   <SelectValue placeholder="Semua Status" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#111918] border-[rgba(0,163,157,0.15)]">
-                  <SelectItem value="all" className="text-white">Semua Status</SelectItem>
-                  <SelectItem value="active" className="text-white">Active</SelectItem>
-                  <SelectItem value="pending" className="text-white">Pending</SelectItem>
-                  <SelectItem value="suspended" className="text-white">Suspended</SelectItem>
+                <SelectContent className="bg-card border-input">
+                  <SelectItem value="all" className="text-foreground">Semua Status</SelectItem>
+                  <SelectItem value="active" className="text-foreground">Active</SelectItem>
+                  <SelectItem value="pending" className="text-foreground">Pending</SelectItem>
+                  <SelectItem value="suspended" className="text-foreground">Suspended</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -443,12 +443,12 @@ export function OrganizersPage() {
       </Card>
 
       {/* ═══ TABLE ═══ */}
-      <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+      <Card className="bg-card border-border">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-white text-base flex items-center gap-2">
-                <Users className="w-4 h-4 text-[#00A39D]" />
+              <CardTitle className="text-foreground text-base flex items-center gap-2">
+                <Users className="w-4 h-4 text-primary" />
                 Daftar Organizer
               </CardTitle>
               <CardDescription className="text-muted-foreground text-xs mt-1">
@@ -468,7 +468,7 @@ export function OrganizersPage() {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-[rgba(0,163,157,0.08)] hover:bg-transparent">
+                  <TableRow className="border-border hover:bg-transparent">
                     <TableHead className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold h-10 px-4">Nama</TableHead>
                     <TableHead className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold h-10 px-4">Email</TableHead>
                     <TableHead className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold h-10 px-4">Status</TableHead>
@@ -480,7 +480,7 @@ export function OrganizersPage() {
                 </TableHeader>
                 <TableBody>
                   {paged.length === 0 ? (
-                    <TableRow className="border-[rgba(0,163,157,0.05)]">
+                    <TableRow className="border-border">
                       <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
                         <Search className="w-8 h-8 mx-auto mb-2 opacity-30" />
                         <p className="text-sm">Tidak ada organizer ditemukan</p>
@@ -490,14 +490,14 @@ export function OrganizersPage() {
                     paged.map((org) => (
                       <TableRow
                         key={org.id}
-                        className="border-[rgba(0,163,157,0.05)] hover:bg-[rgba(0,163,157,0.04)] transition-colors"
+                        className="border-border hover:bg-primary/5 transition-colors"
                       >
                         <TableCell className="px-4 py-3">
                           <div className="flex items-center gap-2 cursor-pointer" onClick={() => setExpandedId(expandedId === org.id ? null : org.id)}>
-                            <div className="w-7 h-7 rounded-full bg-[rgba(0,163,157,0.15)] flex items-center justify-center text-xs font-bold text-[#00A39D]">
+                            <div className="w-7 h-7 rounded-full bg-primary/15 flex items-center justify-center text-xs font-bold text-primary">
                               {org.name.charAt(0).toUpperCase()}
                             </div>
-                            <span className="text-sm text-white font-medium truncate max-w-[160px]">{org.name}</span>
+                            <span className="text-sm text-foreground font-medium truncate max-w-[160px]">{org.name}</span>
                           </div>
                         </TableCell>
                         <TableCell className="px-4 py-3">
@@ -505,13 +505,13 @@ export function OrganizersPage() {
                         </TableCell>
                         <TableCell className="px-4 py-3">{getOrgStatusBadge(org.status)}</TableCell>
                         <TableCell className="px-4 py-3 text-center">
-                          <span className="text-sm text-white font-semibold">{org.eventCount}</span>
+                          <span className="text-sm text-foreground font-semibold">{org.eventCount}</span>
                         </TableCell>
                         <TableCell className="px-4 py-3 text-center">
-                          <span className="text-sm text-[#00A39D] font-semibold">{org.feePercent}%</span>
+                          <span className="text-sm text-primary font-semibold">{org.feePercent}%</span>
                         </TableCell>
                         <TableCell className="px-4 py-3 text-right">
-                          <span className="text-sm text-[#F8AD3C] font-semibold">{formatRupiah(org.totalRevenue)}</span>
+                          <span className="text-sm text-gold font-semibold">{formatRupiah(org.totalRevenue)}</span>
                         </TableCell>
                         <TableCell className="px-4 py-3">
                           <div className="flex items-center justify-center gap-1">
@@ -551,14 +551,14 @@ export function OrganizersPage() {
 
           {/* ═══ PAGINATION ═══ */}
           {filtered.length > PAGE_SIZE && (
-            <div className="flex items-center justify-between px-4 py-3 border-t border-[rgba(0,163,157,0.08)]">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-border">
               <p className="text-xs text-muted-foreground">
                 {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)} dari {filtered.length}
               </p>
               <div className="flex items-center gap-1">
                 <Button
                   variant="outline" size="sm"
-                  className="h-8 px-3 border-[rgba(0,163,157,0.15)] text-muted-foreground hover:text-white hover:bg-[rgba(0,163,157,0.1)]"
+                  className="h-8 px-3 border-input text-muted-foreground hover:text-foreground hover:bg-primary/10"
                   disabled={safePage <= 1}
                   onClick={() => setCurrentPage((p) => p - 1)}
                 >
@@ -578,8 +578,8 @@ export function OrganizersPage() {
                       className={cn(
                         'h-8 w-8 p-0 text-xs font-semibold',
                         safePage === pn
-                          ? 'bg-[#00A39D] text-[#0A0F0E] hover:bg-[#00BFB8]'
-                          : 'border-[rgba(0,163,157,0.15)] text-muted-foreground hover:text-white hover:bg-[rgba(0,163,157,0.1)]'
+                          ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                          : 'border-input text-muted-foreground hover:text-foreground hover:bg-primary/10'
                       )}
                       onClick={() => setCurrentPage(pn)}
                     >
@@ -589,7 +589,7 @@ export function OrganizersPage() {
                 })}
                 <Button
                   variant="outline" size="sm"
-                  className="h-8 px-3 border-[rgba(0,163,157,0.15)] text-muted-foreground hover:text-white hover:bg-[rgba(0,163,157,0.1)]"
+                  className="h-8 px-3 border-input text-muted-foreground hover:text-foreground hover:bg-primary/10"
                   disabled={safePage >= totalPages}
                   onClick={() => setCurrentPage((p) => p + 1)}
                 >

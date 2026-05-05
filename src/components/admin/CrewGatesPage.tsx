@@ -102,7 +102,7 @@ const roleConfig: Record<
 > = {
   ORGANIZER: {
     label: 'Organizer',
-    className: 'bg-[#00A39D]/15 text-[#00A39D] border-[#00A39D]/30',
+    className: 'bg-primary/15 text-primary border-primary/30',
   },
   SCANNER_CREW: {
     label: 'Scanner Crew',
@@ -294,11 +294,11 @@ export function CrewGatesPage() {
     <div className="space-y-6">
       {/* ═══════════ PAGE HEADER ═══════════ */}
       <div>
-        <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-          <Shield className="w-6 h-6 text-[#00A39D]" />
+        <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+          <Shield className="w-6 h-6 text-primary" />
           Crew &amp; Gates
         </h2>
-        <p className="text-[#7FB3AE] text-sm mt-1">
+        <p className="text-muted-foreground text-sm mt-1">
           Manage event crew assignments, gate configurations, and scanner devices
         </p>
       </div>
@@ -308,33 +308,33 @@ export function CrewGatesPage() {
       ═══════════════════════════════════════════════════════════════════════ */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <Users className="w-5 h-5 text-[#00A39D]" />
+          <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+            <Users className="w-5 h-5 text-primary" />
             Crew Management
           </h3>
 
           <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-[#00A39D] hover:bg-[#00BFB8] text-[#0A0F0E] font-semibold h-9 text-sm">
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-9 text-sm">
                 <Plus className="w-4 h-4 mr-1.5" />
                 Assign Crew
               </Button>
             </DialogTrigger>
-            <DialogContent className="bg-[#111918] border-[rgba(0,163,157,0.15)]">
+            <DialogContent className="bg-card border-input">
               <DialogHeader>
-                <DialogTitle className="text-white">Assign New Crew</DialogTitle>
-                <DialogDescription className="text-[#7FB3AE]">
+                <DialogTitle className="text-foreground">Assign New Crew</DialogTitle>
+                <DialogDescription className="text-muted-foreground">
                   Select a role and optional gate/station assignment for the new crew member.
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-2">
                 <div className="space-y-2">
-                  <label className="text-xs font-medium text-[#7FB3AE]">Role</label>
+                  <label className="text-xs font-medium text-muted-foreground">Role</label>
                   <Select value={assignRole} onValueChange={setAssignRole}>
-                    <SelectTrigger className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white w-full">
+                    <SelectTrigger className="bg-background border-input text-foreground w-full">
                       <SelectValue placeholder="Select a role" />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#111918] border-[rgba(0,163,157,0.15)]">
+                    <SelectContent className="bg-card border-input">
                       <SelectItem value="ORGANIZER">Organizer</SelectItem>
                       <SelectItem value="SCANNER_CREW">Scanner Crew</SelectItem>
                       <SelectItem value="VERIFICATION_ADMIN">Verification Admin</SelectItem>
@@ -343,12 +343,12 @@ export function CrewGatesPage() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-medium text-[#7FB3AE]">Gate / Station</label>
+                  <label className="text-xs font-medium text-muted-foreground">Gate / Station</label>
                   <Select value={assignGate} onValueChange={setAssignGate}>
-                    <SelectTrigger className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white w-full">
+                    <SelectTrigger className="bg-background border-input text-foreground w-full">
                       <SelectValue placeholder="Select gate or station" />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#111918] border-[rgba(0,163,157,0.15)]">
+                    <SelectContent className="bg-card border-input">
                       <SelectItem value="Gate A">Gate A — Utara Kiri</SelectItem>
                       <SelectItem value="Gate B">Gate B — Utara Kanan</SelectItem>
                       <SelectItem value="Gate C">Gate C — Timur</SelectItem>
@@ -366,13 +366,13 @@ export function CrewGatesPage() {
                 <Button
                   variant="ghost"
                   onClick={() => setAssignDialogOpen(false)}
-                  className="text-[#7FB3AE] hover:text-white hover:bg-[rgba(0,163,157,0.1)]"
+                  className="text-muted-foreground hover:text-foreground hover:bg-primary/10"
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleAssignCrew}
-                  className="bg-[#00A39D] hover:bg-[#00BFB8] text-[#0A0F0E] font-semibold"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
                 >
                   Assign
                 </Button>
@@ -384,25 +384,25 @@ export function CrewGatesPage() {
         {/* Crew Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-4">
           {[
-            { label: 'Total Crew', value: crewStats.total, icon: Users, color: 'text-white' },
+            { label: 'Total Crew', value: crewStats.total, icon: Users, color: 'text-foreground' },
             { label: 'Active', value: crewStats.active, icon: UserCheck, color: 'text-emerald-400' },
             { label: 'Inactive', value: crewStats.inactive, icon: UserX, color: 'text-red-400' },
-            { label: 'Organizers', value: crewStats.organizers, icon: Shield, color: 'text-[#00A39D]' },
+            { label: 'Organizers', value: crewStats.organizers, icon: Shield, color: 'text-primary' },
             { label: 'Scanner Crew', value: crewStats.scannerCrew, icon: ScanLine, color: 'text-blue-400' },
           ].map((stat) => (
             <Card
               key={stat.label}
-              className="bg-[#111918] border-[rgba(0,163,157,0.1)] py-4"
+              className="bg-card border-border py-4"
             >
               <CardContent className="p-4 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-[rgba(0,163,157,0.08)] flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                   <stat.icon className={cn('w-4 h-4', stat.color)} />
                 </div>
                 <div className="min-w-0">
                   <p className={cn('text-lg font-bold leading-tight', stat.color)}>
                     {stat.value}
                   </p>
-                  <p className="text-[10px] text-[#7FB3AE] truncate">{stat.label}</p>
+                  <p className="text-[10px] text-muted-foreground truncate">{stat.label}</p>
                 </div>
               </CardContent>
             </Card>
@@ -411,36 +411,36 @@ export function CrewGatesPage() {
 
         {/* Search */}
         <div className="relative max-w-sm mb-3">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#7FB3AE]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Search crew by name, email, gate..."
             value={crewSearch}
             onChange={(e) => setCrewSearch(e.target.value)}
-            className="pl-9 bg-[#111918] border-[rgba(0,163,157,0.1)] text-white placeholder:text-[#7FB3AE]/60 h-9"
+            className="pl-9 bg-card border-border text-foreground placeholder:text-muted-foreground/60 h-9"
           />
         </div>
 
         {/* Crew Table */}
-        <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)] overflow-hidden">
+        <Card className="bg-card border-border overflow-hidden">
           <CardContent className="p-0">
             <div className="overflow-x-auto max-h-[480px] overflow-y-auto custom-scrollbar">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-[rgba(0,163,157,0.1)] hover:bg-transparent">
-                    <TableHead className="text-[#7FB3AE] text-xs font-medium">Name</TableHead>
-                    <TableHead className="text-[#7FB3AE] text-xs font-medium">Email</TableHead>
-                    <TableHead className="text-[#7FB3AE] text-xs font-medium">Phone</TableHead>
-                    <TableHead className="text-[#7FB3AE] text-xs font-medium">Role</TableHead>
-                    <TableHead className="text-[#7FB3AE] text-xs font-medium">Gate / Station</TableHead>
-                    <TableHead className="text-[#7FB3AE] text-xs font-medium">Status</TableHead>
-                    <TableHead className="text-[#7FB3AE] text-xs font-medium">Last Active</TableHead>
-                    <TableHead className="text-[#7FB3AE] text-xs font-medium">Actions</TableHead>
+                  <TableRow className="border-border hover:bg-transparent">
+                    <TableHead className="text-muted-foreground text-xs font-medium">Name</TableHead>
+                    <TableHead className="text-muted-foreground text-xs font-medium">Email</TableHead>
+                    <TableHead className="text-muted-foreground text-xs font-medium">Phone</TableHead>
+                    <TableHead className="text-muted-foreground text-xs font-medium">Role</TableHead>
+                    <TableHead className="text-muted-foreground text-xs font-medium">Gate / Station</TableHead>
+                    <TableHead className="text-muted-foreground text-xs font-medium">Status</TableHead>
+                    <TableHead className="text-muted-foreground text-xs font-medium">Last Active</TableHead>
+                    <TableHead className="text-muted-foreground text-xs font-medium">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredCrew.length === 0 ? (
                     <TableRow className="hover:bg-transparent">
-                      <TableCell colSpan={8} className="text-center py-12 text-[#7FB3AE]">
+                      <TableCell colSpan={8} className="text-center py-12 text-muted-foreground">
                         <Users className="w-8 h-8 mx-auto mb-2 opacity-40" />
                         <p className="text-sm">No crew found</p>
                       </TableCell>
@@ -452,15 +452,15 @@ export function CrewGatesPage() {
                       return (
                         <TableRow
                           key={crew.id}
-                          className="border-[rgba(0,163,157,0.06)] hover:bg-[rgba(0,163,157,0.04)]"
+                          className="border-border hover:bg-primary/5"
                         >
-                          <TableCell className="text-sm text-white font-medium">
+                          <TableCell className="text-sm text-foreground font-medium">
                             {crew.name}
                           </TableCell>
-                          <TableCell className="text-xs text-[#7FB3AE]">
+                          <TableCell className="text-xs text-muted-foreground">
                             {crew.email}
                           </TableCell>
-                          <TableCell className="text-xs text-[#7FB3AE] font-mono">
+                          <TableCell className="text-xs text-muted-foreground font-mono">
                             {crew.phone}
                           </TableCell>
                           <TableCell>
@@ -468,7 +468,7 @@ export function CrewGatesPage() {
                               {rc.label}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-xs text-white">
+                          <TableCell className="text-xs text-foreground">
                             {assignedTo}
                           </TableCell>
                           <TableCell>
@@ -494,14 +494,14 @@ export function CrewGatesPage() {
                               )}
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-xs text-[#7FB3AE]">
+                          <TableCell className="text-xs text-muted-foreground">
                             {formatRelativeTime(crew.lastActive)}
                           </TableCell>
                           <TableCell>
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-7 px-2 text-[10px] text-[#7FB3AE] hover:text-white hover:bg-[rgba(0,163,157,0.1)]"
+                              className="h-7 px-2 text-[10px] text-muted-foreground hover:text-foreground hover:bg-primary/10"
                               onClick={() => toast.info(`Edit crew: ${crew.name}`)}
                             >
                               <Settings className="w-3 h-3" />
@@ -518,18 +518,18 @@ export function CrewGatesPage() {
         </Card>
       </div>
 
-      <Separator className="bg-[rgba(0,163,157,0.1)]" />
+      <Separator className="bg-primary/10" />
 
       {/* ═══════════════════════════════════════════════════════════════════════
           SECTION 2 — GATES CONFIGURATION
       ═══════════════════════════════════════════════════════════════════════ */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
-            <DoorOpen className="w-5 h-5 text-[#00A39D]" />
+          <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
+            <DoorOpen className="w-5 h-5 text-primary" />
             Gates Configuration
           </h3>
-          <Badge variant="outline" className="text-xs text-[#7FB3AE] border-[#7FB3AE]/20">
+          <Badge variant="outline" className="text-xs text-muted-foreground border-muted-foreground/20">
             {gateConfigs.filter((g) => gateToggles[g.id]).length}/{gateConfigs.length} active
           </Badge>
         </div>
@@ -543,9 +543,9 @@ export function CrewGatesPage() {
               <Card
                 key={gate.id}
                 className={cn(
-                  'bg-[#111918] border-[rgba(0,163,157,0.1)] transition-all',
+                  'bg-card border-border transition-all',
                   isActive
-                    ? 'border-[rgba(0,163,157,0.2)] hover:border-[rgba(0,163,157,0.4)]'
+                    ? 'border-input hover:border-primary/40'
                     : 'opacity-60'
                 )}
               >
@@ -559,7 +559,7 @@ export function CrewGatesPage() {
                           isActive ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]' : 'bg-gray-600'
                         )}
                       />
-                      <h4 className="text-white font-bold">{gate.name}</h4>
+                      <h4 className="text-foreground font-bold">{gate.name}</h4>
                     </div>
                     <Badge variant="outline" className={cn('text-[10px]', gt.className)}>
                       {gt.icon}
@@ -570,33 +570,33 @@ export function CrewGatesPage() {
                   {/* Details */}
                   <div className="space-y-2.5">
                     <div className="flex items-center gap-2 text-sm">
-                      <MapPin className="w-3.5 h-3.5 text-[#7FB3AE] shrink-0" />
-                      <span className="text-[#7FB3AE]">{gate.location}</span>
+                      <MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                      <span className="text-muted-foreground">{gate.location}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
-                      <Shield className="w-3.5 h-3.5 text-[#7FB3AE] shrink-0" />
-                      <span className="text-[#7FB3AE]">Min Access: </span>
-                      <span className="text-white font-medium">{gate.minAccessLevel}</span>
+                      <Shield className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                      <span className="text-muted-foreground">Min Access: </span>
+                      <span className="text-foreground font-medium">{gate.minAccessLevel}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
-                      <Activity className="w-3.5 h-3.5 text-[#7FB3AE] shrink-0" />
-                      <span className="text-[#7FB3AE]">Capacity: </span>
-                      <span className="text-white font-medium">{gate.capacityPerMinute}/min</span>
+                      <Activity className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                      <span className="text-muted-foreground">Capacity: </span>
+                      <span className="text-foreground font-medium">{gate.capacityPerMinute}/min</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm">
-                      <ScanLine className="w-3.5 h-3.5 text-[#7FB3AE] shrink-0" />
-                      <span className="text-[#7FB3AE]">Scanner: </span>
-                      <span className={gate.currentScanner ? 'text-[#00A39D] font-medium' : 'text-[#7FB3AE]/50'}>
+                      <ScanLine className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                      <span className="text-muted-foreground">Scanner: </span>
+                      <span className={gate.currentScanner ? 'text-primary font-medium' : 'text-muted-foreground/50'}>
                         {gate.currentScanner || 'Not assigned'}
                       </span>
                     </div>
                   </div>
 
-                  <Separator className="bg-[rgba(0,163,157,0.08)]" />
+                  <Separator className="bg-primary/10" />
 
                   {/* Toggle */}
                   <div className="flex items-center justify-between">
-                    <span className={cn('text-xs font-medium', isActive ? 'text-emerald-400' : 'text-[#7FB3AE]')}>
+                    <span className={cn('text-xs font-medium', isActive ? 'text-emerald-400' : 'text-muted-foreground')}>
                       {isActive ? 'Active' : 'Inactive'}
                     </span>
                     <Switch
@@ -612,26 +612,26 @@ export function CrewGatesPage() {
         </div>
       </div>
 
-      <Separator className="bg-[rgba(0,163,157,0.1)]" />
+      <Separator className="bg-primary/10" />
 
       {/* ═══════════════════════════════════════════════════════════════════════
           SECTION 3 — SCANNER DEVICES
       ═══════════════════════════════════════════════════════════════════════ */}
       <div>
-        <h3 className="text-lg font-bold text-white flex items-center gap-2 mb-4">
-          <Monitor className="w-5 h-5 text-[#00A39D]" />
+        <h3 className="text-lg font-bold text-foreground flex items-center gap-2 mb-4">
+          <Monitor className="w-5 h-5 text-primary" />
           Scanner Devices
         </h3>
 
-        <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)] overflow-hidden">
+        <Card className="bg-card border-border overflow-hidden">
           <CardContent className="p-0">
             <Table>
               <TableHeader>
-                <TableRow className="border-[rgba(0,163,157,0.1)] hover:bg-transparent">
-                  <TableHead className="text-[#7FB3AE] text-xs font-medium">Device Name</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-xs font-medium">Type</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-xs font-medium">Status</TableHead>
-                  <TableHead className="text-[#7FB3AE] text-xs font-medium">Last Ping</TableHead>
+                <TableRow className="border-border hover:bg-transparent">
+                  <TableHead className="text-muted-foreground text-xs font-medium">Device Name</TableHead>
+                  <TableHead className="text-muted-foreground text-xs font-medium">Type</TableHead>
+                  <TableHead className="text-muted-foreground text-xs font-medium">Status</TableHead>
+                  <TableHead className="text-muted-foreground text-xs font-medium">Last Ping</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -640,16 +640,16 @@ export function CrewGatesPage() {
                   return (
                     <TableRow
                       key={device.id}
-                      className="border-[rgba(0,163,157,0.06)] hover:bg-[rgba(0,163,157,0.04)]"
+                      className="border-border hover:bg-primary/5"
                     >
                       <TableCell>
                         <div className="flex items-center gap-2">
                           {device.type === 'redeem' ? (
                             <Smartphone className="w-4 h-4 text-purple-400" />
                           ) : (
-                            <Monitor className="w-4 h-4 text-[#7FB3AE]" />
+                            <Monitor className="w-4 h-4 text-muted-foreground" />
                           )}
-                          <span className="text-sm text-white font-medium">{device.name}</span>
+                          <span className="text-sm text-foreground font-medium">{device.name}</span>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -670,7 +670,7 @@ export function CrewGatesPage() {
                           </Badge>
                         )}
                       </TableCell>
-                      <TableCell className="text-xs text-[#7FB3AE]">
+                      <TableCell className="text-xs text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
                           {formatRelativeTime(device.lastPing)}

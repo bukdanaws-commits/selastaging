@@ -2,7 +2,7 @@
 // Client-side utilities for DOKU payment flow
 // Safe to import in client components
 
-import { DOKU_PM_LABELS, DOKU_PM_GROUPS } from './config'
+import { DOKU_PM_LABELS, DOKU_PM_GROUPS } from './constants'
 
 // ─── TYPES ─────────────────────────────────────────────────────
 
@@ -265,5 +265,4 @@ export function formatExpiryCountdown(
 
 // ─── RE-EXPORT DOKU CONFIG HELPERS ─────────────────────────────
 
-export { DOKU_PM_LABELS, DOKU_PM_GROUPS } from './config'
-export { DOKU_PAYMENT_METHODS } from './config'
+export { DOKU_PM_LABELS, DOKU_PM_GROUPS, DOKU_PAYMENT_METHODS } from './constants'

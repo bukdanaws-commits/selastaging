@@ -120,7 +120,7 @@ export default function GateStatusPage() {
 
   const quickStats = [
     { label: 'Re-entry', value: stats.reentryCount, icon: <RotateCcw className="h-4 w-4 text-amber-400" /> },
-    { label: 'Avg Speed', value: `${avgScanSpeed}/jam`, icon: <Gauge className="h-4 w-4 text-[#00A39D]" /> },
+    { label: 'Avg Speed', value: `${avgScanSpeed}/jam`, icon: <Gauge className="h-4 w-4 text-primary" /> },
     { label: 'Peak Hour', value: peakHour, icon: <TrendingUp className="h-4 w-4 text-purple-400" /> },
   ]
 
@@ -146,7 +146,7 @@ export default function GateStatusPage() {
         <div className="px-4 py-4 space-y-4">
           {/* ── PAGE TITLE ── */}
           <div className="flex items-center gap-2">
-            <Activity className="h-5 w-5 text-[#00A39D]" />
+            <Activity className="h-5 w-5 text-primary" />
             <h2 className="text-base font-bold">Status Gate</h2>
           </div>
 
@@ -157,7 +157,7 @@ export default function GateStatusPage() {
                 <CardContent className="p-3 text-center">
                   <ArrowDownToLine className="h-5 w-5 text-emerald-400 mx-auto mb-1" />
                   <p className="text-xl font-bold text-emerald-400">{stats.totalMasuk}</p>
-                  <p className="text-[10px] text-[#7FB3AE]">Total Masuk</p>
+                  <p className="text-[10px] text-muted-foreground">Total Masuk</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -166,16 +166,16 @@ export default function GateStatusPage() {
                 <CardContent className="p-3 text-center">
                   <ArrowUpFromLine className="h-5 w-5 text-red-400 mx-auto mb-1" />
                   <p className="text-xl font-bold text-red-400">{stats.totalKeluar}</p>
-                  <p className="text-[10px] text-[#7FB3AE]">Total Keluar</p>
+                  <p className="text-[10px] text-muted-foreground">Total Keluar</p>
                 </CardContent>
               </Card>
             </motion.div>
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-              <Card className="bg-[#00A39D]/10 border-[#00A39D]/20">
+              <Card className="bg-primary/10 border-primary/20">
                 <CardContent className="p-3 text-center">
-                  <Users className="h-5 w-5 text-[#00A39D] mx-auto mb-1" />
-                  <p className="text-xl font-bold text-[#00A39D]">{stats.inside}</p>
-                  <p className="text-[10px] text-[#7FB3AE]">Di Dalam Sekarang</p>
+                  <Users className="h-5 w-5 text-primary mx-auto mb-1" />
+                  <p className="text-xl font-bold text-primary">{stats.inside}</p>
+                  <p className="text-[10px] text-muted-foreground">Di Dalam Sekarang</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -183,32 +183,32 @@ export default function GateStatusPage() {
 
           {/* ── GATE INFO CARD ── */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <Card className="bg-[#111918] border-white/5">
+            <Card className="bg-card border-border">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <Shield className="h-4 w-4 text-[#00A39D]" />
+                  <Shield className="h-4 w-4 text-primary" />
                   <h3 className="text-sm font-semibold">Informasi Gate</h3>
                 </div>
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-[#7FB3AE]">Nama Gate</span>
+                    <span className="text-xs text-muted-foreground">Nama Gate</span>
                     <span className="text-sm font-semibold">{gateName}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-[#7FB3AE]">Lokasi</span>
+                    <span className="text-xs text-muted-foreground">Lokasi</span>
                     <div className="flex items-center gap-1">
-                      <MapPin className="h-3 w-3 text-[#7FB3AE]" />
+                      <MapPin className="h-3 w-3 text-muted-foreground" />
                       <span className="text-sm">{gateLocation}</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-[#7FB3AE]">Tipe</span>
+                    <span className="text-xs text-muted-foreground">Tipe</span>
                     <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${gateTypeBadge.color}`}>
                       {gateTypeBadge.label}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-[#7FB3AE]">Status</span>
+                    <span className="text-xs text-muted-foreground">Status</span>
                     <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                       gateStatusVal === 'active' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-gray-500/20 text-gray-400'
                     }`}>
@@ -217,17 +217,17 @@ export default function GateStatusPage() {
                   </div>
                   {gateCapacity > 0 && (
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-[#7FB3AE]">Kapasitas</span>
+                      <span className="text-xs text-muted-foreground">Kapasitas</span>
                       <span className="text-sm">{gateCapacity} orang/menit</span>
                     </div>
                   )}
-                  <Separator className="bg-white/5" />
+                  <Separator className="bg-border" />
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-[#7FB3AE]">Total Masuk (semua)</span>
+                    <span className="text-xs text-muted-foreground">Total Masuk (semua)</span>
                     <span className="text-sm font-semibold text-emerald-400">{gateTotalIn.toLocaleString()}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-[#7FB3AE]">Scan Terakhir</span>
+                    <span className="text-xs text-muted-foreground">Scan Terakhir</span>
                     <span className="text-sm">{lastScan ? formatTime(lastScan) : '-'}</span>
                   </div>
                 </div>
@@ -237,23 +237,23 @@ export default function GateStatusPage() {
 
           {/* ── STAFF ON DUTY CARD ── */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-            <Card className="bg-[#111918] border-white/5">
+            <Card className="bg-card border-border">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <Users className="h-4 w-4 text-[#00A39D]" />
+                  <Users className="h-4 w-4 text-primary" />
                   <h3 className="text-sm font-semibold">Petugas Bertugas</h3>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#00A39D]/20 text-[#00A39D] text-sm font-bold shrink-0">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/20 text-primary text-sm font-bold shrink-0">
                     {staffName.split(' ').map(n => n[0]).join('')}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold truncate">{staffName}</p>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border bg-[#00A39D]/15 text-[#00A39D] border-[#00A39D]/20">
+                      <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full border bg-primary/15 text-primary border-primary/20">
                         Gate Staff
                       </span>
-                      <span className="text-[10px] text-[#7FB3AE]">Shift: {staffShift}</span>
+                      <span className="text-[10px] text-muted-foreground">Shift: {staffShift}</span>
                     </div>
                   </div>
                 </div>
@@ -263,16 +263,16 @@ export default function GateStatusPage() {
 
           {/* ── TODAY'S ACTIVITY CHART ── */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-            <Card className="bg-[#111918] border-white/5">
+            <Card className="bg-card border-border">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-[#00A39D]" />
+                    <Clock className="h-4 w-4 text-primary" />
                     <h3 className="text-sm font-semibold">Aktivitas Hari Ini</h3>
                   </div>
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-emerald-400" /><span className="text-[9px] text-[#7FB3AE]">IN</span></div>
-                    <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-400" /><span className="text-[9px] text-[#7FB3AE]">OUT</span></div>
+                    <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-emerald-400" /><span className="text-[9px] text-muted-foreground">IN</span></div>
+                    <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-400" /><span className="text-[9px] text-muted-foreground">OUT</span></div>
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -281,12 +281,12 @@ export default function GateStatusPage() {
                     if (total === 0 && parseInt(hour) < 17) return null
                     return (
                       <div key={hour} className="flex items-center gap-2">
-                        <span className="text-[10px] text-[#7FB3AE] w-8 text-right shrink-0">{String(hour).padStart(2, '0')}:00</span>
-                        <div className="flex-1 flex gap-0.5 h-6 rounded-md overflow-hidden bg-white/5">
+                        <span className="text-[10px] text-muted-foreground w-8 text-right shrink-0">{String(hour).padStart(2, '0')}:00</span>
+                        <div className="flex-1 flex gap-0.5 h-6 rounded-md overflow-hidden bg-border">
                           {data.in > 0 && <div className="bg-emerald-400/80 rounded-l-md transition-all" style={{ width: `${(data.in / (maxHourly || 1)) * 100}%` }} />}
                           {data.out > 0 && <div className="bg-red-400/80 rounded-r-md transition-all" style={{ width: `${(data.out / (maxHourly || 1)) * 100}%`, marginLeft: data.in > 0 ? 2 : 0 }} />}
                         </div>
-                        <span className="text-[10px] text-[#7FB3AE] w-6 text-right shrink-0">{total}</span>
+                        <span className="text-[10px] text-muted-foreground w-6 text-right shrink-0">{total}</span>
                       </div>
                     )
                   })}
@@ -297,7 +297,7 @@ export default function GateStatusPage() {
 
           {/* ── QUICK STATS ROW ── */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
-            <Card className="bg-[#111918] border-white/5">
+            <Card className="bg-card border-border">
               <CardContent className="p-4">
                 <h3 className="text-sm font-semibold mb-3">Quick Stats</h3>
                 <div className="grid grid-cols-3 gap-3">
@@ -305,7 +305,7 @@ export default function GateStatusPage() {
                     <div key={item.label} className="text-center">
                       <div className="flex items-center justify-center mb-1.5">{item.icon}</div>
                       <p className="text-sm font-bold">{item.value}</p>
-                      <p className="text-[10px] text-[#7FB3AE]">{item.label}</p>
+                      <p className="text-[10px] text-muted-foreground">{item.label}</p>
                     </div>
                   ))}
                 </div>

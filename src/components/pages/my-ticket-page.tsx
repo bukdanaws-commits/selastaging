@@ -173,56 +173,56 @@ export default function MyTicketPage() {
   const inside = myTickets.filter((t) => t.status === 'inside').length;
 
   return (
-    <div className="min-h-screen bg-[#0A0F0E]">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-[#0A0F0E]/95 backdrop-blur-md border-b border-[rgba(0,163,157,0.1)]">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-primary/10">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#00A39D]/10 flex items-center justify-center">
-              <Ticket className="w-4 h-4 text-[#00A39D]" />
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Ticket className="w-4 h-4 text-primary" />
             </div>
-            <h1 className="text-white font-bold text-lg">Tiket Saya</h1>
+            <h1 className="text-foreground font-bold text-lg">Tiket Saya</h1>
           </div>
         </div>
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
         {/* ═══════════ SUMMARY CARD ═══════════ */}
-        <Card className="bg-gradient-to-br from-[#111918] to-[#0A0F0E] border-[rgba(0,163,157,0.15)] overflow-hidden">
-          <div className="h-1 bg-gradient-to-r from-[#00A39D] to-[#F8AD3C]" />
+        <Card className="bg-gradient-to-br from-card to-background border-primary/15 overflow-hidden">
+          <div className="h-1 bg-gradient-to-r from-primary to-gold" />
           <CardContent className="p-5">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-[#00A39D]/10 flex items-center justify-center">
-                <Users className="w-6 h-6 text-[#00A39D]" />
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Users className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <p className="text-white font-bold text-lg">Budi Santoso</p>
-                <p className="text-[#7FB3AE] text-sm">Sobat Duta • 4 Tiket</p>
+                <p className="text-foreground font-bold text-lg">Budi Santoso</p>
+                <p className="text-muted-foreground text-sm">Sobat Duta • 4 Tiket</p>
               </div>
             </div>
             <div className="grid grid-cols-3 gap-3">
-              <div className="text-center p-3 rounded-lg bg-[#0A0F0E]/80 border border-[rgba(0,163,157,0.08)]">
-                <p className="text-xl font-bold text-white">{totalTickets}</p>
-                <p className="text-[10px] text-[#7FB3AE]">Total Tiket</p>
+              <div className="text-center p-3 rounded-lg bg-background/80 border border-primary/8">
+                <p className="text-xl font-bold text-foreground">{totalTickets}</p>
+                <p className="text-[10px] text-muted-foreground">Total Tiket</p>
               </div>
               <div className="text-center p-3 rounded-lg bg-amber-500/5 border border-amber-500/10">
                 <p className="text-xl font-bold text-amber-400">{redeemed}</p>
-                <p className="text-[10px] text-[#7FB3AE]">Sudah Tukar</p>
+                <p className="text-[10px] text-muted-foreground">Sudah Tukar</p>
               </div>
               <div className="text-center p-3 rounded-lg bg-emerald-500/5 border border-emerald-500/10">
                 <p className="text-xl font-bold text-emerald-400">{inside}</p>
-                <p className="text-[10px] text-[#7FB3AE]">Di Dalam Venue</p>
+                <p className="text-[10px] text-muted-foreground">Di Dalam Venue</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* ═══════════ EVENT INFO ═══════════ */}
-        <div className="flex items-center gap-3 p-3 rounded-lg bg-[#111918] border border-[rgba(0,163,157,0.08)]">
-          <Calendar className="w-4 h-4 text-[#00A39D] shrink-0" />
+        <div className="flex items-center gap-3 p-3 rounded-lg bg-card border border-primary/8">
+          <Calendar className="w-4 h-4 text-primary shrink-0" />
           <div>
-            <p className="text-sm text-white font-medium">Sheila On 7 — JAKARTA</p>
-            <p className="text-xs text-[#7FB3AE]">Sabtu, 24 Mei 2025 • GBK Madya Stadium</p>
+            <p className="text-sm text-foreground font-medium">Sheila On 7 — JAKARTA</p>
+            <p className="text-xs text-muted-foreground">Sabtu, 24 Mei 2025 • GBK Madya Stadium</p>
           </div>
         </div>
 
@@ -233,14 +233,14 @@ export default function MyTicketPage() {
             return (
               <Card
                 key={ticket.ticketCode}
-                className="bg-[#111918] border-[rgba(0,163,157,0.1)] overflow-hidden"
+                className="bg-card border-primary/10 overflow-hidden"
               >
                 {/* Top bar with tier color */}
                 <div className={cn(
                   'h-1',
                   ticket.tier === 'floor'
-                    ? 'bg-gradient-to-r from-[#F8AD3C] to-[#F8AD3C]/60'
-                    : 'bg-gradient-to-r from-[#00A39D] to-[#00A39D]/60'
+                    ? 'bg-gradient-to-r from-gold to-gold/60'
+                    : 'bg-gradient-to-r from-primary to-primary/60'
                 )} />
 
                 <CardContent className="p-5 space-y-4">
@@ -249,33 +249,33 @@ export default function MyTicketPage() {
                     <div className="flex items-center gap-3">
                       <span className="text-2xl">{ticket.emoji}</span>
                       <div>
-                        <h3 className="text-white font-bold text-base">{ticket.ticketType}</h3>
+                        <h3 className="text-foreground font-bold text-base">{ticket.ticketType}</h3>
                         <div className="flex items-center gap-2 mt-1">
                           <Badge
                             variant="outline"
                             className={cn(
                               'text-[10px] font-semibold',
                               ticket.tier === 'floor'
-                                ? 'bg-[#F8AD3C]/10 text-[#F8AD3C] border-[#F8AD3C]/30'
-                                : 'bg-white/5 text-[#7FB3AE] border-[#7FB3AE]/20'
+                                ? 'bg-gold/10 text-gold border-gold/30'
+                                : 'bg-muted text-muted-foreground border-muted-foreground/20'
                             )}
                           >
                             {ticket.tier.toUpperCase()}
                           </Badge>
                           {ticket.seatLabel && (
-                            <span className="text-xs text-[#7FB3AE]">
-                              Seat: <span className="text-white font-medium">{ticket.seatLabel}</span>
+                            <span className="text-xs text-muted-foreground">
+                              Seat: <span className="text-foreground font-medium">{ticket.seatLabel}</span>
                             </span>
                           )}
                         </div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-[#F8AD3C] font-bold text-sm">{formatRupiah(ticket.price)}</p>
+                      <p className="text-gold font-bold text-sm">{formatRupiah(ticket.price)}</p>
                     </div>
                   </div>
 
-                  <Separator className="bg-[rgba(0,163,157,0.08)]" />
+                  <Separator className="bg-primary/8" />
 
                   {/* QR Code + Ticket Code */}
                   <div className="flex items-center gap-4">
@@ -291,13 +291,13 @@ export default function MyTicketPage() {
                     </div>
                     <div className="flex-1 space-y-2">
                       <div>
-                        <p className="text-[10px] text-[#7FB3AE]">Kode Tiket</p>
+                        <p className="text-[10px] text-muted-foreground">Kode Tiket</p>
                         <div className="flex items-center gap-1.5">
-                          <p className="font-mono text-sm text-white font-bold">{ticket.ticketCode}</p>
+                          <p className="font-mono text-sm text-foreground font-bold">{ticket.ticketCode}</p>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-6 w-6 text-[#7FB3AE] hover:text-white shrink-0"
+                            className="h-6 w-6 text-muted-foreground hover:text-foreground shrink-0"
                             onClick={() => {
                               navigator.clipboard.writeText(ticket.ticketCode);
                               toast.success('Kode tiket disalin!');
@@ -310,7 +310,7 @@ export default function MyTicketPage() {
 
                       {/* Status badge */}
                       <div>
-                        <p className="text-[10px] text-[#7FB3AE] mb-1">Status</p>
+                        <p className="text-[10px] text-muted-foreground mb-1">Status</p>
                         <Badge variant="outline" className={cn('text-xs gap-1.5 py-1', statusConfig.color)}>
                           {statusConfig.icon}
                           {statusConfig.label}
@@ -335,7 +335,7 @@ export default function MyTicketPage() {
                         <AlertCircle className="w-4 h-4 text-gray-400 mt-0.5 shrink-0" />
                         <div>
                           <p className="text-xs text-gray-400">
-                            Tukar di counter <span className="text-white font-medium">H-7 s/d H-1</span> sebelum acara
+                            Tukar di counter <span className="text-foreground font-medium">H-7 s/d H-1</span> sebelum acara
                           </p>
                           <p className="text-[10px] text-gray-500 mt-1">
                             Bawa e-tiket ini ke counter penukaran gelang untuk mendapatkan gelang fisik
@@ -349,7 +349,7 @@ export default function MyTicketPage() {
                         <Watch className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
                         <div className="flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs text-white font-medium">Gelang: {ticket.wristbandCode}</span>
+                            <span className="text-xs text-foreground font-medium">Gelang: {ticket.wristbandCode}</span>
                             {ticket.wristbandColorHex && (
                               <div className="flex items-center gap-1.5">
                                 <div
@@ -360,7 +360,7 @@ export default function MyTicketPage() {
                               </div>
                             )}
                           </div>
-                          <p className="text-[10px] text-[#7FB3AE] mt-1">
+                          <p className="text-[10px] text-muted-foreground mt-1">
                             Scan gelang di gate untuk masuk venue
                           </p>
                         </div>
@@ -371,8 +371,8 @@ export default function MyTicketPage() {
                       <div className="flex items-start gap-2">
                         <LogIn className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" />
                         <div className="flex-1">
-                          <p className="text-xs text-white font-medium">Anda sudah di dalam venue</p>
-                          <div className="flex items-center gap-3 mt-1 text-[10px] text-[#7FB3AE]">
+                          <p className="text-xs text-foreground font-medium">Anda sudah di dalam venue</p>
+                          <div className="flex items-center gap-3 mt-1 text-[10px] text-muted-foreground">
                             {ticket.entryTime && (
                               <span className="flex items-center gap-1">
                                 <Calendar className="w-3 h-3" />
@@ -405,8 +405,7 @@ export default function MyTicketPage() {
                       <div className="flex items-start gap-2">
                         <ArrowLeftRight className="w-4 h-4 text-blue-400 mt-0.5 shrink-0" />
                         <div className="flex-1">
-                          <p className="text-xs text-white font-medium">
-                            Anda sedang di luar venue
+                          <p className="text-xs text-foreground font-medium">
                           </p>
                           <div className="flex items-center gap-2 mt-1">
                             <CheckCircle2 className="w-3 h-3 text-blue-400" />
@@ -414,7 +413,7 @@ export default function MyTicketPage() {
                               Re-entry tersedia
                             </span>
                           </div>
-                          <p className="text-[10px] text-[#7FB3AE] mt-1">
+                          <p className="text-[10px] text-muted-foreground mt-1">
                             Scan gelang di gate untuk masuk kembali
                           </p>
                           {ticket.wristbandCode && ticket.wristbandColorHex && (
@@ -436,12 +435,12 @@ export default function MyTicketPage() {
 
                 {/* Bottom ticket stub */}
                 <div className="relative">
-                  <Separator className="bg-[rgba(0,163,157,0.08)]" />
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-[#0A0F0E]" />
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-5 h-5 rounded-full bg-[#0A0F0E]" />
+                  <Separator className="bg-primary/8" />
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-background" />
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-5 h-5 rounded-full bg-background" />
                 </div>
                 <div className="px-5 pb-3">
-                  <div className="flex items-center justify-between text-[10px] text-[#7FB3AE]/60">
+                  <div className="flex items-center justify-between text-[10px] text-muted-foreground/60">
                     <span>Tiket #{idx + 1} dari {totalTickets}</span>
                     <span>Powered by BSI</span>
                   </div>
@@ -452,25 +451,25 @@ export default function MyTicketPage() {
         </div>
 
         {/* ═══════════ WRISTBAND INFO ═══════════ */}
-        <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+        <Card className="bg-card border-primary/10">
           <CardContent className="p-5">
-            <h3 className="text-white font-semibold text-sm flex items-center gap-2 mb-3">
-              <Watch className="w-4 h-4 text-[#F8AD3C]" />
+            <h3 className="text-foreground font-semibold text-sm flex items-center gap-2 mb-3">
+              <Watch className="w-4 h-4 text-gold" />
               Panduan Warna Gelang
             </h3>
             <div className="grid grid-cols-2 gap-2">
               {wristbandConfigs.map((wb, idx) => (
                 <div
                   key={String(wb.ticketTypeId ?? idx)}
-                  className="flex items-center gap-2 p-2 rounded-lg bg-[#0A0F0E]/60 border border-[rgba(0,163,157,0.06)]"
+                  className="flex items-center gap-2 p-2 rounded-lg bg-background/60 border border-primary/6"
                 >
                   <div
                     className="w-4 h-4 rounded-full shrink-0 border border-white/10"
                     style={{ backgroundColor: String(wb.wristbandColorHex ?? '#E5E7EB') }}
                   />
                   <div>
-                    <p className="text-[11px] text-white font-medium">{String(wb.emoji ?? '')} {String(wb.ticketTypeName ?? '-')}</p>
-                    <p className="text-[9px] text-[#7FB3AE]">{String(wb.wristbandColor ?? '-')}</p>
+                    <p className="text-[11px] text-foreground font-medium">{String(wb.emoji ?? '')} {String(wb.ticketTypeName ?? '-')}</p>
+                    <p className="text-[9px] text-muted-foreground">{String(wb.wristbandColor ?? '-')}</p>
                   </div>
                 </div>
               ))}

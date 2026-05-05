@@ -93,8 +93,8 @@ export default function SettingsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-bold text-white flex items-center gap-2">
-          <Settings2 className="w-5 h-5 text-[#00A39D]" />
+        <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+          <Settings2 className="w-5 h-5 text-primary" />
           Pengaturan Sistem
         </h2>
         <p className="text-sm text-muted-foreground mt-1">
@@ -104,24 +104,24 @@ export default function SettingsPage() {
 
       {/* Main Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="bg-[#111918] border border-[rgba(0,163,157,0.15)] p-1">
+        <TabsList className="bg-card border border-primary/15 p-1">
           <TabsTrigger
             value="doku"
-            className="text-xs data-[state=active]:bg-[#00A39D] data-[state=active]:text-[#0A0F0E] data-[state=active]:font-bold"
+            className="text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-bold"
           >
             <CreditCard className="w-3 h-3 mr-1" />
             DOKU Payment
           </TabsTrigger>
           <TabsTrigger
             value="fee"
-            className="text-xs data-[state=active]:bg-[#00A39D] data-[state=active]:text-[#0A0F0E] data-[state=active]:font-bold"
+            className="text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-bold"
           >
             <Percent className="w-3 h-3 mr-1" />
             Platform Fee
           </TabsTrigger>
           <TabsTrigger
             value="config"
-            className="text-xs data-[state=active]:bg-[#00A39D] data-[state=active]:text-[#0A0F0E] data-[state=active]:font-bold"
+            className="text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-bold"
           >
             <Sliders className="w-3 h-3 mr-1" />
             Global Config
@@ -131,12 +131,12 @@ export default function SettingsPage() {
         {/* ═══ DOKU PAYMENT TAB ═══ */}
         <TabsContent value="doku" className="space-y-4">
           {/* Environment Status */}
-          <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)]">
+          <Card className="bg-card border border-primary/10">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Server className="w-4 h-4 text-[#00A39D]" />
-                  <CardTitle className="text-white text-sm font-bold">
+                  <Server className="w-4 h-4 text-primary" />
+                  <CardTitle className="text-foreground text-sm font-bold">
                     DOKU Environment
                   </CardTitle>
                 </div>
@@ -163,9 +163,9 @@ export default function SettingsPage() {
                   <Input
                     value={dokuConfig.clientId}
                     disabled
-                    className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white text-sm h-10 font-mono"
+                    className="bg-background border-primary/15 text-foreground text-sm h-10 font-mono"
                   />
-                  <Badge variant="outline" className="text-[10px] text-muted-foreground border-white/10 shrink-0">
+                  <Badge variant="outline" className="text-[10px] text-muted-foreground border-border shrink-0">
                     READ ONLY
                   </Badge>
                 </div>
@@ -175,18 +175,18 @@ export default function SettingsPage() {
                 <Input
                   value="••••••••••••••••••••••••••••"
                   disabled
-                  className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-muted-foreground text-sm h-10 font-mono"
+                  className="bg-background border-primary/15 text-muted-foreground text-sm h-10 font-mono"
                 />
               </div>
             </CardContent>
           </Card>
 
           {/* Webhook URLs */}
-          <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)]">
+          <Card className="bg-card border border-primary/10">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
-                <Bell className="w-4 h-4 text-[#00A39D]" />
-                <CardTitle className="text-white text-sm font-bold">Webhook & Redirect URLs</CardTitle>
+                <Bell className="w-4 h-4 text-primary" />
+                <CardTitle className="text-foreground text-sm font-bold">Webhook & Redirect URLs</CardTitle>
               </div>
               <CardDescription className="text-muted-foreground text-xs">
                 URL yang digunakan DOKU untuk notifikasi pembayaran dan redirect setelah bayar
@@ -203,7 +203,7 @@ export default function SettingsPage() {
                   <Input
                     value={(dokuConfig as Record<string, string>)[url.key] || '-'}
                     disabled
-                    className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-muted-foreground text-sm h-9 font-mono"
+                    className="bg-background border-primary/15 text-muted-foreground text-sm h-9 font-mono"
                   />
                   <p className="text-[10px] text-muted-foreground/60">{url.desc}</p>
                 </div>
@@ -212,11 +212,11 @@ export default function SettingsPage() {
           </Card>
 
           {/* Active Payment Methods */}
-          <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)]">
+          <Card className="bg-card border border-primary/10">
             <CardHeader className="pb-3">
               <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-[#00A39D]" />
-                <CardTitle className="text-white text-sm font-bold">Active Payment Methods</CardTitle>
+                <Shield className="w-4 h-4 text-primary" />
+                <CardTitle className="text-foreground text-sm font-bold">Active Payment Methods</CardTitle>
               </div>
               <CardDescription className="text-muted-foreground text-xs">
                 Metode pembayaran yang aktif di platform
@@ -231,7 +231,7 @@ export default function SettingsPage() {
                       'flex items-center justify-between px-3 py-2 rounded-lg border text-xs font-medium',
                       pm.active
                         ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-400'
-                        : 'bg-[#0A0F0E] border-white/5 text-muted-foreground/50'
+                        : 'bg-background border-border text-muted-foreground/50'
                     )}
                   >
                     <span>{pm.name}</span>
@@ -249,12 +249,12 @@ export default function SettingsPage() {
 
         {/* ═══ PLATFORM FEE TAB ═══ */}
         <TabsContent value="fee" className="space-y-4">
-          <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)]">
+          <Card className="bg-card border border-primary/10">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Percent className="w-4 h-4 text-[#F8AD3C]" />
-                  <CardTitle className="text-white text-sm font-bold">
+                  <Percent className="w-4 h-4 text-gold" />
+                  <CardTitle className="text-foreground text-sm font-bold">
                     Platform Default Fee
                   </CardTitle>
                 </div>
@@ -264,8 +264,8 @@ export default function SettingsPage() {
                   className={cn(
                     'text-xs',
                     isEditingFee
-                      ? 'bg-[#00A39D] hover:bg-[#00BFB8] text-[#0A0F0E] font-semibold'
-                      : 'border-[rgba(0,163,157,0.3)] text-[#00A39D] hover:bg-[rgba(0,163,157,0.1)]'
+                      ? 'bg-primary hover:bg-primary/90 text-primary-foreground font-semibold'
+                      : 'border-primary/30 text-primary hover:bg-primary/10'
                   )}
                   onClick={() => setIsEditingFee(!isEditingFee)}
                 >
@@ -278,10 +278,10 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Fee Display */}
-              <div className="bg-[#0A0F0E] rounded-xl p-6 text-center border border-[rgba(0,163,157,0.1)]">
+              <div className="bg-background rounded-xl p-6 text-center border border-primary/10">
                 <p className="text-xs text-muted-foreground mb-2">Current Default Fee</p>
                 <div className="flex items-center justify-center gap-1">
-                  <span className="text-5xl font-black text-[#F8AD3C]">{feeConfig.platformDefaultFee}</span>
+                  <span className="text-5xl font-black text-gold">{feeConfig.platformDefaultFee}</span>
                   <span className="text-2xl font-bold text-muted-foreground">%</span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">dari total penjualan tiket</p>
@@ -301,7 +301,7 @@ export default function SettingsPage() {
                     value={feeConfig.platformDefaultFee}
                     onChange={(e) => setFeeConfig({ ...feeConfig, platformDefaultFee: e.target.value })}
                     disabled={!isEditingFee}
-                    className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white text-sm h-10 w-24"
+                    className="bg-background border-primary/15 text-foreground text-sm h-10 w-24"
                   />
                   <span className="text-sm text-muted-foreground">% dari total penjualan</span>
                 </div>
@@ -316,8 +316,8 @@ export default function SettingsPage() {
                       className={cn(
                         'text-xs h-7',
                         feeConfig.platformDefaultFee === String(val)
-                          ? 'bg-[#00A39D] text-[#0A0F0E] border-[#00A39D]'
-                          : 'border-[rgba(0,163,157,0.2)] text-muted-foreground'
+                          ? 'bg-primary text-primary-foreground border-primary'
+                          : 'border-primary/20 text-muted-foreground'
                       )}
                       onClick={() => setFeeConfig({ ...feeConfig, platformDefaultFee: String(val) })}
                     >
@@ -328,20 +328,20 @@ export default function SettingsPage() {
               </div>
 
               {/* Example Calculation */}
-              <div className="bg-[#0A0F0E] rounded-lg p-4 border border-[rgba(0,163,157,0.05)]">
+              <div className="bg-background rounded-lg p-4 border border-primary/5">
                 <p className="text-xs text-muted-foreground font-medium mb-3">Contoh Perhitungan</p>
                 <div className="space-y-2 text-xs">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Harga Tiket</span>
-                    <span className="text-white font-medium">Rp 1.000.000</span>
+                    <span className="text-foreground font-medium">Rp 1.000.000</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Fee Platform ({feeConfig.platformDefaultFee}%)</span>
-                    <span className="text-[#F8AD3C] font-medium">- Rp {(1000000 * Number(feeConfig.platformDefaultFee) / 100).toLocaleString('id-ID')}</span>
+                    <span className="text-gold font-medium">- Rp {(1000000 * Number(feeConfig.platformDefaultFee) / 100).toLocaleString('id-ID')}</span>
                   </div>
-                  <Separator className="bg-[rgba(0,163,157,0.1)]" />
+                  <Separator className="bg-primary/10" />
                   <div className="flex justify-between font-bold">
-                    <span className="text-white">Diterima Organizer</span>
+                    <span className="text-foreground">Diterima Organizer</span>
                     <span className="text-emerald-400">Rp {(1000000 * (100 - Number(feeConfig.platformDefaultFee)) / 100).toLocaleString('id-ID')}</span>
                   </div>
                 </div>
@@ -353,7 +353,7 @@ export default function SettingsPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="border-[rgba(0,163,157,0.2)] text-muted-foreground text-xs"
+                    className="border-primary/20 text-muted-foreground text-xs"
                     onClick={() => {
                       setFeeConfig({ platformDefaultFee: '5' });
                       setIsEditingFee(false);
@@ -364,7 +364,7 @@ export default function SettingsPage() {
                   </Button>
                   <Button
                     size="sm"
-                    className="bg-[#00A39D] hover:bg-[#00BFB8] text-[#0A0F0E] text-xs font-semibold"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold"
                     onClick={() => {
                       setIsEditingFee(false);
                       toast.success(`Default fee disimpan: ${feeConfig.platformDefaultFee}%`);
@@ -381,12 +381,12 @@ export default function SettingsPage() {
 
         {/* ═══ GLOBAL CONFIG TAB ═══ */}
         <TabsContent value="config" className="space-y-4">
-          <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)]">
+          <Card className="bg-card border border-primary/10">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Sliders className="w-4 h-4 text-[#00A39D]" />
-                  <CardTitle className="text-white text-sm font-bold">
+                  <Sliders className="w-4 h-4 text-primary" />
+                  <CardTitle className="text-foreground text-sm font-bold">
                     Global Configuration
                   </CardTitle>
                 </div>
@@ -396,8 +396,8 @@ export default function SettingsPage() {
                   className={cn(
                     'text-xs',
                     isEditing
-                      ? 'bg-[#00A39D] hover:bg-[#00BFB8] text-[#0A0F0E] font-semibold'
-                      : 'border-[rgba(0,163,157,0.3)] text-[#00A39D] hover:bg-[rgba(0,163,157,0.1)]'
+                      ? 'bg-primary hover:bg-primary/90 text-primary-foreground font-semibold'
+                      : 'border-primary/30 text-primary hover:bg-primary/10'
                   )}
                   onClick={() => setIsEditing(!isEditing)}
                 >
@@ -418,7 +418,7 @@ export default function SettingsPage() {
                     value={config.paymentTimeout}
                     onChange={(e) => setConfig({ ...config, paymentTimeout: e.target.value })}
                     disabled={!isEditing}
-                    className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white text-sm h-10 disabled:opacity-60"
+                    className="bg-background border-primary/15 text-foreground text-sm h-10 disabled:opacity-60"
                   />
                 </div>
                 <div className="space-y-2">
@@ -428,7 +428,7 @@ export default function SettingsPage() {
                     value={config.maxTicketsPerUser}
                     onChange={(e) => setConfig({ ...config, maxTicketsPerUser: e.target.value })}
                     disabled={!isEditing}
-                    className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white text-sm h-10 disabled:opacity-60"
+                    className="bg-background border-primary/15 text-foreground text-sm h-10 disabled:opacity-60"
                   />
                 </div>
                 <div className="space-y-2">
@@ -438,7 +438,7 @@ export default function SettingsPage() {
                     value={config.maxTicketsPerTransaction}
                     onChange={(e) => setConfig({ ...config, maxTicketsPerTransaction: e.target.value })}
                     disabled={!isEditing}
-                    className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white text-sm h-10 disabled:opacity-60"
+                    className="bg-background border-primary/15 text-foreground text-sm h-10 disabled:opacity-60"
                   />
                 </div>
                 <div className="space-y-2">
@@ -447,19 +447,19 @@ export default function SettingsPage() {
                     type="number"
                     value="7"
                     disabled
-                    className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white text-sm h-10 disabled:opacity-60"
+                    className="bg-background border-primary/15 text-foreground text-sm h-10 disabled:opacity-60"
                   />
                   <p className="text-[10px] text-muted-foreground/60">Hari setelah event selesai sebelum WD tersedia</p>
                 </div>
               </div>
 
-              <Separator className="bg-[rgba(0,163,157,0.1)]" />
+              <Separator className="bg-primary/10" />
 
               {/* Toggle switches */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <label className="text-sm text-white font-medium">2FA Required for SUPER_ADMIN</label>
+                    <label className="text-sm text-foreground font-medium">2FA Required for SUPER_ADMIN</label>
                     <p className="text-[10px] text-muted-foreground">Wajibkan autentikasi dua faktor untuk akses admin panel</p>
                   </div>
                   <Switch
@@ -468,10 +468,10 @@ export default function SettingsPage() {
                     disabled={!isEditing}
                   />
                 </div>
-                <Separator className="bg-[rgba(0,163,157,0.06)]" />
+                <Separator className="bg-primary/10" />
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <label className="text-sm text-white font-medium">Auto-cancel Expired Orders</label>
+                    <label className="text-sm text-foreground font-medium">Auto-cancel Expired Orders</label>
                     <p className="text-[10px] text-muted-foreground">Batalkan pesanan otomatis jika melewati batas waktu pembayaran</p>
                   </div>
                   <Switch
@@ -482,13 +482,13 @@ export default function SettingsPage() {
                 </div>
               </div>
 
-              <Separator className="bg-[rgba(0,163,157,0.1)]" />
+              <Separator className="bg-primary/10" />
 
               <div className="flex items-center justify-end gap-3">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="border-[rgba(0,163,157,0.2)] text-muted-foreground text-xs"
+                  className="border-primary/20 text-muted-foreground text-xs"
                   onClick={() => {
                     setConfig({
                       paymentTimeout: '2',
@@ -506,7 +506,7 @@ export default function SettingsPage() {
                 </Button>
                 <Button
                   size="sm"
-                  className="bg-[#00A39D] hover:bg-[#00BFB8] text-[#0A0F0E] text-xs font-semibold disabled:opacity-40"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold disabled:opacity-40"
                   disabled={!isEditing}
                   onClick={handleSaveConfig}
                 >

@@ -80,24 +80,24 @@ export default function MyOrdersPage() {
   const orders: IOrder[] = (data as { data?: IOrder[] } | null)?.data || [];
 
   return (
-    <div className="min-h-screen bg-[#0B0B0F]">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-[#0B0B0F]/95 backdrop-blur-md border-b border-[#2A2A35]">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
           <Button
             variant="ghost"
             size="icon"
-            className="text-gray-400 hover:text-white hover:bg-[#16161D]"
+            className="text-muted-foreground hover:text-foreground hover:bg-card"
             onClick={() => navigateTo("home")}
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-white font-semibold text-lg flex-1">
+          <h1 className="text-foreground font-semibold text-lg flex-1">
             Pesanan Saya
           </h1>
           <Badge
             variant="outline"
-            className="text-gray-400 border-[#2A2A35] text-xs"
+            className="text-muted-foreground border-border text-xs"
           >
             {orders.length} pesanan
           </Badge>
@@ -108,16 +108,16 @@ export default function MyOrdersPage() {
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 text-green-400 animate-spin" />
-            <span className="ml-3 text-gray-400">Memuat pesanan...</span>
+            <span className="ml-3 text-muted-foreground">Memuat pesanan...</span>
           </div>
         ) : orders.length === 0 ? (
-          <Card className="bg-[#16161D] border-[#2A2A35]">
+          <Card className="bg-card border-border">
             <CardContent className="py-16 text-center">
-              <ShoppingBag className="w-16 h-16 text-gray-700 mx-auto mb-4" />
-              <h3 className="text-white text-lg font-semibold mb-2">
+              <ShoppingBag className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
+              <h3 className="text-foreground text-lg font-semibold mb-2">
                 Belum ada pesanan
               </h3>
-              <p className="text-gray-500 text-sm mb-6">
+              <p className="text-muted-foreground text-sm mb-6">
                 Anda belum memiliki pesanan. Mulai beli tiket sekarang!
               </p>
               <Button
@@ -138,7 +138,7 @@ export default function MyOrdersPage() {
         {/* Back button */}
         <Button
           variant="outline"
-          className="w-full border-[#2A2A35] text-gray-300 hover:bg-[#16161D] hover:text-white h-12 mt-4 mb-8"
+          className="w-full border-border text-foreground/80 hover:bg-card hover:text-foreground h-12 mt-4 mb-8"
           onClick={() => navigateTo("home")}
         >
           <Home className="w-4 h-4 mr-2" />
@@ -160,7 +160,7 @@ function OrderCard({ order }: { order: IOrder }) {
 
   return (
     <Card
-      className="bg-[#16161D] border-[#2A2A35] hover:border-[#3A3A45] transition-colors cursor-pointer"
+      className="bg-card border-border hover:border-foreground/15 transition-colors cursor-pointer"
       onClick={() => {
         if (order.status === "pending") navigateTo("payment", order.id);
         else if (order.status === "paid") navigateTo("eticket", order.id);
@@ -172,11 +172,11 @@ function OrderCard({ order }: { order: IOrder }) {
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-white font-semibold text-sm">
+              <span className="text-foreground font-semibold text-sm">
                 {eventTitle}
               </span>
             </div>
-            <div className="flex items-center gap-3 text-xs text-gray-500">
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
               {eventDate && (
                 <span className="flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
@@ -194,16 +194,16 @@ function OrderCard({ order }: { order: IOrder }) {
           {getStatusBadge(order.status)}
         </div>
 
-        <Separator className="bg-[#2A2A35]" />
+        <Separator className="bg-border" />
 
         {/* Details */}
         <div className="flex items-center justify-between text-sm">
           <div className="space-y-0.5">
-            <p className="text-gray-500 text-xs">Kode Pesanan</p>
-            <p className="text-white font-mono text-xs">{order.orderCode}</p>
+            <p className="text-muted-foreground text-xs">Kode Pesanan</p>
+            <p className="text-foreground font-mono text-xs">{order.orderCode}</p>
           </div>
           <div className="text-right space-y-0.5">
-            <p className="text-gray-500 text-xs">Total</p>
+            <p className="text-muted-foreground text-xs">Total</p>
             <p className="text-green-400 font-bold">
               {formatRupiah(order.totalAmount)}
             </p>
@@ -211,11 +211,11 @@ function OrderCard({ order }: { order: IOrder }) {
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-gray-500 text-xs flex items-center gap-1">
+          <span className="text-muted-foreground text-xs flex items-center gap-1">
             <Ticket className="w-3 h-3" />
             {totalTickets} tiket
           </span>
-          <span className="text-gray-500 text-xs">
+          <span className="text-muted-foreground text-xs">
             {paymentMethod}
           </span>
         </div>
@@ -264,7 +264,7 @@ function OrderCard({ order }: { order: IOrder }) {
               <Button
                 size="sm"
                 variant="outline"
-                className="border-[#2A2A35] text-gray-300 hover:bg-[#16161D] hover:text-white h-9"
+                className="border-border text-foreground/80 hover:bg-card hover:text-foreground h-9"
                 onClick={(e) => {
                   e.stopPropagation();
                   navigateTo("eticket", order.id);

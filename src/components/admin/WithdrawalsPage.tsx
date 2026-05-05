@@ -132,20 +132,20 @@ function RejectModal({
           Reject
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-[#111918] border-[rgba(0,163,157,0.15)] text-white max-w-sm">
+      <DialogContent className="bg-card border-input text-foreground max-w-sm">
         <DialogHeader>
-          <DialogTitle className="text-base font-bold text-white flex items-center gap-2">
+          <DialogTitle className="text-base font-bold text-foreground flex items-center gap-2">
             <XCircle className="w-5 h-5 text-red-400" />
             Reject Withdrawal
           </DialogTitle>
           <DialogDescription className="text-muted-foreground text-sm">
-            Tolak permintaan withdrawal dari <span className="font-semibold text-white">{wd.organizerName}</span>
+            Tolak permintaan withdrawal dari <span className="font-semibold text-foreground">{wd.organizerName}</span>
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3 mt-3">
-          <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5">
+          <div className="p-3 rounded-lg bg-background border border-border">
             <p className="text-xs text-muted-foreground">Amount</p>
-            <p className="text-[#F8AD3C] text-sm font-bold">{formatRupiah(wd.amount)}</p>
+            <p className="text-gold text-sm font-bold">{formatRupiah(wd.amount)}</p>
           </div>
           <div>
             <label className="text-xs text-muted-foreground font-medium mb-1.5 block">
@@ -153,14 +153,14 @@ function RejectModal({
             </label>
             <Textarea
               placeholder="Masukkan alasan penolakan..."
-              className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white placeholder:text-muted-foreground/50 min-h-[80px] resize-none text-sm"
+              className="bg-background border-input text-foreground placeholder:text-muted-foreground/50 min-h-[80px] resize-none text-sm"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
             />
           </div>
         </div>
         <DialogFooter className="gap-2">
-          <Button variant="outline" className="border-[rgba(0,163,157,0.2)] text-muted-foreground hover:text-white" onClick={() => setOpen(false)}>
+          <Button variant="outline" className="border-input text-muted-foreground hover:text-foreground" onClick={() => setOpen(false)}>
             Batal
           </Button>
           <Button className="bg-red-500/15 text-red-400 border border-red-500/30 hover:bg-red-500/25" onClick={handleSubmit}>
@@ -214,9 +214,9 @@ function UploadTransferProofDialog({
           Upload Proof
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-[#111918] border-[rgba(0,163,157,0.15)] text-white max-w-sm">
+      <DialogContent className="bg-card border-input text-foreground max-w-sm">
         <DialogHeader>
-          <DialogTitle className="text-base font-bold text-white flex items-center gap-2">
+          <DialogTitle className="text-base font-bold text-foreground flex items-center gap-2">
             <Upload className="w-5 h-5 text-blue-400" />
             Upload Transfer Proof
           </DialogTitle>
@@ -225,9 +225,9 @@ function UploadTransferProofDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-3 mt-3">
-          <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5">
+          <div className="p-3 rounded-lg bg-background border border-border">
             <p className="text-xs text-muted-foreground">Bank Account</p>
-            <p className="text-white text-sm font-medium">{wd.bankName} — {wd.bankHolder}</p>
+            <p className="text-foreground text-sm font-medium">{wd.bankName} — {wd.bankHolder}</p>
             <p className="text-xs text-muted-foreground font-mono">{wd.bankAccount}</p>
           </div>
           <div className="space-y-2">
@@ -235,7 +235,7 @@ function UploadTransferProofDialog({
             <Input
               type="file"
               accept="image/*,.pdf"
-              className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white text-sm h-10 file:text-[#00A39D]"
+              className="bg-background border-input text-foreground text-sm h-10 file:text-primary"
               onChange={(e) => setFile(e.target.files?.[0] || null)}
             />
           </div>
@@ -243,17 +243,17 @@ function UploadTransferProofDialog({
             <label className="text-xs text-muted-foreground font-medium">Catatan (opsional)</label>
             <Textarea
               placeholder="Catatan transfer..."
-              className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white placeholder:text-muted-foreground/50 min-h-[60px] resize-none text-sm"
+              className="bg-background border-input text-foreground placeholder:text-muted-foreground/50 min-h-[60px] resize-none text-sm"
               value={note}
               onChange={(e) => setNote(e.target.value)}
             />
           </div>
         </div>
         <DialogFooter className="gap-2">
-          <Button variant="outline" className="border-[rgba(0,163,157,0.2)] text-muted-foreground hover:text-white" onClick={() => setOpen(false)}>
+          <Button variant="outline" className="border-input text-muted-foreground hover:text-foreground" onClick={() => setOpen(false)}>
             Batal
           </Button>
-          <Button className="bg-[#00A39D] hover:bg-[#00BFB8] text-[#0A0F0E] font-semibold" onClick={handleSubmit} disabled={uploadProof.isPending}>
+          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold" onClick={handleSubmit} disabled={uploadProof.isPending}>
             {uploadProof.isPending ? 'Uploading...' : 'Upload'}
           </Button>
         </DialogFooter>
@@ -268,31 +268,31 @@ function ViewProofDialog({ wd }: { wd: WithdrawalItem }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="text-[#00A39D] hover:text-[#00BFB8] hover:bg-[rgba(0,163,157,0.1)] h-8 px-2">
+        <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10 h-8 px-2">
           <Eye className="w-4 h-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-[#111918] border-[rgba(0,163,157,0.15)] text-white max-w-sm">
+      <DialogContent className="bg-card border-input text-foreground max-w-sm">
         <DialogHeader>
-          <DialogTitle className="text-base font-bold text-white flex items-center gap-2">
-            <FileText className="w-5 h-5 text-[#00A39D]" />
+          <DialogTitle className="text-base font-bold text-foreground flex items-center gap-2">
+            <FileText className="w-5 h-5 text-primary" />
             Transfer Proof
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">{wd.organizerName}</DialogDescription>
         </DialogHeader>
         <div className="space-y-3 mt-3">
-          <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5 space-y-1">
+          <div className="p-3 rounded-lg bg-background border border-border space-y-1">
             <p className="text-xs text-muted-foreground">Amount</p>
-            <p className="text-[#F8AD3C] text-sm font-bold">{formatRupiah(wd.amount)}</p>
+            <p className="text-gold text-sm font-bold">{formatRupiah(wd.amount)}</p>
           </div>
-          <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5 space-y-1">
+          <div className="p-3 rounded-lg bg-background border border-border space-y-1">
             <p className="text-xs text-muted-foreground">Transfer Note</p>
-            <p className="text-white text-sm">{wd.transferNote || '—'}</p>
+            <p className="text-foreground text-sm">{wd.transferNote || '—'}</p>
           </div>
           {wd.transferProofUrl && (
-            <div className="p-3 rounded-lg bg-[#0A0F0E] border border-white/5 text-center">
+            <div className="p-3 rounded-lg bg-background border border-border text-center">
               <p className="text-xs text-muted-foreground mb-2">Bukti Transfer</p>
-              <div className="w-full h-40 rounded bg-[rgba(0,163,157,0.05)] border border-dashed border-[rgba(0,163,157,0.2)] flex items-center justify-center">
+              <div className="w-full h-40 rounded bg-primary/5 border border-dashed border-input flex items-center justify-center">
                 <FileText className="w-8 h-8 text-muted-foreground/40" />
               </div>
             </div>
@@ -341,9 +341,9 @@ export function WithdrawalsPage() {
 
   const stats = [
     { label: 'Pending WD', value: pendingCount, icon: Clock, color: 'text-amber-400', bg: 'bg-amber-500/10' },
-    { label: 'Total Pending Amount', value: formatRupiah(pendingAmount), icon: DollarSign, color: 'text-[#F8AD3C]', bg: 'bg-[rgba(248,173,60,0.1)]' },
+    { label: 'Total Pending Amount', value: formatRupiah(pendingAmount), icon: DollarSign, color: 'text-gold', bg: 'bg-gold/10' },
     { label: 'Completed Today', value: completedToday, icon: CheckCircle2, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-    { label: 'Total Disbursed', value: formatRupiah(totalDisbursed), icon: TrendingUp, color: 'text-[#00A39D]', bg: 'bg-[rgba(0,163,157,0.1)]' },
+    { label: 'Total Disbursed', value: formatRupiah(totalDisbursed), icon: TrendingUp, color: 'text-primary', bg: 'bg-primary/10' },
   ];
 
   const handleReject = useCallback((id: string, reason: string) => {
@@ -379,11 +379,11 @@ export function WithdrawalsPage() {
     <div className="space-y-6">
       {/* ═══ HEADER ═══ */}
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-[rgba(0,163,157,0.1)] flex items-center justify-center">
-          <Wallet className="w-5 h-5 text-[#00A39D]" />
+        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+          <Wallet className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-white">Withdrawal Management</h2>
+          <h2 className="text-xl font-bold text-foreground">Withdrawal Management</h2>
           <p className="text-muted-foreground text-xs">Approve, reject, dan upload bukti transfer withdrawal</p>
         </div>
       </div>
@@ -391,7 +391,7 @@ export function WithdrawalsPage() {
       {/* ═══ STATS ═══ */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {stats.map((stat) => (
-          <Card key={stat.label} className="bg-[#111918] border-[rgba(0,163,157,0.1)] hover:border-[rgba(0,163,157,0.25)] transition-all">
+          <Card key={stat.label} className="bg-card border-border hover:border-primary/25 transition-all">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className={cn('w-9 h-9 rounded-lg flex items-center justify-center shrink-0', stat.bg)}>
@@ -408,7 +408,7 @@ export function WithdrawalsPage() {
       </div>
 
       {/* ═══ FILTER ═══ */}
-      <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+      <Card className="bg-card border-border">
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1 min-w-0">
@@ -416,7 +416,7 @@ export function WithdrawalsPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
                   placeholder="Cari organizer, event, atau rekening..."
-                  className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white placeholder:text-muted-foreground/50 pl-9 h-9"
+                  className="bg-background border-input text-foreground placeholder:text-muted-foreground/50 pl-9 h-9"
                   value={searchQuery}
                   onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                 />
@@ -424,17 +424,17 @@ export function WithdrawalsPage() {
             </div>
             <div className="w-full sm:w-44">
               <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
-                <SelectTrigger className="bg-[#0A0F0E] border-[rgba(0,163,157,0.15)] text-white h-9">
+                <SelectTrigger className="bg-background border-input text-foreground h-9">
                   <SelectValue placeholder="Semua Status" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#111918] border-[rgba(0,163,157,0.15)]">
-                  <SelectItem value="all" className="text-white">Semua Status</SelectItem>
-                  <SelectItem value="pending" className="text-white">Pending</SelectItem>
-                  <SelectItem value="approved" className="text-white">Approved</SelectItem>
-                  <SelectItem value="transferred" className="text-white">Transferred</SelectItem>
-                  <SelectItem value="completed" className="text-white">Completed</SelectItem>
-                  <SelectItem value="rejected" className="text-white">Rejected</SelectItem>
-                  <SelectItem value="dispute" className="text-white">Dispute</SelectItem>
+                <SelectContent className="bg-card border-input">
+                  <SelectItem value="all" className="text-foreground">Semua Status</SelectItem>
+                  <SelectItem value="pending" className="text-foreground">Pending</SelectItem>
+                  <SelectItem value="approved" className="text-foreground">Approved</SelectItem>
+                  <SelectItem value="transferred" className="text-foreground">Transferred</SelectItem>
+                  <SelectItem value="completed" className="text-foreground">Completed</SelectItem>
+                  <SelectItem value="rejected" className="text-foreground">Rejected</SelectItem>
+                  <SelectItem value="dispute" className="text-foreground">Dispute</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -443,12 +443,12 @@ export function WithdrawalsPage() {
       </Card>
 
       {/* ═══ TABLE ═══ */}
-      <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+      <Card className="bg-card border-border">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-white text-base flex items-center gap-2">
-                <Wallet className="w-4 h-4 text-[#00A39D]" />
+              <CardTitle className="text-foreground text-base flex items-center gap-2">
+                <Wallet className="w-4 h-4 text-primary" />
                 Daftar Withdrawal
               </CardTitle>
               <CardDescription className="text-muted-foreground text-xs mt-1">
@@ -468,7 +468,7 @@ export function WithdrawalsPage() {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow className="border-[rgba(0,163,157,0.08)] hover:bg-transparent">
+                  <TableRow className="border-border hover:bg-transparent">
                     <TableHead className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold h-10 px-4">Organizer</TableHead>
                     <TableHead className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold h-10 px-4">Event</TableHead>
                     <TableHead className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold h-10 px-4 text-right">Amount</TableHead>
@@ -480,7 +480,7 @@ export function WithdrawalsPage() {
                 </TableHeader>
                 <TableBody>
                   {paged.length === 0 ? (
-                    <TableRow className="border-[rgba(0,163,157,0.05)]">
+                    <TableRow className="border-border">
                       <TableCell colSpan={7} className="text-center py-12 text-muted-foreground">
                         <Search className="w-8 h-8 mx-auto mb-2 opacity-30" />
                         <p className="text-sm">Tidak ada withdrawal ditemukan</p>
@@ -488,19 +488,19 @@ export function WithdrawalsPage() {
                     </TableRow>
                   ) : (
                     paged.map((wd) => (
-                      <TableRow key={wd.id} className="border-[rgba(0,163,157,0.05)] hover:bg-[rgba(0,163,157,0.04)] transition-colors">
+                      <TableRow key={wd.id} className="border-border hover:bg-primary/5 transition-colors">
                         <TableCell className="px-4 py-3">
-                          <p className="text-sm text-white font-medium truncate max-w-[130px]">{wd.organizerName}</p>
+                          <p className="text-sm text-foreground font-medium truncate max-w-[130px]">{wd.organizerName}</p>
                           <p className="text-[10px] text-muted-foreground truncate max-w-[130px]">{wd.organizerEmail}</p>
                         </TableCell>
                         <TableCell className="px-4 py-3">
-                          <p className="text-xs text-white truncate max-w-[120px]">{wd.eventName}</p>
+                          <p className="text-xs text-foreground truncate max-w-[120px]">{wd.eventName}</p>
                         </TableCell>
                         <TableCell className="px-4 py-3 text-right">
-                          <span className="text-sm text-[#F8AD3C] font-semibold">{formatRupiah(wd.amount)}</span>
+                          <span className="text-sm text-gold font-semibold">{formatRupiah(wd.amount)}</span>
                         </TableCell>
                         <TableCell className="px-4 py-3">
-                          <p className="text-xs text-white">{wd.bankName}</p>
+                          <p className="text-xs text-foreground">{wd.bankName}</p>
                           <p className="text-[10px] text-muted-foreground font-mono">{wd.bankAccount} — {wd.bankHolder}</p>
                         </TableCell>
                         <TableCell className="px-4 py-3">{getWdStatusBadge(wd.status)}</TableCell>
@@ -546,12 +546,12 @@ export function WithdrawalsPage() {
 
           {/* ═══ PAGINATION ═══ */}
           {filtered.length > PAGE_SIZE && (
-            <div className="flex items-center justify-between px-4 py-3 border-t border-[rgba(0,163,157,0.08)]">
+            <div className="flex items-center justify-between px-4 py-3 border-t border-border">
               <p className="text-xs text-muted-foreground">
                 {(safePage - 1) * PAGE_SIZE + 1}–{Math.min(safePage * PAGE_SIZE, filtered.length)} dari {filtered.length}
               </p>
               <div className="flex items-center gap-1">
-                <Button variant="outline" size="sm" className="h-8 px-3 border-[rgba(0,163,157,0.15)] text-muted-foreground hover:text-white hover:bg-[rgba(0,163,157,0.1)]" disabled={safePage <= 1} onClick={() => setCurrentPage((p) => p - 1)}>
+                <Button variant="outline" size="sm" className="h-8 px-3 border-input text-muted-foreground hover:text-foreground hover:bg-primary/10" disabled={safePage <= 1} onClick={() => setCurrentPage((p) => p - 1)}>
                   <ChevronLeft className="w-4 h-4 mr-1" /> Prev
                 </Button>
                 {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
@@ -562,14 +562,14 @@ export function WithdrawalsPage() {
                   else pn = safePage - 3 + i;
                   return (
                     <Button key={pn} variant={safePage === pn ? 'default' : 'outline'} size="sm"
-                      className={cn('h-8 w-8 p-0 text-xs font-semibold', safePage === pn ? 'bg-[#00A39D] text-[#0A0F0E] hover:bg-[#00BFB8]' : 'border-[rgba(0,163,157,0.15)] text-muted-foreground hover:text-white hover:bg-[rgba(0,163,157,0.1)]')}
+                      className={cn('h-8 w-8 p-0 text-xs font-semibold', safePage === pn ? 'bg-primary text-primary-foreground hover:bg-primary/90' : 'border-input text-muted-foreground hover:text-foreground hover:bg-primary/10')}
                       onClick={() => setCurrentPage(pn)}
                     >
                       {pn}
                     </Button>
                   );
                 })}
-                <Button variant="outline" size="sm" className="h-8 px-3 border-[rgba(0,163,157,0.15)] text-muted-foreground hover:text-white hover:bg-[rgba(0,163,157,0.1)]" disabled={safePage >= totalPages} onClick={() => setCurrentPage((p) => p + 1)}>
+                <Button variant="outline" size="sm" className="h-8 px-3 border-input text-muted-foreground hover:text-foreground hover:bg-primary/10" disabled={safePage >= totalPages} onClick={() => setCurrentPage((p) => p + 1)}>
                   Next <ChevronRight className="w-4 h-4 ml-1" />
                 </Button>
               </div>

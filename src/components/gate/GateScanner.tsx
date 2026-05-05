@@ -161,19 +161,19 @@ export function GateScanner() {
             >
               {/* Simulated camera viewfinder */}
               <div
-                className="relative w-64 h-64 rounded-2xl bg-[#111918] border-2 border-[#00A39D]/30 flex items-center justify-center overflow-hidden cursor-pointer"
+                className="relative w-64 h-64 rounded-2xl bg-card border-2 border-primary/30 flex items-center justify-center overflow-hidden cursor-pointer"
                 onClick={handleSimulateScan}
               >
                 {/* Scan grid lines */}
                 <div className="absolute inset-0">
                   {/* Corner brackets */}
-                  <div className="absolute top-3 left-3 w-8 h-8 border-t-2 border-l-2 border-[#00A39D] rounded-tl-lg" />
-                  <div className="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-[#00A39D] rounded-tr-lg" />
-                  <div className="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-[#00A39D] rounded-bl-lg" />
-                  <div className="absolute bottom-3 right-3 w-8 h-8 border-b-2 border-r-2 border-[#00A39D] rounded-br-lg" />
+                  <div className="absolute top-3 left-3 w-8 h-8 border-t-2 border-l-2 border-primary rounded-tl-lg" />
+                  <div className="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-primary rounded-tr-lg" />
+                  <div className="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-primary rounded-bl-lg" />
+                  <div className="absolute bottom-3 right-3 w-8 h-8 border-b-2 border-r-2 border-primary rounded-br-lg" />
                   {/* Center cross */}
-                  <div className="absolute top-1/2 left-4 right-4 h-px bg-[#00A39D]/20" />
-                  <div className="absolute left-1/2 top-4 bottom-4 w-px bg-[#00A39D]/20" />
+                  <div className="absolute top-1/2 left-4 right-4 h-px bg-primary/20" />
+                  <div className="absolute left-1/2 top-4 bottom-4 w-px bg-primary/20" />
                 </div>
 
                 {scanMutation.isPending ? (
@@ -184,8 +184,8 @@ export function GateScanner() {
                     className="absolute left-3 right-3 h-0.5 bg-gradient-to-r from-transparent via-[#00A39D] to-transparent"
                   />
                 ) : (
-                  <div className="flex flex-col items-center gap-2 text-[#7FB3AE] z-10">
-                    <ScanLine className="h-10 w-10 text-[#00A39D]/60" />
+                  <div className="flex flex-col items-center gap-2 text-muted-foreground z-10">
+                    <ScanLine className="h-10 w-10 text-primary/60" />
                     <p className="text-xs font-medium">Tap untuk scan simulasi</p>
                   </div>
                 )}
@@ -213,7 +213,7 @@ export function GateScanner() {
                 )}
               </div>
 
-              <p className="text-[11px] text-[#7FB3AE] text-center max-w-[260px]">
+              <p className="text-[11px] text-muted-foreground text-center max-w-[260px]">
                 Arahkan kamera ke QR code gelang atau tiket penonton
               </p>
 
@@ -221,20 +221,20 @@ export function GateScanner() {
               <div className="w-full max-w-sm">
                 <div className="flex items-center gap-2">
                   <div className="flex-1 relative">
-                    <Keyboard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#7FB3AE]" />
+                    <Keyboard className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       value={searchValue}
                       onChange={(e) => setSearchValue(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleManualSearch()}
                       placeholder="Scan gelang / tiket..."
-                      className="pl-9 h-10 bg-[#111918] border-white/10 text-sm placeholder:text-[#7FB3AE]/50 focus:border-[#00A39D]/50"
+                      className="pl-9 h-10 bg-card border-input text-sm placeholder:text-muted-foreground/50 focus:border-primary/50"
                     />
                   </div>
                   <Button
                     size="sm"
                     onClick={handleManualSearch}
                     disabled={scanMutation.isPending}
-                    className="h-10 bg-[#00A39D] hover:bg-[#00A39D]/80 text-white shrink-0"
+                    className="h-10 bg-primary hover:bg-primary/80 text-foreground shrink-0"
                   >
                     <Search className="h-4 w-4" />
                   </Button>
@@ -254,7 +254,7 @@ export function GateScanner() {
               {(result.type === 'error_not_found' ||
                 result.type === 'error_already_inside' ||
                 result.type === 'error_not_entered') && (
-                <Card className="bg-[#111918] border-white/5">
+                <Card className="bg-card border-border">
                   <CardContent className="p-5 flex flex-col items-center gap-4 text-center">
                     <motion.div
                       initial={{ scale: 0 }}
@@ -276,8 +276,8 @@ export function GateScanner() {
                       )}
                     </motion.div>
                     <div>
-                      <h3 className="text-base font-bold text-white">{result.message}</h3>
-                      <p className="text-xs text-[#7FB3AE] mt-1">
+                      <h3 className="text-base font-bold text-foreground">{result.message}</h3>
+                      <p className="text-xs text-muted-foreground mt-1">
                         {result.type === 'error_not_found' && 'Pastikan kode tiket atau gelang sudah benar'}
                         {result.type === 'error_already_inside' && 'Penonton sudah berada di dalam venue saat ini'}
                         {result.type === 'error_not_entered' && 'Penonton belum melakukan scan masuk sebelumnya'}
@@ -286,7 +286,7 @@ export function GateScanner() {
                     <Button
                       variant="outline"
                       onClick={handleReset}
-                      className="mt-2 border-white/10 text-[#7FB3AE] hover:text-white hover:bg-white/5"
+                      className="mt-2 border-input text-muted-foreground hover:text-foreground hover:bg-accent"
                     >
                       <RotateCcw className="h-4 w-4 mr-2" />
                       Scan Ulang
@@ -297,7 +297,7 @@ export function GateScanner() {
 
               {/* Not redeemed warning */}
               {result.type === 'error_not_redeemed' && (
-                <Card className="bg-[#111918] border-amber-500/30">
+                <Card className="bg-card border-amber-500/30">
                   <CardContent className="p-5 flex flex-col items-center gap-4 text-center">
                     <motion.div
                       initial={{ scale: 0 }}
@@ -310,14 +310,14 @@ export function GateScanner() {
                     </motion.div>
                     <div>
                       <h3 className="text-base font-bold text-amber-400">{result.message}</h3>
-                      <p className="text-xs text-[#7FB3AE] mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         Penonton harus menukar tiket dengan gelang di counter redeem terlebih dahulu
                       </p>
                     </div>
                     <Button
                       variant="outline"
                       onClick={handleReset}
-                      className="border-white/10 text-[#7FB3AE] hover:text-white hover:bg-white/5"
+                      className="border-input text-muted-foreground hover:text-foreground hover:bg-accent"
                     >
                       <RotateCcw className="h-4 w-4 mr-2" />
                       Scan Ulang
@@ -328,19 +328,19 @@ export function GateScanner() {
 
               {/* Success states (entry / exit) */}
               {(result.type === 'success_in' || result.type === 'success_out') && result.attendee && (
-                <Card className="bg-[#111918] border-white/5">
+                <Card className="bg-card border-border">
                   <CardContent className="p-5 space-y-4">
                     {/* Header row */}
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-2.5">
-                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#00A39D]/15">
-                          <User className="h-5 w-5 text-[#00A39D]" />
+                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/15">
+                          <User className="h-5 w-5 text-primary" />
                         </div>
                         <div>
-                          <h3 className="text-sm font-bold text-white leading-tight">
+                          <h3 className="text-sm font-bold text-foreground leading-tight">
                             {String(result.attendee.attendeeName ?? '-')}
                           </h3>
-                          <p className="text-[11px] text-[#7FB3AE] mt-0.5">
+                          <p className="text-[11px] text-muted-foreground mt-0.5">
                             {String(result.attendee.ticketTypeName ?? '-')}
                           </p>
                         </div>
@@ -351,26 +351,26 @@ export function GateScanner() {
                     </div>
 
                     {/* Detail rows */}
-                    <div className="bg-[#0A0F0E] rounded-xl p-3 space-y-2.5">
+                    <div className="bg-background rounded-xl p-3 space-y-2.5">
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-xs text-[#7FB3AE]">
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <Ticket className="h-3.5 w-3.5" />
                           <span>Tiket</span>
                         </div>
-                        <span className="text-xs font-mono text-white">{String(result.attendee.ticketCode ?? '-')}</span>
+                        <span className="text-xs font-mono text-foreground">{String(result.attendee.ticketCode ?? '-')}</span>
                       </div>
                       {result.attendee.wristbandColor != null && (
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-xs text-[#7FB3AE]">
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <Watch className="h-3.5 w-3.5" />
                             <span>Gelang</span>
                           </div>
-                          <span className="text-xs text-white">{String(result.attendee.wristbandColor)}</span>
+                          <span className="text-xs text-foreground">{String(result.attendee.wristbandColor)}</span>
                         </div>
                       )}
                       {(result.attendee.reentryCount as number) > 0 && (
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-[#7FB3AE]">Re-entry</span>
+                          <span className="text-xs text-muted-foreground">Re-entry</span>
                           <Badge className="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px]">
                             {String(result.attendee.reentryCount)}x
                           </Badge>
@@ -383,14 +383,14 @@ export function GateScanner() {
                       <div className="grid grid-cols-2 gap-2">
                         <Button
                           onClick={() => handleConfirm('IN')}
-                          className="h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm gap-2"
+                          className="h-12 bg-emerald-500 hover:bg-emerald-600 text-foreground font-bold text-sm gap-2"
                         >
                           <LogIn className="h-4 w-4" />
                           IZINKAN MASUK
                         </Button>
                         <Button
                           onClick={() => handleConfirm('OUT')}
-                          className="h-12 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm gap-2"
+                          className="h-12 bg-amber-500 hover:bg-amber-600 text-foreground font-bold text-sm gap-2"
                         >
                           <LogOut className="h-4 w-4" />
                           IZINKAN KELUAR
@@ -399,7 +399,7 @@ export function GateScanner() {
                     ) : result.type === 'success_in' ? (
                       <Button
                         onClick={() => handleConfirm('IN')}
-                        className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm gap-2"
+                        className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-foreground font-bold text-sm gap-2"
                       >
                         <LogIn className="h-4 w-4" />
                         IZINKAN MASUK
@@ -408,7 +408,7 @@ export function GateScanner() {
                     ) : (
                       <Button
                         onClick={() => handleConfirm('OUT')}
-                        className="w-full h-12 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm gap-2"
+                        className="w-full h-12 bg-amber-500 hover:bg-amber-600 text-foreground font-bold text-sm gap-2"
                       >
                         <LogOut className="h-4 w-4" />
                         IZINKAN KELUAR
@@ -420,7 +420,7 @@ export function GateScanner() {
                     <Button
                       variant="ghost"
                       onClick={handleReset}
-                      className="w-full text-[#7FB3AE] hover:text-white hover:bg-white/5 text-xs"
+                      className="w-full text-muted-foreground hover:text-foreground hover:bg-accent text-xs"
                     >
                       <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
                       Scan Berikutnya
@@ -440,7 +440,7 @@ export function GateScanner() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 z-50 bg-[#0A0F0E]/95 backdrop-blur-sm flex flex-col items-center justify-center"
+            className="absolute inset-0 z-50 bg-background/95 backdrop-blur-sm flex flex-col items-center justify-center"
           >
             <motion.div
               initial={{ scale: 0, rotate: -180 }}
@@ -476,7 +476,7 @@ export function GateScanner() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="text-sm text-[#7FB3AE] mt-2"
+              className="text-sm text-muted-foreground mt-2"
             >
               {successAction === 'IN' ? 'Penonton berhasil masuk' : 'Penonton berhasil keluar'}
             </motion.p>

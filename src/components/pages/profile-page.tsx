@@ -59,19 +59,19 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0B0F]">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-[#0B0B0F]/95 backdrop-blur-md border-b border-[#2A2A35]">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
           <Button
             variant="ghost"
             size="icon"
-            className="text-gray-400 hover:text-white hover:bg-[#16161D]"
+            className="text-muted-foreground hover:text-foreground hover:bg-card"
             onClick={() => navigateTo("home")}
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-white font-semibold text-lg flex-1">
+          <h1 className="text-foreground font-semibold text-lg flex-1">
             Profil Saya
           </h1>
         </div>
@@ -79,12 +79,12 @@ export default function ProfilePage() {
 
       <main className="max-w-lg mx-auto px-4 py-6 space-y-4">
         {/* User info card */}
-        <Card className="bg-[#16161D] border-[#2A2A35] overflow-hidden">
+        <Card className="bg-card border-border overflow-hidden">
           {/* Top gradient */}
           <div className="h-24 bg-gradient-to-r from-green-500/20 to-green-600/10" />
           <CardContent className="relative px-6 pb-6 -mt-10">
             <div className="flex items-end gap-4">
-              <Avatar className="w-20 h-20 border-4 border-[#16161D] shadow-lg">
+              <Avatar className="w-20 h-20 border-4 border-card shadow-lg">
                 <AvatarImage src={currentUser?.avatar as string} alt={currentUser?.name as string} />
                 <AvatarFallback className="bg-green-500/20 text-green-400 text-xl">
                   {(currentUser?.name as string)
@@ -95,7 +95,7 @@ export default function ProfilePage() {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 pb-1">
-                <h2 className="text-white text-xl font-bold">{currentUser?.name as string}</h2>
+                <h2 className="text-foreground text-xl font-bold">{currentUser?.name as string}</h2>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -111,12 +111,12 @@ export default function ProfilePage() {
             </div>
 
             <div className="mt-4 space-y-2">
-              <div className="flex items-center gap-2 text-sm text-gray-400">
-                <Mail className="w-4 h-4 text-gray-600" />
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Mail className="w-4 h-4 text-muted-foreground/70" />
                 {currentUser?.email as string}
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-400">
-                <Phone className="w-4 h-4 text-gray-600" />
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Phone className="w-4 h-4 text-muted-foreground/70" />
                 {currentUser?.phone as string}
               </div>
             </div>
@@ -125,21 +125,21 @@ export default function ProfilePage() {
 
         {/* Stats cards */}
         <div className="grid grid-cols-3 gap-3">
-          <Card className="bg-[#16161D] border-[#2A2A35]">
+          <Card className="bg-card border-border">
             <CardContent className="pt-4 pb-3 text-center">
               <ShoppingBag className="w-5 h-5 text-green-400 mx-auto mb-2" />
-              <p className="text-white text-xl font-bold">{totalOrders}</p>
-              <p className="text-gray-500 text-xs">Pesanan</p>
+              <p className="text-foreground text-xl font-bold">{totalOrders}</p>
+              <p className="text-muted-foreground text-xs">Pesanan</p>
             </CardContent>
           </Card>
-          <Card className="bg-[#16161D] border-[#2A2A35]">
+          <Card className="bg-card border-border">
             <CardContent className="pt-4 pb-3 text-center">
               <Ticket className="w-5 h-5 text-green-400 mx-auto mb-2" />
-              <p className="text-white text-xl font-bold">{totalTickets}</p>
-              <p className="text-gray-500 text-xs">Tiket</p>
+              <p className="text-foreground text-xl font-bold">{totalTickets}</p>
+              <p className="text-muted-foreground text-xs">Tiket</p>
             </CardContent>
           </Card>
-          <Card className="bg-[#16161D] border-[#2A2A35]">
+          <Card className="bg-card border-border">
             <CardContent className="pt-4 pb-3 text-center">
               <Wallet className="w-5 h-5 text-green-400 mx-auto mb-2" />
               <p className="text-green-400 text-base font-bold">
@@ -147,36 +147,36 @@ export default function ProfilePage() {
                   ? formatRupiah(totalSpent).replace("Rp", "").trim()
                   : "Rp 0"}
               </p>
-              <p className="text-gray-500 text-xs">Total Belanja</p>
+              <p className="text-muted-foreground text-xs">Total Belanja</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Menu items */}
-        <Card className="bg-[#16161D] border-[#2A2A35]">
+        <Card className="bg-card border-border">
           <CardContent className="p-0">
             {/* My orders */}
             <button
-              className="w-full flex items-center gap-3 px-4 py-4 hover:bg-[#1E1E28] transition-colors text-left"
+              className="w-full flex items-center gap-3 px-4 py-4 hover:bg-accent transition-colors text-left"
               onClick={() => navigateTo("my-orders")}
             >
               <div className="w-9 h-9 rounded-lg bg-green-500/10 flex items-center justify-center">
                 <ShoppingBag className="w-4 h-4 text-green-400" />
               </div>
               <div className="flex-1">
-                <p className="text-white text-sm font-medium">Pesanan Saya</p>
-                <p className="text-gray-500 text-xs">
+                <p className="text-foreground text-sm font-medium">Pesanan Saya</p>
+                <p className="text-muted-foreground text-xs">
                   {totalOrders} pesanan • {totalTickets} tiket
                 </p>
               </div>
-              <ChevronRight className="w-4 h-4 text-gray-600" />
+              <ChevronRight className="w-4 h-4 text-muted-foreground/70" />
             </button>
 
-            <Separator className="bg-[#2A2A35]" />
+            <Separator className="bg-border" />
 
             {/* Account info (decorative) */}
             <button
-              className="w-full flex items-center gap-3 px-4 py-4 hover:bg-[#1E1E28] transition-colors text-left"
+              className="w-full flex items-center gap-3 px-4 py-4 hover:bg-accent transition-colors text-left"
               onClick={() =>
                 toast({ title: "Fitur pengaturan akun segera hadir!" })
               }
@@ -185,21 +185,21 @@ export default function ProfilePage() {
                 <User className="w-4 h-4 text-blue-400" />
               </div>
               <div className="flex-1">
-                <p className="text-white text-sm font-medium">
+                <p className="text-foreground text-sm font-medium">
                   Pengaturan Akun
                 </p>
-                <p className="text-gray-500 text-xs">
+                <p className="text-muted-foreground text-xs">
                   Ubah email, password, dan preferensi
                 </p>
               </div>
-              <ChevronRight className="w-4 h-4 text-gray-600" />
+              <ChevronRight className="w-4 h-4 text-muted-foreground/70" />
             </button>
 
-            <Separator className="bg-[#2A2A35]" />
+            <Separator className="bg-border" />
 
             {/* Help (decorative) */}
             <button
-              className="w-full flex items-center gap-3 px-4 py-4 hover:bg-[#1E1E28] transition-colors text-left"
+              className="w-full flex items-center gap-3 px-4 py-4 hover:bg-accent transition-colors text-left"
               onClick={() =>
                 toast({ title: "Halaman bantuan segera hadir!" })
               }
@@ -208,12 +208,12 @@ export default function ProfilePage() {
                 <Phone className="w-4 h-4 text-yellow-400" />
               </div>
               <div className="flex-1">
-                <p className="text-white text-sm font-medium">Bantuan</p>
-                <p className="text-gray-500 text-xs">
+                <p className="text-foreground text-sm font-medium">Bantuan</p>
+                <p className="text-muted-foreground text-xs">
                   FAQ dan hubungi customer service
                 </p>
               </div>
-              <ChevronRight className="w-4 h-4 text-gray-600" />
+              <ChevronRight className="w-4 h-4 text-muted-foreground/70" />
             </button>
           </CardContent>
         </Card>
@@ -231,7 +231,7 @@ export default function ProfilePage() {
         {/* Back button */}
         <Button
           variant="outline"
-          className="w-full border-[#2A2A35] text-gray-300 hover:bg-[#16161D] hover:text-white h-12 mb-8"
+          className="w-full border-border text-foreground/80 hover:bg-card hover:text-foreground h-12 mb-8"
           onClick={() => navigateTo("home")}
         >
           <Home className="w-4 h-4 mr-2" />

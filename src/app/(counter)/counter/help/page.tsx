@@ -73,7 +73,7 @@ export default function HelpPage() {
       </div>
 
       {/* ── Quick Contact ── */}
-      <Card className="bg-[#111918] border-border/30">
+      <Card className="bg-card border-border/30">
         <CardContent className="p-4 space-y-4">
           <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
             <Headphones className="h-4 w-4 text-primary" />
@@ -81,7 +81,7 @@ export default function HelpPage() {
           </h2>
 
           {/* Supervisor */}
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-[#0A0F0E]/60">
+          <div className="flex items-center gap-3 p-3 rounded-lg bg-background/60">
             <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
               <UserCircle className="h-5 w-5 text-primary" />
             </div>
@@ -102,7 +102,7 @@ export default function HelpPage() {
           </div>
 
           {/* Event Hotline */}
-          <div className="flex items-center gap-3 p-3 rounded-lg bg-[#0A0F0E]/60">
+          <div className="flex items-center gap-3 p-3 rounded-lg bg-background/60">
             <div className="h-9 w-9 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
               <Phone className="h-5 w-5 text-amber-400" />
             </div>
@@ -124,7 +124,7 @@ export default function HelpPage() {
       </Card>
 
       {/* ── FAQ Accordion ── */}
-      <Card className="bg-[#111918] border-border/30">
+      <Card className="bg-card border-border/30">
         <CardContent className="p-4">
           <h2 className="text-sm font-semibold text-foreground mb-2">
             Pertanyaan Umum (FAQ)

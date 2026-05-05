@@ -74,7 +74,7 @@ export function CounterHistory() {
   return (
     <div className="flex flex-col gap-4 p-4 max-w-lg mx-auto w-full">
       {/* ── Summary Card ── */}
-      <Card className="bg-[#111918] border-border/30">
+      <Card className="bg-card border-border/30">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-sm font-semibold">
             <CalendarDays className="h-4 w-4 text-primary" />
@@ -83,7 +83,7 @@ export function CounterHistory() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col items-center p-3 rounded-lg bg-[#0A0F0E]/80 border border-border/20">
+            <div className="flex flex-col items-center p-3 rounded-lg bg-background/80 border border-border/20">
               <p className="text-2xl font-bold text-primary">
                 {todayRedemptions}
               </p>
@@ -91,7 +91,7 @@ export function CounterHistory() {
                 Total Dituksr
               </p>
             </div>
-            <div className="flex flex-col items-center p-3 rounded-lg bg-[#0A0F0E]/80 border border-border/20">
+            <div className="flex flex-col items-center p-3 rounded-lg bg-background/80 border border-border/20">
               <p className="text-2xl font-bold text-amber-400">
                 {myRedemptions.length}
               </p>
@@ -110,7 +110,7 @@ export function CounterHistory() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Cari nama, kode tiket, atau gelang..."
-          className="pl-9 bg-[#111918] border-border/30 text-sm focus:border-primary"
+          className="pl-9 bg-card border-border/30 text-sm focus:border-primary"
         />
       </div>
 
@@ -132,7 +132,7 @@ export function CounterHistory() {
       {/* ── Redemption List ── */}
       <div className="space-y-2">
         {filtered.length === 0 ? (
-          <Card className="bg-[#111918] border-border/30">
+          <Card className="bg-card border-border/30">
             <CardContent className="py-8 flex flex-col items-center gap-2 text-center">
               <Search className="h-10 w-10 text-muted-foreground/30" />
               <p className="text-sm font-medium text-muted-foreground">
@@ -149,7 +149,7 @@ export function CounterHistory() {
           displayed.map((r, idx) => (
             <Card
               key={String(r.id ?? idx)}
-              className="bg-[#111918] border-border/30 hover:border-primary/30 transition-colors"
+              className="bg-card border-border/30 hover:border-primary/30 transition-colors"
             >
               <CardContent className="p-3">
                 <div className="flex items-start gap-3">
@@ -199,7 +199,7 @@ export function CounterHistory() {
                       {r.wristbandColor != null && (
                         <div className="flex items-center gap-1.5">
                           <div
-                            className="h-3.5 w-3.5 rounded-full border border-white/10"
+                            className="h-3.5 w-3.5 rounded-full border border-input"
                             style={{
                               backgroundColor: String(r.wristbandColorHex ?? '#E5E7EB'),
                             }}

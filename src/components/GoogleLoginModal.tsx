@@ -27,7 +27,7 @@ export function GoogleLoginModal({ open, onOpenChange, onLogin, isLoading }: Goo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md p-0 overflow-hidden border-[#2A2A35] bg-[#0B0B0F] [&>button]:hidden">
+      <DialogContent className="sm:max-w-md p-0 overflow-hidden border-border bg-background [&>button]:hidden">
         {/* Top gradient */}
         <div className="h-2 bg-gradient-to-r from-primary via-teal-400 to-amber-400" />
 
@@ -39,7 +39,7 @@ export function GoogleLoginModal({ open, onOpenChange, onLogin, isLoading }: Goo
             </div>
 
             <div>
-              <DialogTitle className="text-xl sm:text-2xl font-bold text-white">
+              <DialogTitle className="text-xl sm:text-2xl font-bold text-foreground">
                 Masuk untuk Melanjutkan
               </DialogTitle>
               <DialogDescription className="text-sm text-muted-foreground mt-2">
@@ -94,7 +94,7 @@ export function GoogleLoginModal({ open, onOpenChange, onLogin, isLoading }: Goo
             </div>
           </div>
 
-          <Separator className="my-6 bg-[#2A2A35]" />
+          <Separator className="my-6 bg-border" />
 
           {/* Terms */}
           <p className="text-xs text-muted-foreground text-center leading-relaxed">

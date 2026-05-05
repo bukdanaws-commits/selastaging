@@ -51,14 +51,14 @@ export function GateLayout({ children }: { children: React.ReactNode }) {
   const gateTypeBadge = getGateTypeBadge(gateType)
 
   return (
-    <div className="flex flex-col h-dvh bg-[#0A0F0E] text-white max-w-md mx-auto relative overflow-hidden">
+    <div className="flex flex-col h-dvh bg-background text-foreground max-w-md mx-auto relative overflow-hidden">
       {/* ── HEADER ───────────────────────────────────────────────────────── */}
-      <header className="shrink-0 px-4 py-3 bg-[#111918] border-b border-white/5">
+      <header className="shrink-0 px-4 py-3 bg-card border-b border-border">
         <div className="flex items-center justify-between">
           {/* Left: Gate info */}
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#00A39D]/15">
-              <Shield className="h-5 w-5 text-[#00A39D]" />
+            <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-primary/15">
+              <Shield className="h-5 w-5 text-primary" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -72,7 +72,7 @@ export function GateLayout({ children }: { children: React.ReactNode }) {
                   {gateTypeBadge.label}
                 </span>
               </div>
-              <p className="text-[11px] text-[#7FB3AE] leading-tight">
+              <p className="text-[11px] text-muted-foreground leading-tight">
                 {gateLocation} · {gateStatus === 'active' ? 'Aktif' : 'Nonaktif'}
               </p>
             </div>
@@ -82,9 +82,9 @@ export function GateLayout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center gap-2">
             <div className="text-right hidden sm:block">
               <p className="text-xs font-medium leading-tight">{staffName}</p>
-              <p className="text-[10px] text-[#7FB3AE]">Gate Staff</p>
+              <p className="text-[10px] text-muted-foreground">Gate Staff</p>
             </div>
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#00A39D]/20 text-[#00A39D] text-xs font-bold">
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary/20 text-primary text-xs font-bold">
               <User className="h-4 w-4" />
             </div>
           </div>
@@ -95,7 +95,7 @@ export function GateLayout({ children }: { children: React.ReactNode }) {
       <main className="flex-1 overflow-hidden">{children}</main>
 
       {/* ── BOTTOM NAVIGATION ────────────────────────────────────────────── */}
-      <nav className="shrink-0 bg-[#111918] border-t border-white/5 pb-[env(safe-area-inset-bottom)]">
+      <nav className="shrink-0 bg-card border-t border-border pb-[env(safe-area-inset-bottom)]">
         <div className="flex">
           {navItems.map((item) => {
             const isActive =
@@ -109,12 +109,12 @@ export function GateLayout({ children }: { children: React.ReactNode }) {
                 className={cn(
                   'flex-1 flex flex-col items-center justify-center py-3 gap-1 transition-colors relative',
                   isActive
-                    ? 'text-[#00A39D]'
-                    : 'text-[#7FB3AE] hover:text-white'
+                    ? 'text-primary'
+                    : 'text-muted-foreground hover:text-foreground'
                 )}
               >
                 {isActive && (
-                  <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-[#00A39D] rounded-full" />
+                  <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full" />
                 )}
                 {item.icon}
                 <span className="text-[10px] font-medium">{item.label}</span>

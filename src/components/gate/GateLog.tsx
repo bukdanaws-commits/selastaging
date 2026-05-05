@@ -109,21 +109,21 @@ export function GateLog() {
               <CardContent className="p-3 text-center">
                 <ArrowDownToLine className="h-4 w-4 text-emerald-400 mx-auto mb-1" />
                 <p className="text-lg font-bold text-emerald-400">{stats.totalMasuk}</p>
-                <p className="text-[10px] text-[#7FB3AE]">Masuk</p>
+                <p className="text-[10px] text-muted-foreground">Masuk</p>
               </CardContent>
             </Card>
             <Card className="bg-red-500/10 border-red-500/20">
               <CardContent className="p-3 text-center">
                 <ArrowUpFromLine className="h-4 w-4 text-red-400 mx-auto mb-1" />
                 <p className="text-lg font-bold text-red-400">{stats.totalKeluar}</p>
-                <p className="text-[10px] text-[#7FB3AE]">Keluar</p>
+                <p className="text-[10px] text-muted-foreground">Keluar</p>
               </CardContent>
             </Card>
-            <Card className="bg-[#00A39D]/10 border-[#00A39D]/20">
+            <Card className="bg-primary/10 border-primary/20">
               <CardContent className="p-3 text-center">
-                <Users className="h-4 w-4 text-[#00A39D] mx-auto mb-1" />
-                <p className="text-lg font-bold text-[#00A39D]">{stats.currentlyInside}</p>
-                <p className="text-[10px] text-[#7FB3AE]">Di Dalam</p>
+                <Users className="h-4 w-4 text-primary mx-auto mb-1" />
+                <p className="text-lg font-bold text-primary">{stats.currentlyInside}</p>
+                <p className="text-[10px] text-muted-foreground">Di Dalam</p>
               </CardContent>
             </Card>
           </div>
@@ -131,12 +131,12 @@ export function GateLog() {
           {/* ── SEARCH + FILTER ───────────────────────────────────────── */}
           <div className="space-y-3">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#7FB3AE]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Cari nama, kode tiket..."
-                className="pl-9 h-9 bg-[#111918] border-white/10 text-sm placeholder:text-[#7FB3AE]/50 focus:border-[#00A39D]/50"
+                className="pl-9 h-9 bg-card border-input text-sm placeholder:text-muted-foreground/50 focus:border-primary/50"
               />
             </div>
 
@@ -148,10 +148,10 @@ export function GateLog() {
                   size="sm"
                   onClick={() => setFilter(btn.value)}
                   className={cn(
-                    'h-8 text-[11px] border-white/10 px-3',
+                    'h-8 text-[11px] border-input px-3',
                     filter === btn.value
-                      ? 'bg-[#00A39D]/20 border-[#00A39D]/40 text-[#00A39D]'
-                      : 'text-[#7FB3AE] hover:text-white hover:bg-white/5'
+                      ? 'bg-primary/20 border-primary/40 text-primary'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                   )}
                 >
                   {btn.label}
@@ -160,8 +160,8 @@ export function GateLog() {
                     className={cn(
                       'ml-1.5 text-[9px] h-4 min-w-4 px-1',
                       filter === btn.value
-                        ? 'bg-[#00A39D]/30 text-[#00A39D]'
-                        : 'bg-white/5 text-[#7FB3AE]'
+                        ? 'bg-primary/30 text-primary'
+                        : 'bg-white/5 text-muted-foreground'
                     )}
                   >
                     {btn.count}
@@ -174,7 +174,7 @@ export function GateLog() {
           {/* ── LOG LIST ─────────────────────────────────────────────── */}
           <div className="space-y-2 pb-4">
             {filteredLogs.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-[#7FB3AE]">
+              <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
                 <Filter className="h-8 w-8 mb-2 opacity-40" />
                 <p className="text-sm">Tidak ada log ditemukan</p>
               </div>
@@ -186,7 +186,7 @@ export function GateLog() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: Math.min(idx * 0.03, 0.3) }}
                 >
-                  <Card className="bg-[#111918] border-white/5 hover:border-white/10 transition-colors">
+                  <Card className="bg-card border-border hover:border-input transition-colors">
                     <CardContent className="p-3">
                       <div className="flex items-start gap-3">
                         {/* Action indicator */}
@@ -208,7 +208,7 @@ export function GateLog() {
                         {/* Content */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between gap-2">
-                            <p className="text-sm font-semibold text-white truncate">
+                            <p className="text-sm font-semibold text-foreground truncate">
                               {String(log.userName ?? '-')}
                             </p>
                             <span
@@ -225,17 +225,17 @@ export function GateLog() {
                           <div className="flex items-center gap-2 mt-0.5">
                             <Badge
                               variant="outline"
-                              className="text-[9px] h-4 px-1.5 border-white/10 text-[#7FB3AE]"
+                              className="text-[9px] h-4 px-1.5 border-input text-muted-foreground"
                             >
                               {String(log.ticketType ?? '-')}
                             </Badge>
-                            <span className="text-[9px] text-[#7FB3AE]">{String(log.gateName ?? '-')}</span>
+                            <span className="text-[9px] text-muted-foreground">{String(log.gateName ?? '-')}</span>
                           </div>
                           <div className="flex items-center justify-between mt-1.5">
-                            <p className="text-[10px] font-mono text-[#7FB3AE]/70">
+                            <p className="text-[10px] font-mono text-muted-foreground/70">
                               {String(log.ticketCode ?? '-')}
                             </p>
-                            <p className="text-[10px] text-[#7FB3AE]/70">
+                            <p className="text-[10px] text-muted-foreground/70">
                               {log.scannedAt ? formatTime(String(log.scannedAt)) : (log.timestamp ? formatTime(String(log.timestamp)) : '-')}
                             </p>
                           </div>

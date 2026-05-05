@@ -89,29 +89,29 @@ export default function GateProfilPage() {
         <div className="px-4 py-4 space-y-4">
           {/* ── PAGE TITLE ── */}
           <div className="flex items-center gap-2">
-            <User className="h-5 w-5 text-[#00A39D]" />
+            <User className="h-5 w-5 text-primary" />
             <h2 className="text-base font-bold">Profil</h2>
           </div>
 
           {/* ── PROFILE HEADER CARD ── */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-            <Card className="bg-[#111918] border-white/5">
+            <Card className="bg-card border-border">
               <CardContent className="p-5">
                 <div className="flex flex-col items-center text-center">
-                  <div className="flex items-center justify-center w-20 h-20 rounded-full bg-[#00A39D]/20 text-[#00A39D] text-2xl font-bold mb-3 ring-2 ring-[#00A39D]/30 ring-offset-2 ring-offset-[#111918]">
+                  <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/20 text-primary text-2xl font-bold mb-3 ring-2 ring-primary/30 ring-offset-2 ring-offset-card">
                     {initials}
                   </div>
                   <h3 className="text-lg font-bold">{staffName}</h3>
-                  <p className="text-sm text-[#7FB3AE] mt-0.5">Gate Staff</p>
+                  <p className="text-sm text-muted-foreground mt-0.5">Gate Staff</p>
                   <div className="mt-3 flex items-center gap-2">
-                    <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-[#00A39D]/15 text-[#00A39D] border border-[#00A39D]/20">
+                    <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-primary/15 text-primary border border-primary/20">
                       Shift {staffShift ? staffShift.charAt(0).toUpperCase() + staffShift.slice(1) : '-'}
                     </span>
                     <span className="text-[10px] font-semibold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
                       Aktif
                     </span>
                   </div>
-                  <p className="text-[10px] text-[#7FB3AE]/60 mt-2 font-mono">ID: {staffId}</p>
+                  <p className="text-[10px] text-muted-foreground/60 mt-2 font-mono">ID: {staffId}</p>
                 </div>
               </CardContent>
             </Card>
@@ -119,26 +119,26 @@ export default function GateProfilPage() {
 
           {/* ── GATE ASSIGNMENT CARD ── */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            <Card className="bg-[#111918] border-white/5">
+            <Card className="bg-card border-border">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <Shield className="h-4 w-4 text-[#00A39D]" />
+                  <Shield className="h-4 w-4 text-primary" />
                   <h3 className="text-sm font-semibold">Penempatan Gate</h3>
                 </div>
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-[#7FB3AE]">Gate Saat Ini</span>
+                    <span className="text-xs text-muted-foreground">Gate Saat Ini</span>
                     <span className="text-sm font-semibold">{gateName}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-[#7FB3AE]">Lokasi</span>
+                    <span className="text-xs text-muted-foreground">Lokasi</span>
                     <div className="flex items-center gap-1">
-                      <MapPin className="h-3 w-3 text-[#7FB3AE]" />
+                      <MapPin className="h-3 w-3 text-muted-foreground" />
                       <span className="text-sm">{gateLocation}</span>
                     </div>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-[#7FB3AE]">Tipe Gate</span>
+                    <span className="text-xs text-muted-foreground">Tipe Gate</span>
                     <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${gateTypeBadge.color}`}>
                       {gateTypeBadge.label}
                     </span>
@@ -150,27 +150,27 @@ export default function GateProfilPage() {
 
           {/* ── SESSION STATS CARD ── */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-            <Card className="bg-[#111918] border-white/5">
+            <Card className="bg-card border-border">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <QrCode className="h-4 w-4 text-[#00A39D]" />
+                  <QrCode className="h-4 w-4 text-primary" />
                   <h3 className="text-sm font-semibold">Statistik Sesi</h3>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center p-3 rounded-lg bg-white/5">
-                    <QrCode className="h-5 w-5 text-[#00A39D] mx-auto mb-1.5" />
+                  <div className="text-center p-3 rounded-lg bg-accent">
+                    <QrCode className="h-5 w-5 text-primary mx-auto mb-1.5" />
                     <p className="text-lg font-bold">{todayScans || gateLogs.length}</p>
-                    <p className="text-[10px] text-[#7FB3AE]">Total Scan Hari Ini</p>
+                    <p className="text-[10px] text-muted-foreground">Total Scan Hari Ini</p>
                   </div>
-                  <div className="text-center p-3 rounded-lg bg-white/5">
+                  <div className="text-center p-3 rounded-lg bg-accent">
                     <Gauge className="h-5 w-5 text-emerald-400 mx-auto mb-1.5" />
                     <p className="text-lg font-bold">{avgPerHour}</p>
-                    <p className="text-[10px] text-[#7FB3AE]">Rata-rata / Jam</p>
+                    <p className="text-[10px] text-muted-foreground">Rata-rata / Jam</p>
                   </div>
                 </div>
-                <Separator className="bg-white/5 my-3" />
+                <Separator className="bg-accent my-3" />
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-[#7FB3AE]">Total Scan (karir)</span>
+                  <span className="text-xs text-muted-foreground">Total Scan (karir)</span>
                   <span className="text-sm font-semibold">{staffTotalScans.toLocaleString()}</span>
                 </div>
               </CardContent>
@@ -179,43 +179,43 @@ export default function GateProfilPage() {
 
           {/* ── CONTACT & SUPPORT CARD ── */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <Card className="bg-[#111918] border-white/5">
+            <Card className="bg-card border-border">
               <CardContent className="p-4">
                 <div className="flex items-center gap-2 mb-3">
-                  <Headphones className="h-4 w-4 text-[#00A39D]" />
+                  <Headphones className="h-4 w-4 text-primary" />
                   <h3 className="text-sm font-semibold">Kontak & Bantuan</h3>
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
-                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-[#00A39D]/10 shrink-0">
-                      <User className="h-4 w-4 text-[#00A39D]" />
+                    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/10 shrink-0">
+                      <User className="h-4 w-4 text-primary" />
                     </div>
                     <div>
-                      <p className="text-[10px] text-[#7FB3AE]">Supervisor</p>
+                      <p className="text-[10px] text-muted-foreground">Supervisor</p>
                       <p className="text-sm font-medium">Command Center</p>
                       <div className="flex items-center gap-1 mt-0.5">
-                        <Phone className="h-3 w-3 text-[#7FB3AE]" />
-                        <p className="text-xs text-[#7FB3AE]">Hubungi via radio</p>
+                        <Phone className="h-3 w-3 text-muted-foreground" />
+                        <p className="text-xs text-muted-foreground">Hubungi via radio</p>
                       </div>
                     </div>
                   </div>
-                  <Separator className="bg-white/5" />
+                  <Separator className="bg-accent" />
                   <div className="flex items-start gap-3">
                     <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald-500/10 shrink-0">
                       <Phone className="h-4 w-4 text-emerald-400" />
                     </div>
                     <div>
-                      <p className="text-[10px] text-[#7FB3AE]">Event Hotline</p>
+                      <p className="text-[10px] text-muted-foreground">Event Hotline</p>
                       <p className="text-sm font-medium">021-555-0123</p>
                     </div>
                   </div>
-                  <Separator className="bg-white/5" />
+                  <Separator className="bg-accent" />
                   <div className="flex items-start gap-3">
                     <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-amber-500/10 shrink-0">
                       <Terminal className="h-4 w-4 text-amber-400" />
                     </div>
                     <div>
-                      <p className="text-[10px] text-[#7FB3AE]">Command Center</p>
+                      <p className="text-[10px] text-muted-foreground">Command Center</p>
                       <p className="text-sm font-medium">Ext. 100</p>
                     </div>
                   </div>

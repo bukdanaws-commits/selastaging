@@ -77,12 +77,12 @@ function KpiCard({
   color?: string;
 }) {
   return (
-    <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)] hover:border-[rgba(0,163,157,0.3)] transition-all card-hover">
+    <Card className="bg-card border border-border hover:border-primary/30 transition-all card-hover">
       <CardContent className="p-5">
         <div className="flex items-start justify-between">
           <div className="space-y-2">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">{title}</p>
-            <p className="text-xl font-extrabold text-white">{value}</p>
+            <p className="text-xl font-extrabold text-foreground">{value}</p>
             {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
             {trend && trendLabel && (
               <div className="flex items-center gap-1">
@@ -183,20 +183,20 @@ export function AnalyticsPage() {
       {/* ═══ HEADER ═══ */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[rgba(248,173,60,0.1)] flex items-center justify-center">
-            <BarChart3 className="w-5 h-5 text-[#F8AD3C]" />
+          <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center">
+            <BarChart3 className="w-5 h-5 text-gold" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white">Analytics & Reports</h2>
+            <h2 className="text-xl font-bold text-foreground">Analytics & Reports</h2>
             <p className="text-muted-foreground text-xs">Data analitik penjualan</p>
           </div>
         </div>
-        <Button size="sm" className="bg-[#00A39D] hover:bg-[#00BFB8] text-[#0A0F0E] text-xs font-semibold" onClick={handleExport}>
+        <Button size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-semibold" onClick={handleExport}>
           <Download className="w-3 h-3 mr-1.5" />Export Laporan
         </Button>
       </div>
 
-      <Separator className="bg-[rgba(0,163,157,0.1)]" />
+      <Separator className="bg-border" />
 
       {/* ═══ SUMMARY KPIs ═══ */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -208,18 +208,18 @@ export function AnalyticsPage() {
 
       {/* ═══ MAIN TABS ═══ */}
       <Tabs defaultValue="revenue" className="space-y-4">
-        <TabsList className="bg-[#111918] border border-[rgba(0,163,157,0.15)] p-1">
-          <TabsTrigger value="revenue" className="text-xs data-[state=active]:bg-[#00A39D] data-[state=active]:text-[#0A0F0E] data-[state=active]:font-bold"><DollarSign className="w-3 h-3 mr-1" />Revenue</TabsTrigger>
-          <TabsTrigger value="sales" className="text-xs data-[state=active]:bg-[#00A39D] data-[state=active]:text-[#0A0F0E] data-[state=active]:font-bold"><BarChart3 className="w-3 h-3 mr-1" />Sales</TabsTrigger>
-          <TabsTrigger value="demographics" className="text-xs data-[state=active]:bg-[#00A39D] data-[state=active]:text-[#0A0F0E] data-[state=active]:font-bold"><Users className="w-3 h-3 mr-1" />Demographics</TabsTrigger>
+        <TabsList className="bg-card border border-input p-1">
+          <TabsTrigger value="revenue" className="text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-bold"><DollarSign className="w-3 h-3 mr-1" />Revenue</TabsTrigger>
+          <TabsTrigger value="sales" className="text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-bold"><BarChart3 className="w-3 h-3 mr-1" />Sales</TabsTrigger>
+          <TabsTrigger value="demographics" className="text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:font-bold"><Users className="w-3 h-3 mr-1" />Demographics</TabsTrigger>
         </TabsList>
 
         {/* ─── REVENUE TAB ─── */}
         <TabsContent value="revenue" className="space-y-4">
           {revenueChartData.length > 0 && (
-            <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)]">
+            <Card className="bg-card border border-border">
               <CardHeader className="pb-2">
-                <CardTitle className="text-white text-sm font-bold flex items-center gap-2"><TrendingUp className="w-4 h-4 text-[#00A39D]" />Revenue 7 Hari Terakhir</CardTitle>
+                <CardTitle className="text-foreground text-sm font-bold flex items-center gap-2"><TrendingUp className="w-4 h-4 text-primary" />Revenue 7 Hari Terakhir</CardTitle>
                 <CardDescription className="text-muted-foreground text-xs">Tren pendapatan</CardDescription>
               </CardHeader>
               <CardContent>
@@ -240,9 +240,9 @@ export function AnalyticsPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {salesByTier.length > 0 && (
-              <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)] lg:col-span-2">
+              <Card className="bg-card border border-border lg:col-span-2">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-white text-sm font-bold flex items-center gap-2"><BarChart3 className="w-4 h-4 text-[#F8AD3C]" />Revenue per Kategori Tiket</CardTitle>
+                  <CardTitle className="text-foreground text-sm font-bold flex items-center gap-2"><BarChart3 className="w-4 h-4 text-gold" />Revenue per Kategori Tiket</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="h-64">
@@ -260,9 +260,9 @@ export function AnalyticsPage() {
               </Card>
             )}
 
-            <Card className="bg-[#111918] border border-[rgba(248,173,60,0.2)]">
+            <Card className="bg-card border border-gold/20">
               <CardContent className="p-6 flex flex-col items-center justify-center h-full space-y-4">
-                <div className="w-14 h-14 rounded-2xl bg-[rgba(248,173,60,0.12)] flex items-center justify-center"><DollarSign className="w-7 h-7 text-[#F8AD3C]" /></div>
+                <div className="w-14 h-14 rounded-2xl bg-gold/15 flex items-center justify-center"><DollarSign className="w-7 h-7 text-gold" /></div>
                 <div className="text-center">
                   <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Total Revenue</p>
                   <p className="text-3xl font-extrabold gradient-text-gold">{formatRupiah(totalRevenue)}</p>
@@ -272,14 +272,14 @@ export function AnalyticsPage() {
                   <span className="text-green-400 font-semibold">+18.5%</span>
                   <span className="text-muted-foreground">vs target awal</span>
                 </div>
-                <Separator className="bg-[rgba(0,163,157,0.1)] w-full" />
+                <Separator className="bg-border w-full" />
                 <div className="grid grid-cols-2 gap-4 w-full text-center">
                   <div>
-                    <p className="text-lg font-bold text-white">{paidOrders}</p>
+                    <p className="text-lg font-bold text-foreground">{paidOrders}</p>
                     <p className="text-[10px] text-muted-foreground">Orders Paid</p>
                   </div>
                   <div>
-                    <p className="text-lg font-bold text-white">{paidOrders > 0 ? formatRupiah(Math.round(totalRevenue / paidOrders)) : '—'}</p>
+                    <p className="text-lg font-bold text-foreground">{paidOrders > 0 ? formatRupiah(Math.round(totalRevenue / paidOrders)) : '—'}</p>
                     <p className="text-[10px] text-muted-foreground">AOV</p>
                   </div>
                 </div>
@@ -291,9 +291,9 @@ export function AnalyticsPage() {
         {/* ─── SALES TAB ─── */}
         <TabsContent value="sales" className="space-y-4">
           {salesByTier.length > 0 && (
-            <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)]">
+            <Card className="bg-card border border-border">
               <CardHeader className="pb-2">
-                <CardTitle className="text-white text-sm font-bold flex items-center gap-2"><BarChart3 className="w-4 h-4 text-[#00A39D]" />Tiket Terjual per Kategori</CardTitle>
+                <CardTitle className="text-foreground text-sm font-bold flex items-center gap-2"><BarChart3 className="w-4 h-4 text-primary" />Tiket Terjual per Kategori</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-64">
@@ -313,13 +313,13 @@ export function AnalyticsPage() {
           )}
 
           {salesByTier.length > 0 && (
-            <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)]">
-              <CardHeader className="pb-3"><CardTitle className="text-white text-sm font-bold">Detail Penjualan per Tier</CardTitle></CardHeader>
+            <Card className="bg-card border border-border">
+              <CardHeader className="pb-3"><CardTitle className="text-foreground text-sm font-bold">Detail Penjualan per Tier</CardTitle></CardHeader>
               <CardContent>
-                <div className="max-h-72 overflow-y-auto rounded-lg border border-[rgba(0,163,157,0.08)]">
+                <div className="max-h-72 overflow-y-auto rounded-lg border border-border">
                   <Table>
                     <TableHeader>
-                      <TableRow className="border-b border-[rgba(0,163,157,0.15)] hover:bg-transparent">
+                      <TableRow className="border-b border-input hover:bg-transparent">
                         <TableHead className="text-[10px] text-muted-foreground uppercase tracking-wider">Kategori</TableHead>
                         <TableHead className="text-[10px] text-muted-foreground uppercase tracking-wider text-right">Terjual</TableHead>
                         <TableHead className="text-[10px] text-muted-foreground uppercase tracking-wider text-right">Quota</TableHead>
@@ -329,12 +329,12 @@ export function AnalyticsPage() {
                     </TableHeader>
                     <TableBody>
                       {salesByTier.map((tier) => (
-                        <TableRow key={tier.name} className="border-b border-[rgba(0,163,157,0.08)] hover:bg-[rgba(0,163,157,0.04)]">
-                          <TableCell className="text-sm text-white font-medium">{tier.name}</TableCell>
-                          <TableCell className="text-sm text-white text-right">{tier.terjual.toLocaleString('id-ID')}</TableCell>
+                        <TableRow key={tier.name} className="border-b border-border hover:bg-primary/5">
+                          <TableCell className="text-sm text-foreground font-medium">{tier.name}</TableCell>
+                          <TableCell className="text-sm text-foreground text-right">{tier.terjual.toLocaleString('id-ID')}</TableCell>
                           <TableCell className="text-sm text-muted-foreground text-right">{tier.quota.toLocaleString('id-ID')}</TableCell>
-                          <TableCell className="text-right"><Badge variant="outline" className={cn('text-[10px] font-bold', tier.percentage >= 90 ? 'border-red-500/50 text-red-400' : tier.percentage >= 70 ? 'border-[rgba(248,173,60,0.5)] text-[#F8AD3C]' : 'border-green-500/50 text-green-400')}>{tier.percentage}%</Badge></TableCell>
-                          <TableCell className="text-sm text-[#00A39D] font-semibold text-right">{formatRupiah(tier.revenue)}</TableCell>
+                          <TableCell className="text-right"><Badge variant="outline" className={cn('text-[10px] font-bold', tier.percentage >= 90 ? 'border-red-500/50 text-red-400' : tier.percentage >= 70 ? 'border-gold/50 text-gold' : 'border-green-500/50 text-green-400')}>{tier.percentage}%</Badge></TableCell>
+                          <TableCell className="text-sm text-primary font-semibold text-right">{formatRupiah(tier.revenue)}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -345,9 +345,9 @@ export function AnalyticsPage() {
           )}
 
           {paymentMethodBreakdown.length > 0 && (
-            <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)]">
+            <Card className="bg-card border border-border">
               <CardHeader className="pb-2">
-                <CardTitle className="text-white text-sm font-bold flex items-center gap-2"><CreditCard className="w-4 h-4 text-[#00BFB8]" />Distribusi Metode Pembayaran</CardTitle>
+                <CardTitle className="text-foreground text-sm font-bold flex items-center gap-2"><CreditCard className="w-4 h-4 text-primary" />Distribusi Metode Pembayaran</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {paymentMethodBreakdown.map((pm, i) => (
@@ -358,11 +358,11 @@ export function AnalyticsPage() {
                         <span className="text-muted-foreground">{pm.method}</span>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="text-white font-medium">{pm.count} trx</span>
+                        <span className="text-foreground font-medium">{pm.count} trx</span>
                         <span className="text-muted-foreground w-10 text-right">{pm.percentage}%</span>
                       </div>
                     </div>
-                    <div className="h-2 w-full bg-[#0A0F0E] rounded-full overflow-hidden">
+                    <div className="h-2 w-full bg-background rounded-full overflow-hidden">
                       <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pm.percentage}%`, backgroundColor: payColors[i] || '#00A39D' }} />
                     </div>
                   </div>
@@ -374,9 +374,9 @@ export function AnalyticsPage() {
 
         {/* ─── DEMOGRAPHICS TAB ─── */}
         <TabsContent value="demographics" className="space-y-4">
-          <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)]">
+          <Card className="bg-card border border-border">
             <CardHeader className="pb-3">
-              <CardTitle className="text-white text-sm font-bold flex items-center gap-2"><Building2 className="w-4 h-4 text-[#00A39D]" />Top Kota Asal Penonton</CardTitle>
+              <CardTitle className="text-foreground text-sm font-bold flex items-center gap-2"><Building2 className="w-4 h-4 text-primary" />Top Kota Asal Penonton</CardTitle>
               <CardDescription className="text-muted-foreground text-xs">Berdasarkan data alamat pemesanan</CardDescription>
             </CardHeader>
             <CardContent>
@@ -386,12 +386,12 @@ export function AnalyticsPage() {
                     <div className="flex items-center justify-between text-sm">
                       <div className="flex items-center gap-3">
                         <span className="w-5 text-center font-bold text-xs text-muted-foreground">{i + 1}</span>
-                        <Globe className="w-3.5 h-3.5 text-[#7FB3AE]" />
-                        <span className="text-white font-medium">{city.city}</span>
+                        <Globe className="w-3.5 h-3.5 text-muted-foreground" />
+                        <span className="text-foreground font-medium">{city.city}</span>
                       </div>
-                      <span className="text-[#00A39D] font-bold">{city.pct}%</span>
+                      <span className="text-primary font-bold">{city.pct}%</span>
                     </div>
-                    <div className="h-2 w-full bg-[#0A0F0E] rounded-full overflow-hidden ml-8">
+                    <div className="h-2 w-full bg-background rounded-full overflow-hidden ml-8">
                       <div className="h-full rounded-full bg-gradient-to-r from-[#00A39D] to-[#00BFB8] transition-all duration-500" style={{ width: `${city.pct * 2.2}%` }} />
                     </div>
                   </div>
@@ -401,18 +401,18 @@ export function AnalyticsPage() {
           </Card>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)]">
+            <Card className="bg-card border border-border">
               <CardHeader className="pb-3">
-                <CardTitle className="text-white text-sm font-bold flex items-center gap-2"><Users className="w-4 h-4 text-[#F8AD3C]" />Distribusi Usia</CardTitle>
+                <CardTitle className="text-foreground text-sm font-bold flex items-center gap-2"><Users className="w-4 h-4 text-gold" />Distribusi Usia</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 {ageDistribution.map((age) => (
                   <div key={age.range} className="space-y-1">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">{age.range} tahun</span>
-                      <span className="text-white font-bold">{age.pct}%</span>
+                      <span className="text-foreground font-bold">{age.pct}%</span>
                     </div>
-                    <div className="h-3 w-full bg-[#0A0F0E] rounded-full overflow-hidden">
+                    <div className="h-3 w-full bg-background rounded-full overflow-hidden">
                       <div className="h-full rounded-full bg-gradient-to-r from-[#F8AD3C] to-[#FBBF4E] transition-all duration-500" style={{ width: `${age.pct * 2.5}%` }} />
                     </div>
                   </div>
@@ -420,29 +420,29 @@ export function AnalyticsPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-[#111918] border border-[rgba(0,163,157,0.1)]">
+            <Card className="bg-card border border-border">
               <CardHeader className="pb-3">
-                <CardTitle className="text-white text-sm font-bold flex items-center gap-2"><UserCheck className="w-4 h-4 text-[#00BFB8]" />Pembeli Baru vs. Kembali</CardTitle>
+                <CardTitle className="text-foreground text-sm font-bold flex items-center gap-2"><UserCheck className="w-4 h-4 text-primary" />Pembeli Baru vs. Kembali</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-xl bg-[rgba(0,163,157,0.06)] border border-[rgba(0,163,157,0.1)] text-center">
-                    <div className="w-10 h-10 rounded-xl bg-[rgba(0,163,157,0.12)] flex items-center justify-center mx-auto mb-2"><UserPlus className="w-5 h-5 text-[#00A39D]" /></div>
-                    <p className="text-2xl font-extrabold text-white">68%</p>
+                  <div className="p-4 rounded-xl bg-primary/5 border border-border text-center">
+                    <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center mx-auto mb-2"><UserPlus className="w-5 h-5 text-primary" /></div>
+                    <p className="text-2xl font-extrabold text-foreground">68%</p>
                     <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">First-time Buyers</p>
                     <p className="text-xs text-muted-foreground mt-1">{(totalSold * 0.68).toLocaleString('id-ID', { maximumFractionDigits: 0 })} orang</p>
                   </div>
-                  <div className="p-4 rounded-xl bg-[rgba(248,173,60,0.06)] border border-[rgba(248,173,60,0.1)] text-center">
-                    <div className="w-10 h-10 rounded-xl bg-[rgba(248,173,60,0.12)] flex items-center justify-center mx-auto mb-2"><UserCheck className="w-5 h-5 text-[#F8AD3C]" /></div>
-                    <p className="text-2xl font-extrabold text-white">32%</p>
+                  <div className="p-4 rounded-xl bg-gold/5 border border-gold/10 text-center">
+                    <div className="w-10 h-10 rounded-xl bg-gold/15 flex items-center justify-center mx-auto mb-2"><UserCheck className="w-5 h-5 text-gold" /></div>
+                    <p className="text-2xl font-extrabold text-foreground">32%</p>
                     <p className="text-[10px] text-muted-foreground uppercase tracking-wider mt-1">Returning Buyers</p>
                     <p className="text-xs text-muted-foreground mt-1">{(totalSold * 0.32).toLocaleString('id-ID', { maximumFractionDigits: 0 })} orang</p>
                   </div>
                 </div>
-                <Separator className="bg-[rgba(0,163,157,0.1)]" />
+                <Separator className="bg-border" />
                 <div className="text-center space-y-1">
                   <p className="text-xs text-muted-foreground">Avg. repeat purchase rate untuk konser musik Indonesia</p>
-                  <p className="text-sm text-[#00A39D] font-semibold">2.3x per returning buyer</p>
+                  <p className="text-sm text-primary font-semibold">2.3x per returning buyer</p>
                 </div>
               </CardContent>
             </Card>

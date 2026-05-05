@@ -161,8 +161,8 @@ export function EventsPage() {
       {/* ═══════════ HEADER ═══════════ */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Ticket className="w-6 h-6 text-[#00A39D]" />
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <Ticket className="w-6 h-6 text-primary" />
             Kelola Event
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
@@ -171,41 +171,41 @@ export function EventsPage() {
         </div>
         <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-[#00A39D] hover:bg-[#00BFB8] text-[#0A0F0E] font-semibold">
+            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
               <Plus className="w-4 h-4 mr-2" />
               Buat Event Baru
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-[#111918] border-[rgba(0,163,157,0.2)] text-white max-w-lg">
+          <DialogContent className="bg-card border-primary/20 text-foreground max-w-lg">
             <DialogHeader>
-              <DialogTitle className="text-white">Buat Event Baru</DialogTitle>
+              <DialogTitle className="text-foreground">Buat Event Baru</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 pt-2">
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">Nama Event</label>
-                <Input placeholder="Contoh: Sheila On 7 — Surabaya" className="bg-[#0A0F0E] border-[rgba(0,163,157,0.2)] text-white placeholder:text-muted-foreground/50" />
+                <Input placeholder="Contoh: Sheila On 7 — Surabaya" className="bg-background border-primary/20 text-foreground placeholder:text-muted-foreground/50" />
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">Subtitle</label>
-                <Input placeholder="Contoh: Melompat Lebih Tinggi Tour 2026" className="bg-[#0A0F0E] border-[rgba(0,163,157,0.2)] text-white placeholder:text-muted-foreground/50" />
+                <Input placeholder="Contoh: Melompat Lebih Tinggi Tour 2026" className="bg-background border-primary/20 text-foreground placeholder:text-muted-foreground/50" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm text-muted-foreground">Tanggal</label>
-                  <Input type="date" className="bg-[#0A0F0E] border-[rgba(0,163,157,0.2)] text-white" />
+                  <Input type="date" className="bg-background border-primary/20 text-foreground" />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm text-muted-foreground">Waktu</label>
-                  <Input type="time" className="bg-[#0A0F0E] border-[rgba(0,163,157,0.2)] text-white" />
+                  <Input type="time" className="bg-background border-primary/20 text-foreground" />
                 </div>
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">Venue</label>
                 <Select>
-                  <SelectTrigger className="bg-[#0A0F0E] border-[rgba(0,163,157,0.2)] text-white">
+                  <SelectTrigger className="bg-background border-primary/20 text-foreground">
                     <SelectValue placeholder="Pilih venue" />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#111918] border-[rgba(0,163,157,0.2)]">
+                  <SelectContent className="bg-card border-primary/20">
                     <SelectItem value="gbk-madya">GBK Madya Stadium — Jakarta</SelectItem>
                     <SelectItem value="gbk-seni">GBK Senayan — Jakarta</SelectItem>
                     <SelectItem value="istora">Istora Senayan — Jakarta</SelectItem>
@@ -215,18 +215,18 @@ export function EventsPage() {
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">Status</label>
                 <Select defaultValue="draft">
-                  <SelectTrigger className="bg-[#0A0F0E] border-[rgba(0,163,157,0.2)] text-white">
+                  <SelectTrigger className="bg-background border-primary/20 text-foreground">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-[#111918] border-[rgba(0,163,157,0.2)]">
+                  <SelectContent className="bg-card border-primary/20">
                     <SelectItem value="draft">Draft</SelectItem>
                     <SelectItem value="published">Published</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="flex justify-end gap-3 pt-2">
-                <Button variant="outline" onClick={() => setCreateDialogOpen(false)} className="border-white/20 text-white hover:bg-white/5">Batal</Button>
-                <Button className="bg-[#00A39D] hover:bg-[#00BFB8] text-[#0A0F0E] font-semibold" onClick={handleCreateEvent}>Buat Event</Button>
+                <Button variant="outline" onClick={() => setCreateDialogOpen(false)} className="border-input text-foreground hover:bg-accent">Batal</Button>
+                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold" onClick={handleCreateEvent}>Buat Event</Button>
               </div>
             </div>
           </DialogContent>
@@ -241,7 +241,7 @@ export function EventsPage() {
           { label: 'Jumlah Tier Tiket', value: ticketTypes.length.toString(), sub: `${floorTiers.length} floor, ${tribunTiers.length} tribun`, icon: BarChart3, color: '#00A39D' },
           { label: 'Kapasitas Venue', value: Number(venue.capacity || 0).toLocaleString('id-ID'), sub: `${totalQuota > 0 && venue.capacity ? Math.round((totalSold / Number(venue.capacity)) * 100) : 0}% terisi`, icon: TrendingUp, color: '#F8AD3C' },
         ].map((stat) => (
-          <Card key={stat.label} className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+          <Card key={stat.label} className="bg-card border-primary/10">
             <CardContent className="p-4">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-muted-foreground text-sm">{stat.label}</span>
@@ -249,7 +249,7 @@ export function EventsPage() {
                   <stat.icon className="w-4 h-4" style={{ color: stat.color }} />
                 </div>
               </div>
-              <p className="text-white text-xl font-bold">{stat.value}</p>
+              <p className="text-foreground text-xl font-bold">{stat.value}</p>
               <p className="text-muted-foreground text-xs mt-0.5">{stat.sub}</p>
             </CardContent>
           </Card>
@@ -257,12 +257,12 @@ export function EventsPage() {
       </div>
 
       {/* ═══════════ EVENT LIST TABLE ═══════════ */}
-      <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+      <Card className="bg-card border-primary/10">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-white text-lg flex items-center gap-2">
-                <CalendarDays className="w-5 h-5 text-[#00A39D]" />
+              <CardTitle className="text-foreground text-lg flex items-center gap-2">
+                <CalendarDays className="w-5 h-5 text-primary" />
                 Daftar Event
               </CardTitle>
               <CardDescription className="text-muted-foreground text-sm mt-1">
@@ -278,7 +278,7 @@ export function EventsPage() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-[rgba(0,163,157,0.1)] hover:bg-transparent">
+                <TableRow className="border-primary/10 hover:bg-transparent">
                   <TableHead className="text-muted-foreground font-semibold text-xs uppercase tracking-wider">Event</TableHead>
                   <TableHead className="text-muted-foreground font-semibold text-xs uppercase tracking-wider">Tanggal</TableHead>
                   <TableHead className="text-muted-foreground font-semibold text-xs uppercase tracking-wider">Venue</TableHead>
@@ -295,28 +295,28 @@ export function EventsPage() {
                   </TableRow>
                 ) : (
                   events.map((evt, idx) => (
-                    <TableRow key={String(evt.id || idx)} className="border-[rgba(0,163,157,0.05)] hover:bg-[rgba(0,163,157,0.05)]">
+                    <TableRow key={String(evt.id || idx)} className="border-primary/5 hover:bg-primary/5">
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#00A39D]/20 to-[#F8AD3C]/10 flex items-center justify-center shrink-0">
-                            <Zap className="w-5 h-5 text-[#00A39D]" />
+                          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary/20 to-gold/10 flex items-center justify-center shrink-0">
+                            <Zap className="w-5 h-5 text-primary" />
                           </div>
                           <div>
-                            <p className="text-white font-semibold text-sm">{String(evt.title || '')}</p>
+                            <p className="text-foreground font-semibold text-sm">{String(evt.title || '')}</p>
                             <p className="text-muted-foreground text-xs">{String(evt.subtitle || '')}</p>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                          <CalendarDays className="w-3.5 h-3.5 text-[#00A39D]" />
+                          <CalendarDays className="w-3.5 h-3.5 text-primary" />
                           {evt.date ? formatDateStr(String(evt.date)) : '—'}
                         </div>
                         <p className="text-xs text-muted-foreground/60 mt-0.5">{String(evt.time || '')}</p>
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                          <MapPin className="w-3.5 h-3.5 text-[#00A39D]" />
+                          <MapPin className="w-3.5 h-3.5 text-primary" />
                           {String((evt.venue as Record<string, unknown>)?.name || '')}
                         </div>
                         <p className="text-xs text-muted-foreground/60 mt-0.5">{String((evt.venue as Record<string, unknown>)?.city || '')}</p>
@@ -327,19 +327,19 @@ export function EventsPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        <p className="text-white font-semibold text-sm">{totalSold.toLocaleString('id-ID')}</p>
+                        <p className="text-foreground font-semibold text-sm">{totalSold.toLocaleString('id-ID')}</p>
                         <p className="text-xs text-muted-foreground">/ {totalQuota.toLocaleString('id-ID')}</p>
                       </TableCell>
                       <TableCell className="text-right">
-                        <p className="text-[#F8AD3C] font-semibold text-sm">{formatRupiah(totalRevenue)}</p>
+                        <p className="text-gold font-semibold text-sm">{formatRupiah(totalRevenue)}</p>
                         <p className="text-xs text-muted-foreground">{overallPercentage}%</p>
                       </TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-1">
-                          <Button variant="ghost" size="sm" className="text-[#00A39D] hover:text-[#00BFB8] hover:bg-[rgba(0,163,157,0.1)] h-8 w-8 p-0" onClick={() => toast.info('Detail event')}>
+                          <Button variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10 h-8 w-8 p-0" onClick={() => toast.info('Detail event')}>
                             <Eye className="w-4 h-4" />
                           </Button>
-                          <Button variant="ghost" size="sm" className="text-[#F8AD3C] hover:text-[#FBBF4E] hover:bg-[rgba(248,173,60,0.1)] h-8 w-8 p-0" onClick={() => toast.info('Edit event')}>
+                          <Button variant="ghost" size="sm" className="text-gold hover:text-gold hover:bg-gold/10 h-8 w-8 p-0" onClick={() => toast.info('Edit event')}>
                             <Pencil className="w-4 h-4" />
                           </Button>
                         </div>
@@ -354,19 +354,19 @@ export function EventsPage() {
       </Card>
 
       {/* ═══════════ TICKET TIERS MANAGEMENT ═══════════ */}
-      <Card className="bg-[#111918] border-[rgba(0,163,157,0.1)]">
+      <Card className="bg-card border-primary/10">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-white text-lg flex items-center gap-2">
-                <BarChart3 className="w-5 h-5 text-[#00A39D]" />
+              <CardTitle className="text-foreground text-lg flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-primary" />
                 Manajemen Tier Tiket
               </CardTitle>
               <CardDescription className="text-muted-foreground text-sm mt-1">
                 Konfigurasi harga, quota, dan benefit setiap tier tiket
               </CardDescription>
             </div>
-            <Badge className="bg-[#00A39D]/15 text-[#00A39D] border-[rgba(0,163,157,0.3)]">
+            <Badge className="bg-primary/15 text-primary border-primary/30">
               {ticketTypes.length} Tier
             </Badge>
           </div>
@@ -383,46 +383,46 @@ export function EventsPage() {
                   const isExpanded = expandedTier === String(tt.id);
                   const isVVIP = String(tt.id) === 'tt-vvip';
                   return (
-                    <div key={String(tt.id)} className={cn('rounded-xl border p-4 transition-all', isVVIP ? 'bg-gradient-to-r from-[rgba(248,173,60,0.06)] to-[#111918] border-[rgba(248,173,60,0.2)]' : 'bg-[#0A0F0E] border-[rgba(0,163,157,0.1)]', isExpanded && 'border-[rgba(0,163,157,0.3)]')}>
+                    <div key={String(tt.id)} className={cn('rounded-xl border p-4 transition-all', isVVIP ? 'bg-gradient-to-r from-gold/10 to-card border-gold/20' : 'bg-background border-primary/10', isExpanded && 'border-primary/30')}>
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <span className="text-2xl">{String(tt.emoji || '🎵')}</span>
                           <div>
                             <div className="flex items-center gap-2">
-                              <p className="text-white font-semibold text-sm">{String(tt.name || '')}</p>
-                              {isVVIP && <Badge className="bg-[#F8AD3C]/20 text-[#F8AD3C] border-[rgba(248,173,60,0.3)] text-[10px] px-1.5 py-0"><Crown className="w-2.5 h-2.5 mr-0.5" />EXCLUSIVE</Badge>}
+                              <p className="text-foreground font-semibold text-sm">{String(tt.name || '')}</p>
+                              {isVVIP && <Badge className="bg-gold/20 text-gold border-gold/30 text-[10px] px-1.5 py-0"><Crown className="w-2.5 h-2.5 mr-0.5" />EXCLUSIVE</Badge>}
                             </div>
                             <p className="text-muted-foreground text-xs">{String(tt.zone || '')}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-white hover:bg-white/5 h-7 w-7 p-0" onClick={() => toggleTierExpand(String(tt.id))}>
+                          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-accent h-7 w-7 p-0" onClick={() => toggleTierExpand(String(tt.id))}>
                             {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                           </Button>
-                          <Button variant="ghost" size="sm" className="text-[#F8AD3C] hover:text-[#FBBF4E] hover:bg-[rgba(248,173,60,0.1)] h-7 w-7 p-0" onClick={() => handleEditTier(String(tt.id))}>
+                          <Button variant="ghost" size="sm" className="text-gold hover:text-gold hover:bg-gold/10 h-7 w-7 p-0" onClick={() => handleEditTier(String(tt.id))}>
                             <Pencil className="w-3.5 h-3.5" />
                           </Button>
                         </div>
                       </div>
                       <div className="grid grid-cols-5 gap-3 mb-3">
-                        <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">Harga</p><p className={cn('font-bold text-sm', isVVIP ? 'text-[#F8AD3C]' : 'text-[#00A39D]')}>{formatRupiah(Number(tt.price || 0))}</p></div>
-                        <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">Quota</p><p className="text-white font-semibold text-sm">{Number(tt.quota || 0).toLocaleString('id-ID')}</p></div>
-                        <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">Terjual</p><p className="text-white font-semibold text-sm">{Number(tt.sold || 0).toLocaleString('id-ID')}</p></div>
+                        <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">Harga</p><p className={cn('font-bold text-sm', isVVIP ? 'text-gold' : 'text-primary')}>{formatRupiah(Number(tt.price || 0))}</p></div>
+                        <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">Quota</p><p className="text-foreground font-semibold text-sm">{Number(tt.quota || 0).toLocaleString('id-ID')}</p></div>
+                        <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">Terjual</p><p className="text-foreground font-semibold text-sm">{Number(tt.sold || 0).toLocaleString('id-ID')}</p></div>
                         <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">Tersedia</p><p className={cn('font-semibold text-sm', available === 0 ? 'text-red-400' : 'text-emerald-400')}>{available.toLocaleString('id-ID')}</p></div>
-                        <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">% Terjual</p><p className={cn('font-bold text-sm', percentage >= 90 ? 'text-red-400' : percentage >= 70 ? 'text-[#F8AD3C]' : 'text-[#00A39D]')}>{percentage}%</p></div>
+                        <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">% Terjual</p><p className={cn('font-bold text-sm', percentage >= 90 ? 'text-red-400' : percentage >= 70 ? 'text-gold' : 'text-primary')}>{percentage}%</p></div>
                       </div>
-                      <Progress value={percentage} className={cn('h-2 rounded-full', percentage >= 90 ? '[&>div]:bg-red-500' : percentage >= 70 ? '[&>div]:bg-[#F8AD3C]' : '[&>div]:bg-[#00A39D]')} />
+                      <Progress value={percentage} className={cn('h-2 rounded-full', percentage >= 90 ? '[&>div]:bg-red-500' : percentage >= 70 ? '[&>div]:bg-gold' : '[&>div]:bg-primary')} />
                       <div className="mt-2 flex items-center justify-between">
-                        <p className="text-muted-foreground text-xs">Revenue: <span className="text-[#F8AD3C] font-semibold">{formatRupiah(Number(tt.sold || 0) * Number(tt.price || 0))}</span></p>
+                        <p className="text-muted-foreground text-xs">Revenue: <span className="text-gold font-semibold">{formatRupiah(Number(tt.sold || 0) * Number(tt.price || 0))}</span></p>
                         <p className="text-muted-foreground text-xs">{Number(tt.sold || 0).toLocaleString('id-ID')} / {Number(tt.quota || 0).toLocaleString('id-ID')}</p>
                       </div>
                       {isExpanded && (
-                        <div className="mt-4 pt-4 border-t border-[rgba(0,163,157,0.1)]">
+                        <div className="mt-4 pt-4 border-t border-primary/10">
                           <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Benefits</h4>
                           <ul className="space-y-1.5">
                             {((tt.benefits || []) as string[]).map((b: string) => (
                               <li key={b} className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <div className={cn('w-1.5 h-1.5 rounded-full shrink-0', isVVIP ? 'bg-[#F8AD3C]' : 'bg-[#00A39D]')} />
+                                <div className={cn('w-1.5 h-1.5 rounded-full shrink-0', isVVIP ? 'bg-gold' : 'bg-primary')} />
                                 {b}
                               </li>
                             ))}
@@ -442,43 +442,43 @@ export function EventsPage() {
                   const percentage = getQuotaPercentage(tt);
                   const isExpanded = expandedTier === String(tt.id);
                   return (
-                    <div key={String(tt.id)} className={cn('rounded-xl border p-4 transition-all', 'bg-[#0A0F0E] border-[rgba(0,163,157,0.1)]', isExpanded && 'border-[rgba(0,163,157,0.3)]')}>
+                    <div key={String(tt.id)} className={cn('rounded-xl border p-4 transition-all', 'bg-background border-primary/10', isExpanded && 'border-primary/30')}>
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <span className="text-2xl">{String(tt.emoji || '💺')}</span>
                           <div>
-                            <p className="text-white font-semibold text-sm">{String(tt.name || '')}</p>
+                            <p className="text-foreground font-semibold text-sm">{String(tt.name || '')}</p>
                             <p className="text-muted-foreground text-xs">{String(tt.zone || '')}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-white hover:bg-white/5 h-7 w-7 p-0" onClick={() => toggleTierExpand(String(tt.id))}>
+                          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-accent h-7 w-7 p-0" onClick={() => toggleTierExpand(String(tt.id))}>
                             {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                           </Button>
-                          <Button variant="ghost" size="sm" className="text-[#F8AD3C] hover:text-[#FBBF4E] hover:bg-[rgba(248,173,60,0.1)] h-7 w-7 p-0" onClick={() => handleEditTier(String(tt.id))}>
+                          <Button variant="ghost" size="sm" className="text-gold hover:text-gold hover:bg-gold/10 h-7 w-7 p-0" onClick={() => handleEditTier(String(tt.id))}>
                             <Pencil className="w-3.5 h-3.5" />
                           </Button>
                         </div>
                       </div>
                       <div className="grid grid-cols-5 gap-3 mb-3">
-                        <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">Harga</p><p className="text-[#00A39D] font-bold text-sm">{formatRupiah(Number(tt.price || 0))}</p></div>
-                        <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">Quota</p><p className="text-white font-semibold text-sm">{Number(tt.quota || 0).toLocaleString('id-ID')}</p></div>
-                        <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">Terjual</p><p className="text-white font-semibold text-sm">{Number(tt.sold || 0).toLocaleString('id-ID')}</p></div>
+                        <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">Harga</p><p className="text-primary font-bold text-sm">{formatRupiah(Number(tt.price || 0))}</p></div>
+                        <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">Quota</p><p className="text-foreground font-semibold text-sm">{Number(tt.quota || 0).toLocaleString('id-ID')}</p></div>
+                        <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">Terjual</p><p className="text-foreground font-semibold text-sm">{Number(tt.sold || 0).toLocaleString('id-ID')}</p></div>
                         <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">Tersedia</p><p className={cn('font-semibold text-sm', available === 0 ? 'text-red-400' : 'text-emerald-400')}>{available.toLocaleString('id-ID')}</p></div>
-                        <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">% Terjual</p><p className={cn('font-bold text-sm', percentage >= 90 ? 'text-red-400' : percentage >= 70 ? 'text-[#F8AD3C]' : 'text-[#00A39D]')}>{percentage}%</p></div>
+                        <div><p className="text-muted-foreground text-[10px] uppercase tracking-wider mb-0.5">% Terjual</p><p className={cn('font-bold text-sm', percentage >= 90 ? 'text-red-400' : percentage >= 70 ? 'text-gold' : 'text-primary')}>{percentage}%</p></div>
                       </div>
-                      <Progress value={percentage} className={cn('h-2 rounded-full', percentage >= 90 ? '[&>div]:bg-red-500' : percentage >= 70 ? '[&>div]:bg-[#F8AD3C]' : '[&>div]:bg-[#00A39D]')} />
+                      <Progress value={percentage} className={cn('h-2 rounded-full', percentage >= 90 ? '[&>div]:bg-red-500' : percentage >= 70 ? '[&>div]:bg-gold' : '[&>div]:bg-primary')} />
                       <div className="mt-2 flex items-center justify-between">
-                        <p className="text-muted-foreground text-xs">Revenue: <span className="text-[#F8AD3C] font-semibold">{formatRupiah(Number(tt.sold || 0) * Number(tt.price || 0))}</span></p>
+                        <p className="text-muted-foreground text-xs">Revenue: <span className="text-gold font-semibold">{formatRupiah(Number(tt.sold || 0) * Number(tt.price || 0))}</span></p>
                         <p className="text-muted-foreground text-xs">{Number(tt.sold || 0).toLocaleString('id-ID')} / {Number(tt.quota || 0).toLocaleString('id-ID')}</p>
                       </div>
                       {isExpanded && (
-                        <div className="mt-4 pt-4 border-t border-[rgba(0,163,157,0.1)]">
+                        <div className="mt-4 pt-4 border-t border-primary/10">
                           <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Benefits</h4>
                           <ul className="space-y-1.5">
                             {((tt.benefits || []) as string[]).map((b: string) => (
                               <li key={b} className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <div className="w-1.5 h-1.5 rounded-full shrink-0 bg-[#00A39D]" />
+                                <div className="w-1.5 h-1.5 rounded-full shrink-0 bg-primary" />
                                 {b}
                               </li>
                             ))}
@@ -494,15 +494,15 @@ export function EventsPage() {
 
           {/* Sales Summary Table */}
           {salesByTier.length > 0 && (
-            <div className="border-t border-[rgba(0,163,157,0.1)] pt-6">
-              <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
-                <BarChart3 className="w-4 h-4 text-[#00A39D]" />
+            <div className="border-t border-primary/10 pt-6">
+              <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-primary" />
                 Ringkasan Penjualan per Tier
               </h3>
               <div className="overflow-x-auto">
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-[rgba(0,163,157,0.1)] hover:bg-transparent">
+                    <TableRow className="border-primary/10 hover:bg-transparent">
                       <TableHead className="text-muted-foreground font-semibold text-xs uppercase tracking-wider">Tier</TableHead>
                       <TableHead className="text-muted-foreground font-semibold text-xs uppercase tracking-wider text-right">Terjual</TableHead>
                       <TableHead className="text-muted-foreground font-semibold text-xs uppercase tracking-wider text-right">Quota</TableHead>
@@ -512,19 +512,19 @@ export function EventsPage() {
                   </TableHeader>
                   <TableBody>
                     {salesByTier.map((tier) => (
-                      <TableRow key={tier.name} className="border-[rgba(0,163,157,0.05)] hover:bg-[rgba(0,163,157,0.05)]">
-                        <TableCell className="text-white font-medium text-sm">{tier.name}</TableCell>
+                      <TableRow key={tier.name} className="border-primary/5 hover:bg-primary/5">
+                        <TableCell className="text-foreground font-medium text-sm">{tier.name}</TableCell>
                         <TableCell className="text-right text-sm">{tier.terjual.toLocaleString('id-ID')}</TableCell>
                         <TableCell className="text-right text-sm text-muted-foreground">{tier.quota.toLocaleString('id-ID')}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-2">
                             <div className="w-16">
-                              <Progress value={tier.percentage} className={cn('h-1.5 rounded-full', tier.percentage >= 90 ? '[&>div]:bg-red-500' : tier.percentage >= 70 ? '[&>div]:bg-[#F8AD3C]' : '[&>div]:bg-[#00A39D]')} />
+                              <Progress value={tier.percentage} className={cn('h-1.5 rounded-full', tier.percentage >= 90 ? '[&>div]:bg-red-500' : tier.percentage >= 70 ? '[&>div]:bg-gold' : '[&>div]:bg-primary')} />
                             </div>
-                            <span className={cn('text-xs font-semibold w-10 text-right', tier.percentage >= 90 ? 'text-red-400' : tier.percentage >= 70 ? 'text-[#F8AD3C]' : 'text-[#00A39D]')}>{tier.percentage}%</span>
+                            <span className={cn('text-xs font-semibold w-10 text-right', tier.percentage >= 90 ? 'text-red-400' : tier.percentage >= 70 ? 'text-gold' : 'text-primary')}>{tier.percentage}%</span>
                           </div>
                         </TableCell>
-                        <TableCell className="text-right text-[#F8AD3C] font-semibold text-sm">{formatRupiah(tier.revenue)}</TableCell>
+                        <TableCell className="text-right text-gold font-semibold text-sm">{formatRupiah(tier.revenue)}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -537,32 +537,32 @@ export function EventsPage() {
 
       {/* ═══════════ EDIT TIER DIALOG ═══════════ */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="bg-[#111918] border-[rgba(0,163,157,0.2)] text-white max-w-lg">
+        <DialogContent className="bg-card border-primary/20 text-foreground max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-white">Edit Tier Tiket — {editingTier || ''}</DialogTitle>
+            <DialogTitle className="text-foreground">Edit Tier Tiket — {editingTier || ''}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-2">
             <div className="space-y-2">
               <label className="text-sm text-muted-foreground">Nama Tier</label>
-              <Input defaultValue={editingTier ? String(ticketTypes.find(t => String(t.id) === editingTier)?.name || '') : ''} className="bg-[#0A0F0E] border-[rgba(0,163,157,0.2)] text-white" />
+              <Input defaultValue={editingTier ? String(ticketTypes.find(t => String(t.id) === editingTier)?.name || '') : ''} className="bg-background border-primary/20 text-foreground" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">Harga (Rp)</label>
-                <Input type="number" defaultValue={editingTier ? Number(ticketTypes.find(t => String(t.id) === editingTier)?.price || 0) : ''} className="bg-[#0A0F0E] border-[rgba(0,163,157,0.2)] text-white" />
+                <Input type="number" defaultValue={editingTier ? Number(ticketTypes.find(t => String(t.id) === editingTier)?.price || 0) : ''} className="bg-background border-primary/20 text-foreground" />
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">Quota</label>
-                <Input type="number" defaultValue={editingTier ? Number(ticketTypes.find(t => String(t.id) === editingTier)?.quota || 0) : ''} className="bg-[#0A0F0E] border-[rgba(0,163,157,0.2)] text-white" />
+                <Input type="number" defaultValue={editingTier ? Number(ticketTypes.find(t => String(t.id) === editingTier)?.quota || 0) : ''} className="bg-background border-primary/20 text-foreground" />
               </div>
             </div>
             <div className="space-y-2">
               <label className="text-sm text-muted-foreground">Zone</label>
-              <Input defaultValue={editingTier ? String(ticketTypes.find(t => String(t.id) === editingTier)?.zone || '') : ''} className="bg-[#0A0F0E] border-[rgba(0,163,157,0.2)] text-white" />
+              <Input defaultValue={editingTier ? String(ticketTypes.find(t => String(t.id) === editingTier)?.zone || '') : ''} className="bg-background border-primary/20 text-foreground" />
             </div>
             <div className="flex justify-end gap-3 pt-2">
-              <Button variant="outline" onClick={() => setEditDialogOpen(false)} className="border-white/20 text-white hover:bg-white/5">Batal</Button>
-              <Button className="bg-[#00A39D] hover:bg-[#00BFB8] text-[#0A0F0E] font-semibold" onClick={() => { toast.success('Tier berhasil diperbarui!'); setEditDialogOpen(false); }}>Simpan Perubahan</Button>
+              <Button variant="outline" onClick={() => setEditDialogOpen(false)} className="border-input text-foreground hover:bg-accent">Batal</Button>
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold" onClick={() => { toast.success('Tier berhasil diperbarui!'); setEditDialogOpen(false); }}>Simpan Perubahan</Button>
             </div>
           </div>
         </DialogContent>

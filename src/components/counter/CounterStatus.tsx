@@ -89,7 +89,7 @@ export function CounterStatus() {
   return (
     <div className="flex flex-col gap-4 p-4 max-w-lg mx-auto w-full">
       {/* ── Counter Info Card ── */}
-      <Card className="bg-[#111918] border-border/30">
+      <Card className="bg-card border-border/30">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
@@ -124,21 +124,21 @@ export function CounterStatus() {
           <Separator className="bg-border/30" />
 
           <div className="grid grid-cols-3 gap-3">
-            <div className="flex flex-col items-center p-2.5 rounded-lg bg-[#0A0F0E]/80 border border-border/20">
+            <div className="flex flex-col items-center p-2.5 rounded-lg bg-background/80 border border-border/20">
               <Users className="h-4 w-4 text-primary mb-1" />
               <p className="text-lg font-bold text-foreground">
                 {staffCount}
               </p>
               <p className="text-[10px] text-muted-foreground">Staff</p>
             </div>
-            <div className="flex flex-col items-center p-2.5 rounded-lg bg-[#0A0F0E]/80 border border-border/20">
+            <div className="flex flex-col items-center p-2.5 rounded-lg bg-background/80 border border-border/20">
               <Gauge className="h-4 w-4 text-amber-400 mb-1" />
               <p className="text-lg font-bold text-foreground">
                 {counterCapacity}
               </p>
               <p className="text-[10px] text-muted-foreground">Kapasitas</p>
             </div>
-            <div className="flex flex-col items-center p-2.5 rounded-lg bg-[#0A0F0E]/80 border border-border/20">
+            <div className="flex flex-col items-center p-2.5 rounded-lg bg-background/80 border border-border/20">
               <Activity className="h-4 w-4 text-emerald-400 mb-1" />
               <p className="text-lg font-bold text-foreground">
                 {redeemedToday}
@@ -182,7 +182,7 @@ export function CounterStatus() {
       </Card>
 
       {/* ── Staff On Duty ── */}
-      <Card className="bg-[#111918] border-border/30">
+      <Card className="bg-card border-border/30">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-sm font-semibold">
             <Shield className="h-4 w-4 text-primary" />
@@ -207,7 +207,7 @@ export function CounterStatus() {
                       'flex items-center gap-3 p-2.5 rounded-lg border transition-colors',
                       isMe
                         ? 'bg-primary/5 border-primary/30'
-                        : 'bg-[#0A0F0E]/50 border-border/20'
+                        : 'bg-background/50 border-border/20'
                     )}
                   >
                     <div className="h-9 w-9 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
@@ -248,7 +248,7 @@ export function CounterStatus() {
       </Card>
 
       {/* ── Today's Stats ── */}
-      <Card className="bg-[#111918] border-border/30">
+      <Card className="bg-card border-border/30">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-sm font-semibold">
             <TrendingUp className="h-4 w-4 text-primary" />
@@ -257,7 +257,7 @@ export function CounterStatus() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-3">
-            <div className="p-3 rounded-lg bg-[#0A0F0E]/80 border border-border/20">
+            <div className="p-3 rounded-lg bg-background/80 border border-border/20">
               <div className="flex items-center gap-2 mb-2">
                 <UserCircle className="h-4 w-4 text-primary" />
                 <span className="text-[10px] text-muted-foreground">
@@ -268,7 +268,7 @@ export function CounterStatus() {
                 {myRedeemed}
               </p>
             </div>
-            <div className="p-3 rounded-lg bg-[#0A0F0E]/80 border border-border/20">
+            <div className="p-3 rounded-lg bg-background/80 border border-border/20">
               <div className="flex items-center gap-2 mb-2">
                 <Users className="h-4 w-4 text-amber-400" />
                 <span className="text-[10px] text-muted-foreground">
@@ -279,7 +279,7 @@ export function CounterStatus() {
                 {redeemedToday}
               </p>
             </div>
-            <div className="p-3 rounded-lg bg-[#0A0F0E]/80 border border-border/20 col-span-2">
+            <div className="p-3 rounded-lg bg-background/80 border border-border/20 col-span-2">
               <div className="flex items-center gap-2 mb-2">
                 <Timer className="h-4 w-4 text-emerald-400" />
                 <span className="text-[10px] text-muted-foreground">
@@ -298,7 +298,7 @@ export function CounterStatus() {
       </Card>
 
       {/* ── Redemption Period Config ── */}
-      <Card className="bg-[#111918] border-border/30">
+      <Card className="bg-card border-border/30">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-sm font-semibold">
             <Clock className="h-4 w-4 text-primary" />
@@ -308,7 +308,7 @@ export function CounterStatus() {
         <CardContent>
           <div className="space-y-3">
             {configStartDate && (
-              <div className="flex items-center justify-between p-3 rounded-lg bg-[#0A0F0E]/80 border border-border/20">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-background/80 border border-border/20">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                   <span className="text-xs text-muted-foreground">
@@ -321,7 +321,7 @@ export function CounterStatus() {
               </div>
             )}
             {configEndDate && (
-              <div className="flex items-center justify-between p-3 rounded-lg bg-[#0A0F0E]/80 border border-border/20">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-background/80 border border-border/20">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                   <span className="text-xs text-muted-foreground">
@@ -333,7 +333,7 @@ export function CounterStatus() {
                 </span>
               </div>
             )}
-            <div className="flex items-center justify-between p-3 rounded-lg bg-[#0A0F0E]/80 border border-border/20">
+            <div className="flex items-center justify-between p-3 rounded-lg bg-background/80 border border-border/20">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">
@@ -344,7 +344,7 @@ export function CounterStatus() {
                 {configStartTime} — {configEndTime} WIB
               </span>
             </div>
-            <div className="flex items-center justify-between p-3 rounded-lg bg-[#0A0F0E]/80 border border-border/20">
+            <div className="flex items-center justify-between p-3 rounded-lg bg-background/80 border border-border/20">
               <div className="flex items-center gap-2">
                 <Activity className="h-4 w-4 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">

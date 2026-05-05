@@ -81,9 +81,9 @@ export default function PaymentStatusPage() {
   // ─── Loading state ─────────────────────────────────────────────
   if (orderLoading) {
     return (
-      <div className="min-h-screen bg-[#0B0B0F] flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-green-400 animate-spin" />
-        <span className="ml-3 text-gray-400">Memuat status pesanan...</span>
+        <span className="ml-3 text-muted-foreground">Memuat status pesanan...</span>
       </div>
     );
   }
@@ -91,8 +91,8 @@ export default function PaymentStatusPage() {
   // ─── Not found state ───────────────────────────────────────────
   if (!typedOrder) {
     return (
-      <div className="min-h-screen bg-[#0B0B0F] flex items-center justify-center">
-        <p className="text-gray-500">Order tidak ditemukan</p>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Order tidak ditemukan</p>
       </div>
     );
   }
@@ -107,7 +107,7 @@ export default function PaymentStatusPage() {
   const paymentMethod = typedOrder.paymentMethod || typedOrder.paymentType || typedOrder.paymentChannel || "DOKU";
 
   return (
-    <div className="min-h-screen bg-[#0B0B0F]">
+    <div className="min-h-screen bg-background">
       {/* Confetti overlay */}
       {showConfetti && (
         <div
@@ -144,17 +144,17 @@ export default function PaymentStatusPage() {
       )}
 
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-[#0B0B0F]/95 backdrop-blur-md border-b border-[#2A2A35]">
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
           <Button
             variant="ghost"
             size="icon"
-            className="text-gray-400 hover:text-white hover:bg-[#16161D]"
+            className="text-muted-foreground hover:text-foreground hover:bg-card"
             onClick={() => navigateTo("home")}
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-white font-semibold text-lg flex-1">
+          <h1 className="text-foreground font-semibold text-lg flex-1">
             Status Pembayaran
           </h1>
         </div>
@@ -168,10 +168,10 @@ export default function PaymentStatusPage() {
               <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-4 animate-pulse">
                 <CheckCircle2 className="w-10 h-10 text-green-500" />
               </div>
-              <h2 className="text-2xl font-bold text-white mb-2">
+              <h2 className="text-2xl font-bold text-foreground mb-2">
                 Pembayaran Berhasil! 🎉
               </h2>
-              <p className="text-gray-400">
+              <p className="text-muted-foreground">
                 E-tiket Anda sudah siap. Silakan cek tiket Anda.
               </p>
             </>
@@ -180,22 +180,22 @@ export default function PaymentStatusPage() {
               <div className="w-20 h-20 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-4">
                 <XCircle className="w-10 h-10 text-red-500" />
               </div>
-              <h2 className="text-2xl font-bold text-white mb-2">
+              <h2 className="text-2xl font-bold text-foreground mb-2">
                 Pembayaran Ditolak
               </h2>
-              <p className="text-gray-400 text-sm max-w-sm mx-auto">
+              <p className="text-muted-foreground text-sm max-w-sm mx-auto">
                 Pembayaran tidak dapat diverifikasi. Silakan coba lagi.
               </p>
             </>
           ) : isExpired ? (
             <>
               <div className="w-20 h-20 rounded-full bg-gray-500/20 flex items-center justify-center mx-auto mb-4">
-                <Clock className="w-10 h-10 text-gray-500" />
+                <Clock className="w-10 h-10 text-muted-foreground" />
               </div>
-              <h2 className="text-2xl font-bold text-white mb-2">
+              <h2 className="text-2xl font-bold text-foreground mb-2">
                 Pesanan Expired
               </h2>
-              <p className="text-gray-400 text-sm max-w-sm mx-auto">
+              <p className="text-muted-foreground text-sm max-w-sm mx-auto">
                 Batas waktu pembayaran telah habis. Silakan buat pesanan baru.
               </p>
             </>
@@ -204,10 +204,10 @@ export default function PaymentStatusPage() {
               <div className="w-20 h-20 rounded-full bg-yellow-500/20 flex items-center justify-center mx-auto mb-4">
                 <Loader2 className="w-10 h-10 text-yellow-500 animate-spin" />
               </div>
-              <h2 className="text-2xl font-bold text-white mb-2">
+              <h2 className="text-2xl font-bold text-foreground mb-2">
                 Menunggu Pembayaran
               </h2>
-              <p className="text-gray-400 text-sm">
+              <p className="text-muted-foreground text-sm">
                 Silakan selesaikan pembayaran Anda
               </p>
               <Badge
@@ -222,9 +222,9 @@ export default function PaymentStatusPage() {
         </div>
 
         {/* Timeline */}
-        <Card className="bg-[#16161D] border-[#2A2A35]">
+        <Card className="bg-card border-border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-white text-sm">
+            <CardTitle className="text-foreground text-sm">
               Proses Pembayaran
             </CardTitle>
           </CardHeader>
@@ -247,18 +247,18 @@ export default function PaymentStatusPage() {
                             "bg-green-500",
                           isActive &&
                             "bg-yellow-500 ring-4 ring-yellow-500/20",
-                          isPending && "bg-[#2A2A35]"
+                          isPending && "bg-border"
                         )}
                       >
                         {isCompleted ? (
-                          <CheckCircle2 className="w-4 h-4 text-white" />
+                          <CheckCircle2 className="w-4 h-4 text-foreground" />
                         ) : (
                           <Icon
                             className={cn(
                               "w-4 h-4",
                               isActive
-                                ? "text-white"
-                                : "text-gray-600"
+                                ? "text-foreground"
+                                : "text-muted-foreground/70"
                             )}
                           />
                         )}
@@ -267,7 +267,7 @@ export default function PaymentStatusPage() {
                         <div
                           className={cn(
                             "w-0.5 h-10",
-                            isCompleted ? "bg-green-500" : "bg-[#2A2A35]"
+                            isCompleted ? "bg-green-500" : "bg-border"
                           )}
                         />
                       )}
@@ -279,8 +279,8 @@ export default function PaymentStatusPage() {
                         className={cn(
                           "text-sm font-medium",
                           isCompleted && "text-green-400",
-                          isActive && "text-white",
-                          isPending && "text-gray-600"
+                          isActive && "text-foreground",
+                          isPending && "text-muted-foreground/70"
                         )}
                       >
                         {step.label}
@@ -291,7 +291,7 @@ export default function PaymentStatusPage() {
                         </p>
                       )}
                       {isCompleted && (
-                        <p className="text-xs text-gray-500 mt-0.5">Selesai</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">Selesai</p>
                       )}
                     </div>
                   </div>
@@ -302,38 +302,38 @@ export default function PaymentStatusPage() {
         </Card>
 
         {/* Order details */}
-        <Card className="bg-[#16161D] border-[#2A2A35]">
+        <Card className="bg-card border-border">
           <CardContent className="pt-4 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-gray-400 text-sm">Kode Pesanan</span>
-              <span className="text-white font-mono text-sm">
+              <span className="text-muted-foreground text-sm">Kode Pesanan</span>
+              <span className="text-foreground font-mono text-sm">
                 {typedOrder.orderCode}
               </span>
             </div>
-            <Separator className="bg-[#2A2A35]" />
+            <Separator className="bg-border" />
             <div className="flex items-center justify-between">
-              <span className="text-gray-400 text-sm">Event</span>
-              <span className="text-white text-sm">{eventTitle}</span>
+              <span className="text-muted-foreground text-sm">Event</span>
+              <span className="text-foreground text-sm">{eventTitle}</span>
             </div>
-            <Separator className="bg-[#2A2A35]" />
+            <Separator className="bg-border" />
             <div className="flex items-center justify-between">
-              <span className="text-gray-400 text-sm">Total</span>
+              <span className="text-muted-foreground text-sm">Total</span>
               <span className="text-green-400 font-bold">
                 {formatRupiah(typedOrder.totalAmount)}
               </span>
             </div>
-            <Separator className="bg-[#2A2A35]" />
+            <Separator className="bg-border" />
             <div className="flex items-center justify-between">
-              <span className="text-gray-400 text-sm">Metode</span>
-              <span className="text-white text-sm">{paymentMethod}</span>
+              <span className="text-muted-foreground text-sm">Metode</span>
+              <span className="text-foreground text-sm">{paymentMethod}</span>
             </div>
           </CardContent>
         </Card>
 
         {/* Status history */}
-        <Card className="bg-[#16161D] border-[#2A2A35]">
+        <Card className="bg-card border-border">
           <CardHeader className="pb-2">
-            <CardTitle className="text-white text-sm">
+            <CardTitle className="text-foreground text-sm">
               Riwayat Status
             </CardTitle>
           </CardHeader>
@@ -350,7 +350,7 @@ export default function PaymentStatusPage() {
                     })
                   : "--:--"}
               </Badge>
-              <span className="text-gray-300 text-sm">Pesanan dibuat</span>
+              <span className="text-foreground/80 text-sm">Pesanan dibuat</span>
             </div>
             {isPaid && (
               <div className="flex items-center gap-2">
@@ -362,7 +362,7 @@ export default function PaymentStatusPage() {
                       })
                     : "--:--"}
                 </Badge>
-                <span className="text-gray-300 text-sm">
+                <span className="text-foreground/80 text-sm">
                   Pembayaran berhasil diverifikasi
                 </span>
               </div>
@@ -375,7 +375,7 @@ export default function PaymentStatusPage() {
                 >
                   Ditolak
                 </Badge>
-                <span className="text-gray-300 text-sm">
+                <span className="text-foreground/80 text-sm">
                   Pembayaran ditolak
                 </span>
               </div>
@@ -384,11 +384,11 @@ export default function PaymentStatusPage() {
               <div className="flex items-center gap-2">
                 <Badge
                   variant="outline"
-                  className="text-gray-500 border-gray-600 text-xs shrink-0"
+                  className="text-muted-foreground border-muted-foreground/70 text-xs shrink-0"
                 >
                   Expired
                 </Badge>
-                <span className="text-gray-300 text-sm">
+                <span className="text-foreground/80 text-sm">
                   Batas waktu pembayaran habis
                 </span>
               </div>
@@ -425,7 +425,7 @@ export default function PaymentStatusPage() {
           )}
           <Button
             variant="outline"
-            className="w-full border-[#2A2A35] text-gray-300 hover:bg-[#16161D] hover:text-white h-12"
+            className="w-full border-border text-foreground/80 hover:bg-card hover:text-foreground h-12"
             onClick={() => navigateTo("home")}
           >
             <Home className="w-4 h-4 mr-2" />

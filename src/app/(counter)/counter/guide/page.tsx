@@ -49,7 +49,7 @@ export default function GuidePage() {
         {wristbandConfigs.map((wb, idx) => (
           <Card
             key={String(wb.ticketTypeId ?? idx)}
-            className="bg-[#111918] border-border/30 hover:border-primary/30 transition-colors"
+            className="bg-card border-border/30 hover:border-primary/30 transition-colors"
           >
             <CardContent className="p-4 flex flex-col items-center gap-3 text-center">
               {/* Color Swatch */}
@@ -76,7 +76,7 @@ export default function GuidePage() {
       </div>
 
       {/* ── Quick Reference Table ── */}
-      <Card className="bg-[#111918] border-border/30">
+      <Card className="bg-card border-border/30">
         <CardContent className="p-4">
           <h2 className="text-sm font-semibold text-foreground mb-3">
             Tiket Tier → Warna Gelang
@@ -86,7 +86,7 @@ export default function GuidePage() {
               <div
                 key={String(wb.ticketTypeId ?? idx)}
                 className={`flex items-center justify-between py-2 px-3 rounded-lg ${
-                  idx % 2 === 0 ? 'bg-[#0A0F0E]/60' : ''
+                  idx % 2 === 0 ? 'bg-background/60' : ''
                 }`}
               >
                 <div className="flex items-center gap-2.5">

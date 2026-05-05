@@ -146,7 +146,7 @@ export function CounterScanner() {
     <div className="flex flex-col gap-4 p-4 max-w-lg mx-auto w-full">
       {/* ── Today's Quick Stats ── */}
       <div className="grid grid-cols-3 gap-2">
-        <Card className="bg-[#111918] border-border/30">
+        <Card className="bg-card border-border/30">
           <CardContent className="p-3 text-center">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
               Dituksr Hari Ini
@@ -156,7 +156,7 @@ export function CounterScanner() {
             </p>
           </CardContent>
         </Card>
-        <Card className="bg-[#111918] border-border/30">
+        <Card className="bg-card border-border/30">
           <CardContent className="p-3 text-center">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
               Counter
@@ -164,7 +164,7 @@ export function CounterScanner() {
             <p className="text-xl font-bold text-foreground mt-1">{counterName}</p>
           </CardContent>
         </Card>
-        <Card className="bg-[#111918] border-border/30">
+        <Card className="bg-card border-border/30">
           <CardContent className="p-3 text-center">
             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
               Status
@@ -177,7 +177,7 @@ export function CounterScanner() {
       </div>
 
       {/* ── Scan Viewfinder (Simulated) ── */}
-      <Card className="bg-[#111918] border-border/30 overflow-hidden">
+      <Card className="bg-card border-border/30 overflow-hidden">
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-sm font-semibold">
             <Camera className="h-4 w-4 text-primary" />
@@ -224,7 +224,7 @@ export function CounterScanner() {
                 onChange={(e) => setTicketCode(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Contoh: SHL-JKT-VVIPIP-0001"
-                className="font-mono text-sm bg-[#0A0F0E] border-border/50 focus:border-primary"
+                className="font-mono text-sm bg-background border-border/50 focus:border-primary"
                 disabled={scanMutation.isPending}
               />
               <Button
@@ -245,7 +245,7 @@ export function CounterScanner() {
 
       {/* ── Result Panel ── */}
       {result && (
-        <Card className="bg-[#111918] border-primary/50 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <Card className="bg-card border-primary/50 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
               <CardTitle className="flex items-center gap-2 text-sm font-semibold text-emerald-400">
@@ -324,9 +324,9 @@ export function CounterScanner() {
               {result.wristbandColor && (
                 <>
                   <Separator className="bg-border/30" />
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-[#0A0F0E]/80 border border-border/30">
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-background/80 border border-border/30">
                     <div
-                      className="h-8 w-8 rounded-full shrink-0 border-2 border-white/20"
+                      className="h-8 w-8 rounded-full shrink-0 border-2 border-input"
                       style={{ backgroundColor: result.wristbandColorHex || '#E5E7EB' }}
                     />
                     <div className="flex-1 min-w-0">
@@ -347,7 +347,7 @@ export function CounterScanner() {
               <Button
                 onClick={handleRedeem}
                 disabled={scanMutation.isPending}
-                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold h-11"
+                className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-foreground font-semibold h-11"
               >
                 {scanMutation.isPending ? (
                   <RotateCcw className="h-4 w-4 mr-2 animate-spin" />
@@ -371,7 +371,7 @@ export function CounterScanner() {
 
       {/* ── Not Found State ── */}
       {notFound && !result && (
-        <Card className="bg-[#111918] border-destructive/30 animate-in fade-in duration-200">
+        <Card className="bg-card border-destructive/30 animate-in fade-in duration-200">
           <CardContent className="py-6 flex flex-col items-center gap-3 text-center">
             <XCircle className="h-12 w-12 text-destructive/60" />
             <div>
