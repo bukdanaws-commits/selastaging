@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { formatRupiah, formatDateTime } from '@/lib/utils';
 import { useAdminOrders } from '@/hooks/use-api';
 import { useAdminDashboard } from '@/hooks/use-api';
+import { useScopedData, useRoleLabel } from '@/hooks/use-scoped-data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 
@@ -287,6 +288,9 @@ export function OrdersPage() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [currentPage, setCurrentPage] = useState(1);
 
+  const { isOrganizer, scopeParams, apiScope } = useScopedData({ filterByEvent: true });
+  const pageTitle = useRoleLabel({ superAdmin: 'Orders & Payments', organizer: 'My Orders' });
+
   const { data: ordersResponse, isLoading, error } = useAdminOrders();
   const { data: dashboardData } = useAdminDashboard();
 
@@ -378,10 +382,10 @@ export function OrdersPage() {
       <div>
         <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <ShoppingCart className="w-6 h-6 text-primary" />
-          Orders &amp; Payments
+          {pageTitle}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Kelola semua pesanan dan pembayaran tiket
+          {isOrganizer ? 'Pesanan dan pembayaran event Anda' : 'Kelola semua pesanan dan pembayaran tiket'}
         </p>
       </div>
 

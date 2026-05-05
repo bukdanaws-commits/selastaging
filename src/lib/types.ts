@@ -351,6 +351,61 @@ export interface ITenantUser {
   joinedAt: string
 }
 
+// ─── COUPON SYSTEM ──────────────────────────────────────────────────────────
+
+export type CouponDiscountType = 'percentage' | 'nominal'
+export type CouponScope = 'global' | 'event'
+export type CouponStatus = 'active' | 'inactive' | 'expired'
+
+export interface ICouponCategoryConfig {
+  /** Ticket category this config applies to (e.g. "CAT-5", "CAT-7") */
+  category: string
+  /** Discount amount for this category (nominal in IDR or percentage) */
+  discountValue: number
+  /** Minimum order amount for this category */
+  minOrder: number
+}
+
+export interface ICoupon {
+  id: string
+  code: string
+  name: string
+  description?: string
+  discountType: CouponDiscountType
+  /** Global discount value (overridden per category if categoryConfigs exist) */
+  discountValue: number
+  /** Maximum discount amount in IDR (for percentage type) */
+  maxDiscount?: number
+  /** Scope: global (all events) or specific event */
+  scope: CouponScope
+  /** If scope is 'event', the specific event ID */
+  eventId?: string
+  /** Per-category override configs */
+  categoryConfigs: ICouponCategoryConfig[]
+  /** Total usage limit across all users */
+  usageLimit: number
+  /** Usage limit per user (1 = once per user) */
+  usageLimitPerUser: number
+  /** Current total usage count */
+  usedCount: number
+  status: CouponStatus
+  startsAt: string
+  expiresAt: string
+  organizerId: string
+  tenantId: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ICouponUsage {
+  id: string
+  couponId: string
+  userId: string
+  orderId: string
+  discountAmount: number
+  createdAt: string
+}
+
 // ─── WITHDRAWAL & BALANCE (DOKU Settlement) ────────────────────────────────
 
 export interface IOrganizerBankAccount {

@@ -3,9 +3,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import { TrendingUp, DollarSign, Wallet, Clock, AlertTriangle, CheckCircle2, ArrowDownRight, PieChart } from 'lucide-react'
+import { TrendingUp, DollarSign, Wallet, Clock, AlertTriangle, CheckCircle2, ArrowDownRight, PieChart, Building2, Eye } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { formatRupiah } from '@/lib/utils'
+import { useScopedData, useRoleLabel } from '@/hooks/use-scoped-data'
 
 // ─── Mock Finance Data ──────────────────────────────────────────────────────
 const MOCK_FINANCE = {
@@ -42,7 +43,50 @@ const MOCK_FINANCE = {
 
 const MAX_DAILY = Math.max(...MOCK_FINANCE.dailyRevenue.map(d => d.amount))
 
+// ─── Mock Organizer Overview (SUPER_ADMIN view) ────────────────────────────
+const MOCK_ORGANIZER_OVERVIEW = [
+  {
+    organizerId: 'org-sheila-on7',
+    organizerName: 'Sheila On 7 Tour',
+    eventName: 'Sheila On 7 - Jakarta',
+    grossRevenue: 15_200_000_000,
+    platformFee: 760_000_000,
+    netRevenue: 14_440_000_000,
+    availableBalance: 14_440_000_000,
+    totalWithdrawn: 0,
+    status: 'settled' as const,
+  },
+  {
+    organizerId: 'org-sheila-on7',
+    organizerName: 'Sheila On 7 Tour',
+    eventName: 'Sheila On 7 - Bandung',
+    grossRevenue: 6_800_000_000,
+    platformFee: 340_000_000,
+    netRevenue: 6_460_000_000,
+    availableBalance: 3_460_000_000,
+    totalWithdrawn: 3_000_000_000,
+    status: 'settled' as const,
+  },
+  {
+    organizerId: 'org-sheila-on7',
+    organizerName: 'Sheila On 7 Tour',
+    eventName: 'Sheila On 7 - Surabaya',
+    grossRevenue: 3_800_000_000,
+    platformFee: 190_000_000,
+    netRevenue: 3_610_000_000,
+    availableBalance: 0,
+    totalWithdrawn: 3_610_000_000,
+    status: 'settled' as const,
+  },
+]
+
 export default function FinancePage() {
+  const { isSuperAdmin, isOrganizer } = useScopedData()
+  const pageTitle = useRoleLabel({ superAdmin: 'Finance Overview', organizer: 'My Finance' })
+  const pageSubtitle = useRoleLabel({
+    superAdmin: 'Ringkasan keuangan semua organizer',
+    organizer: 'Ringkasan keuangan event kamu',
+  })
   const finance = MOCK_FINANCE
   const isSettled = finance.settlementStatus === 'settled'
   const daysUntilSettlement = !isSettled ? 7 : 0
@@ -50,8 +94,8 @@ export default function FinancePage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-foreground">Finance</h1>
-        <p className="text-muted-foreground mt-1">Ringkasan keuangan event kamu</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground">{pageTitle}</h1>
+        <p className="text-muted-foreground mt-1">{pageSubtitle}</p>
       </div>
 
       {/* Revenue Cards */}
@@ -203,6 +247,90 @@ export default function FinancePage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* ── SUPER_ADMIN: Per-Organizer Financial Overview ── */}
+      {isSuperAdmin && (
+        <Card className="bg-card border-border">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-primary" />
+              <CardTitle className="text-foreground text-sm font-bold">
+                Per-Organizer Financial Overview
+              </CardTitle>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Breakdown pendapatan per event/organizer — data real-time dari settlement DOKU
+            </p>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <div className="space-y-3">
+              {MOCK_ORGANIZER_OVERVIEW.map((org, i) => (
+                <div key={i} className="bg-background rounded-lg p-4 border border-border">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">{org.eventName}</p>
+                      <p className="text-xs text-muted-foreground">{org.organizerName}</p>
+                    </div>
+                    <Badge className={
+                      org.status === 'settled'
+                        ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20'
+                        : 'bg-yellow-500/15 text-yellow-400 border-yellow-500/20'
+                    }>
+                      {org.status === 'settled' ? 'SETTLED' : 'PENDING'}
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                    <div>
+                      <p className="text-muted-foreground">Gross Revenue</p>
+                      <p className="font-semibold text-foreground">{formatRupiah(org.grossRevenue)}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Platform Fee</p>
+                      <p className="font-semibold text-red-400">-{formatRupiah(org.platformFee)}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Available</p>
+                      <p className="font-semibold text-amber-400">{formatRupiah(org.availableBalance)}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Withdrawn</p>
+                      <p className="font-semibold text-purple-400">{formatRupiah(org.totalWithdrawn)}</p>
+                    </div>
+                  </div>
+                  {/* Revenue bar */}
+                  <div className="mt-3 flex items-center gap-2">
+                    <div className="flex-1 h-2 bg-accent rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full"
+                        style={{ width: `${(org.totalWithdrawn / org.netRevenue) * 100}%` }}
+                      />
+                    </div>
+                    <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                      {Math.round((org.totalWithdrawn / org.netRevenue) * 100)}% withdrawn
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Platform Total Summary */}
+            <div className="mt-4 pt-4 border-t border-border">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground font-medium">Total Platform Fee Collected</span>
+                <span className="font-bold text-gold">
+                  {formatRupiah(MOCK_ORGANIZER_OVERVIEW.reduce((sum, o) => sum + o.platformFee, 0))}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-sm mt-1">
+                <span className="text-muted-foreground font-medium">Total Organizer Balance (All)</span>
+                <span className="font-bold text-emerald-400">
+                  {formatRupiah(MOCK_ORGANIZER_OVERVIEW.reduce((sum, o) => sum + o.availableBalance, 0))}
+                </span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

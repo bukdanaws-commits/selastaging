@@ -21,6 +21,7 @@ import {
   gateApi,
   adminApi,
   notificationApi,
+  couponApi,
   type PaginatedData,
 } from '@/lib/api'
 import apiFetch from '@/lib/api'
@@ -45,6 +46,7 @@ import type {
   IGateScanRequest,
   IGateScanResponse,
   ISSEEvent,
+  ICoupon,
 } from '@/lib/types'
 
 // ─── QUERY KEY FACTORY ────────────────────────────────────────────────────
@@ -127,6 +129,12 @@ export const queryKeys = {
   // Notifications
   notifications: {
     list: (params?: Record<string, string>) => ['notifications', 'list', params] as const,
+  },
+
+  // Coupons
+  coupons: {
+    list: (params?: Record<string, string>) => ['coupons', 'list', params] as const,
+    detail: (id: string) => ['coupons', 'detail', id] as const,
   },
 
   // SSE
@@ -899,6 +907,56 @@ export function useMarkAllNotificationsRead() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] })
     },
+  })
+}
+
+// ─── COUPON HOOKS ───────────────────────────────────────────────────────────
+
+export function useCoupons(params?: Record<string, string>) {
+  return useQuery({
+    queryKey: queryKeys.coupons.list(params),
+    queryFn: () => couponApi.getCoupons(params),
+  })
+}
+
+export function useCreateCoupon() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: Record<string, unknown>) => couponApi.createCoupon(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['coupons'] })
+    },
+  })
+}
+
+export function useUpdateCoupon() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Record<string, unknown> }) =>
+      couponApi.updateCoupon(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['coupons'] })
+    },
+  })
+}
+
+export function useDeleteCoupon() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (id: string) => couponApi.deleteCoupon(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['coupons'] })
+    },
+  })
+}
+
+/**
+ * useValidateCoupon() — validate and apply a coupon for checkout
+ */
+export function useValidateCoupon() {
+  return useMutation({
+    mutationFn: (data: { code: string; orderId: string; subtotal: number; category?: string }) =>
+      couponApi.validateCoupon(data),
   })
 }
 

@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 
 import { cn, formatRupiah } from '@/lib/utils';
 import { useAdminEvents, useAdminDashboard } from '@/hooks/use-api';
+import { useScopedData, useRoleLabel } from '@/hooks/use-scoped-data';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import {
@@ -80,6 +81,9 @@ export function EventsPage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editingTier, setEditingTier] = useState<string | null>(null);
+
+  const { isOrganizer, organizerId, scopeParams, apiScope } = useScopedData({ filterByEvent: true });
+  const pageTitle = useRoleLabel({ superAdmin: 'Kelola Event', organizer: 'My Events' });
 
   const { data: eventsData, isLoading: eventsLoading, error: eventsError } = useAdminEvents();
   const { data: dashboardData } = useAdminDashboard();
@@ -163,10 +167,10 @@ export function EventsPage() {
         <div>
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Ticket className="w-6 h-6 text-primary" />
-            Kelola Event
+            {pageTitle}
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Kelola event konser dan konfigurasi tiket
+            {isOrganizer ? 'Event yang Anda kelola' : 'Kelola event konser dan konfigurasi tiket'}
           </p>
         </div>
         <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>

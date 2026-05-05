@@ -70,6 +70,8 @@ interface AdminUser {
   email: string;
   phone: string;
   role: string;
+  organizerId?: string;
+  tenantId?: string;
   status: 'active' | 'suspended' | 'banned';
   totalOrders: number;
   totalSpent: number;
@@ -89,6 +91,18 @@ const ROLE_CONFIG: Record<string, { label: string; color: string; bgColor: strin
     color: 'text-primary',
     bgColor: 'bg-primary/15 border-primary/30',
     icon: UserCog,
+  },
+  COUNTER_STAFF: {
+    label: 'Counter Staff',
+    color: 'text-emerald-400',
+    bgColor: 'bg-emerald-500/15 border-emerald-500/30',
+    icon: Users,
+  },
+  GATE_STAFF: {
+    label: 'Gate Staff',
+    color: 'text-blue-400',
+    bgColor: 'bg-blue-500/15 border-blue-500/30',
+    icon: Users,
   },
   PARTICIPANT: {
     label: 'Participant',
@@ -124,6 +138,8 @@ export function UsersPage() {
   const [roleDialogOpen, setRoleDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
   const [newRole, setNewRole] = useState<string>('');
+  const [organizerIdField, setOrganizerIdField] = useState<string>('');
+  const [tenantIdField, setTenantIdField] = useState<string>('');
 
   const { data: usersData, isLoading, error } = useAdminUsers();
 
@@ -135,6 +151,8 @@ export function UsersPage() {
       email: String(u.email || ''),
       phone: String(u.phone || '—'),
       role: String(u.role || 'PARTICIPANT'),
+      organizerId: String(u.organizerId || ''),
+      tenantId: String(u.tenantId || ''),
       status: (u.status === 'suspended' || u.status === 'banned' ? u.status : 'active') as AdminUser['status'],
       totalOrders: Number(u.totalOrders || 0),
       totalSpent: Number(u.totalSpent || 0),
@@ -183,12 +201,23 @@ export function UsersPage() {
   const handleRoleChange = (user: AdminUser) => {
     setSelectedUser(user);
     setNewRole(user.role);
+    setOrganizerIdField(user.organizerId || `org-${Date.now().toString(36)}`);
+    setTenantIdField(user.tenantId || `tenant-${Date.now().toString(36)}`);
     setRoleDialogOpen(true);
   };
 
   const handleSaveRole = () => {
     if (selectedUser && newRole) {
-      toast.success(`Role ${selectedUser.name} berhasil diubah ke ${newRole}`);
+      if (newRole === 'ORGANIZER' && !organizerIdField.trim()) {
+        toast.error('Organizer ID wajib diisi untuk role Organizer');
+        return;
+      }
+      const roleName = ROLE_CONFIG[newRole]?.label || newRole;
+      let message = `Role ${selectedUser.name} berhasil diubah ke ${roleName}`;
+      if (newRole === 'ORGANIZER') {
+        message += ` (Org ID: ${organizerIdField}, Tenant: ${tenantIdField})`;
+      }
+      toast.success(message);
       setRoleDialogOpen(false);
     }
   };
@@ -638,19 +667,75 @@ export function UsersPage() {
                   <AlertTriangle className="w-3 h-3 inline mr-1 text-gold" />
                   Ubah Role Ke
                 </label>
-                <Select value={newRole} onValueChange={setNewRole}>
+                <Select value={newRole} onValueChange={(v) => {
+                  setNewRole(v);
+                  if (v === 'ORGANIZER' && !organizerIdField) {
+                    setOrganizerIdField(`org-${Date.now().toString(36)}`);
+                    setTenantIdField(`tenant-${Date.now().toString(36)}`);
+                  }
+                }}>
                   <SelectTrigger className="bg-background border-input text-foreground">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-input">
                     <SelectItem value="PARTICIPANT" className="text-foreground">Participant</SelectItem>
                     <SelectItem value="ORGANIZER" className="text-foreground">Organizer</SelectItem>
+                    <SelectItem value="COUNTER_STAFF" className="text-foreground">Counter Staff</SelectItem>
+                    <SelectItem value="GATE_STAFF" className="text-foreground">Gate Staff</SelectItem>
                     <SelectItem value="SUPER_ADMIN" className="text-foreground">Super Admin</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              {/* Warning */}
+              {/* Organizer-specific fields */}
+              {newRole === 'ORGANIZER' && (
+                <div className="space-y-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
+                  <p className="text-xs text-primary font-semibold flex items-center gap-1">
+                    <UserCog className="w-3 h-3" />
+                    Organizer Configuration
+                  </p>
+                  <div className="space-y-2">
+                    <label className="text-sm text-muted-foreground">Organizer ID</label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        value={organizerIdField}
+                        onChange={(e) => setOrganizerIdField(e.target.value)}
+                        placeholder="org-xxx"
+                        className="bg-background border-input text-foreground font-mono text-sm"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-primary/30 text-primary hover:bg-primary/10 text-xs shrink-0"
+                        onClick={() => setOrganizerIdField(`org-${Date.now().toString(36)}`)}
+                      >
+                        Auto
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm text-muted-foreground">Tenant ID</label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        value={tenantIdField}
+                        onChange={(e) => setTenantIdField(e.target.value)}
+                        placeholder="tenant-xxx"
+                        className="bg-background border-input text-foreground font-mono text-sm"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-primary/30 text-primary hover:bg-primary/10 text-xs shrink-0"
+                        onClick={() => setTenantIdField(`tenant-${Date.now().toString(36)}`)}
+                      >
+                        Auto
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Warning for SUPER_ADMIN */}
               {newRole === 'SUPER_ADMIN' && (
                 <div className="flex items-start gap-2 p-3 rounded-lg bg-gold/10 border border-gold/20">
                   <AlertTriangle className="w-4 h-4 text-gold shrink-0 mt-0.5" />
@@ -658,6 +743,19 @@ export function UsersPage() {
                     Super Admin memiliki akses penuh ke seluruh sistem termasuk
                     pengaturan, verifikasi, dan manajemen user. Pastikan pengguna
                     ini terpercaya.
+                  </p>
+                </div>
+              )}
+
+              {/* Warning for staff roles */}
+              {(newRole === 'COUNTER_STAFF' || newRole === 'GATE_STAFF') && (
+                <div className="flex items-start gap-2 p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                  <AlertTriangle className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+                  <p className="text-xs text-blue-400 leading-relaxed">
+                    {newRole === 'COUNTER_STAFF'
+                      ? 'Counter Staff dapat memindai dan menukarkan tiket menjadi gelang di counter yang ditugaskan.'
+                      : 'Gate Staff dapat memindai tiket di gate masuk/keluar yang ditugaskan.'
+                    }
                   </p>
                 </div>
               )}

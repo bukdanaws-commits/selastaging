@@ -21,6 +21,8 @@ import type {
   IOrganizerBalance,
   IOrganizerFeeConfig,
   IPaymentLog,
+  ICoupon,
+  ICouponUsage,
   OrderStatus,
   TicketStatus,
   TicketTier,
@@ -51,6 +53,8 @@ export interface MockDataBundle {
   balances: IOrganizerBalance[]
   organizerFeeConfigs: IOrganizerFeeConfig[]
   paymentLogs: IPaymentLog[]
+  coupons: ICoupon[]
+  couponUsages: ICouponUsage[]
 }
 
 // ─── CONSTANTS ──────────────────────────────────────────────────────────────
@@ -1228,6 +1232,88 @@ export function generateAllMockData(): MockDataBundle {
     }
   })
 
+  // ── 13. COUPONS ────────────────────────────────────────────────────────
+  const coupons: ICoupon[] = [
+    {
+      id: 'coupon-1',
+      code: 'SAHABATDUTA',
+      name: 'Sahabat Duta',
+      description: 'Diskon khusus untuk Sahabat Duta',
+      discountType: 'nominal',
+      discountValue: 50000,
+      scope: 'global',
+      categoryConfigs: [
+        { category: 'CAT-5', discountValue: 50000, minOrder: 500000 },
+        { category: 'CAT-6', discountValue: 30000, minOrder: 300000 },
+        { category: 'CAT-7', discountValue: 25000, minOrder: 250000 },
+      ],
+      usageLimit: 1000,
+      usageLimitPerUser: 1,
+      usedCount: 127,
+      status: 'active',
+      startsAt: '2026-01-01T00:00:00+07:00',
+      expiresAt: '2026-12-31T23:59:59+07:00',
+      organizerId: ORGANIZER_ID,
+      tenantId: TENANT_ID,
+      createdAt: '2026-01-01T00:00:00+07:00',
+      updatedAt: '2026-01-15T10:30:00+07:00',
+    },
+    {
+      id: 'coupon-2',
+      code: 'TRENDSHEILA',
+      name: 'Trend Sheila',
+      description: 'Diskon 10% untuk semua kategori',
+      discountType: 'percentage',
+      discountValue: 10,
+      maxDiscount: 100000,
+      scope: 'event',
+      eventId: EVENT_ID,
+      categoryConfigs: [
+        { category: 'CAT-3', discountValue: 10, minOrder: 1000000 },
+        { category: 'CAT-4', discountValue: 10, minOrder: 750000 },
+      ],
+      usageLimit: 500,
+      usageLimitPerUser: 1,
+      usedCount: 45,
+      status: 'active',
+      startsAt: '2026-03-01T00:00:00+07:00',
+      expiresAt: '2026-06-30T23:59:59+07:00',
+      organizerId: ORGANIZER_ID,
+      tenantId: TENANT_ID,
+      createdAt: '2026-03-01T00:00:00+07:00',
+      updatedAt: '2026-03-01T00:00:00+07:00',
+    },
+    {
+      id: 'coupon-3',
+      code: 'EARLYBIRD',
+      name: 'Early Bird Special',
+      description: 'Diskon early bird Rp 75.000',
+      discountType: 'nominal',
+      discountValue: 75000,
+      scope: 'global',
+      categoryConfigs: [
+        { category: 'CAT-3', discountValue: 75000, minOrder: 1000000 },
+        { category: 'CAT-4', discountValue: 75000, minOrder: 750000 },
+        { category: 'CAT-5', discountValue: 50000, minOrder: 500000 },
+      ],
+      usageLimit: 200,
+      usageLimitPerUser: 1,
+      usedCount: 200,
+      status: 'expired',
+      startsAt: '2025-12-01T00:00:00+07:00',
+      expiresAt: '2026-01-31T23:59:59+07:00',
+      organizerId: ORGANIZER_ID,
+      tenantId: TENANT_ID,
+      createdAt: '2025-12-01T00:00:00+07:00',
+      updatedAt: '2026-02-01T00:00:00+07:00',
+    },
+  ]
+
+  const couponUsages: ICouponUsage[] = [
+    { id: 'cu-1', couponId: 'coupon-1', userId: 'user-participant-000001', orderId: 'order-0000001', discountAmount: 50000, createdAt: '2026-01-20T14:30:00+07:00' },
+    { id: 'cu-2', couponId: 'coupon-2', userId: 'user-participant-000002', orderId: 'order-0000002', discountAmount: 85000, createdAt: '2026-03-10T09:15:00+07:00' },
+  ]
+
   return {
     users: allUsers,
     events,
@@ -1246,5 +1332,7 @@ export function generateAllMockData(): MockDataBundle {
     balances,
     organizerFeeConfigs,
     paymentLogs,
+    coupons,
+    couponUsages,
   }
 }

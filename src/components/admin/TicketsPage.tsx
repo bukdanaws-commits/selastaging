@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { cn, formatRupiah } from '@/lib/utils';
 import { useAdminTickets, useAdminDashboard } from '@/hooks/use-api';
+import { useScopedData, useRoleLabel } from '@/hooks/use-scoped-data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 
@@ -80,6 +81,9 @@ export function TicketsPage() {
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+
+  const { isOrganizer, scopeParams, apiScope } = useScopedData({ filterByEvent: true });
+  const pageTitle = useRoleLabel({ superAdmin: 'Tickets & Wristbands', organizer: 'My Tickets' });
 
   const { data: ticketsData, isLoading, error } = useAdminTickets();
   const { data: dashboardData } = useAdminDashboard();
@@ -208,10 +212,10 @@ export function TicketsPage() {
       <div>
         <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <Ticket className="w-6 h-6 text-primary" />
-          Tickets &amp; Wristbands
+          {pageTitle}
         </h2>
         <p className="text-muted-foreground text-sm mt-1">
-          Manage event tickets, redemption status, and wristband assignments
+          {isOrganizer ? 'Tiket event Anda dan status penukaran gelang' : 'Manage event tickets, redemption status, and wristband assignments'}
         </p>
       </div>
 

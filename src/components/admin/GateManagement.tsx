@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { cn, formatTime } from '@/lib/utils';
 import { useAdminGates, useAdminStaff } from '@/hooks/use-api';
+import { useScopedData, useRoleLabel } from '@/hooks/use-scoped-data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 
@@ -84,6 +85,9 @@ import {
 // ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
 
 export function GateManagement() {
+  const { isOrganizer, scopeParams, apiScope } = useScopedData({ filterByEvent: true });
+  const pageTitle = useRoleLabel({ superAdmin: 'Kelola Gate', organizer: 'My Gates' });
+
   const { data: apiGates, isLoading, error } = useAdminGates();
   const { data: apiStaff } = useAdminStaff();
   const apiGatesData: Gate[] = (apiGates as any)?.data ?? apiGates as any ?? [];
@@ -203,10 +207,10 @@ export function GateManagement() {
         <div>
           <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <DoorOpen className="w-6 h-6 text-primary" />
-            Kelola Gate
+            {pageTitle}
           </h2>
           <p className="text-muted-foreground text-sm mt-1">
-            Konfigurasi gate masuk/keluar dan staff assignment
+            {isOrganizer ? 'Gate masuk/keluar event Anda' : 'Konfigurasi gate masuk/keluar dan staff assignment'}
           </p>
         </div>
         <Button

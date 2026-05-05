@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { useAdminCounters, useAdminStaff } from '@/hooks/use-api';
+import { useScopedData, useRoleLabel } from '@/hooks/use-scoped-data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 
@@ -90,6 +91,9 @@ import {
 // ─── MAIN COMPONENT ──────────────────────────────────────────────────────────
 
 export function CounterManagement() {
+  const { isOrganizer, scopeParams, apiScope } = useScopedData({ filterByEvent: true });
+  const pageTitle = useRoleLabel({ superAdmin: 'Kelola Konter', organizer: 'My Counters' });
+
   const { data: apiCountersData, isLoading, error } = useAdminCounters();
   const { data: apiStaff } = useAdminStaff();
 
@@ -195,10 +199,10 @@ export function CounterManagement() {
         <div>
           <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Store className="w-6 h-6 text-primary" />
-            Kelola Konter
+            {pageTitle}
           </h2>
           <p className="text-muted-foreground text-sm mt-1">
-            Manajemen counter penukaran gelang dan staff assignment
+            {isOrganizer ? 'Counter penukaran gelang event Anda' : 'Manajemen counter penukaran gelang dan staff assignment'}
           </p>
         </div>
         <div className="flex gap-2">

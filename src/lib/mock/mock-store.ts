@@ -22,6 +22,8 @@ import type {
   IOrganizerBalance,
   IOrganizerFeeConfig,
   IPaymentLog,
+  ICoupon,
+  ICouponUsage,
   TicketStatus,
   OrderStatus,
   GateAction,
@@ -82,6 +84,8 @@ export interface IMockAllData {
   balances: IOrganizerBalance[]
   organizerFeeConfigs: IOrganizerFeeConfig[]
   paymentLogs: IPaymentLog[]
+  coupons: ICoupon[]
+  couponUsages: ICouponUsage[]
 }
 
 // ─── EXTENDED DASHBOARD TYPES ───────────────────────────────────────────────
@@ -136,6 +140,10 @@ export interface MockState {
   organizerFeeConfigs: IOrganizerFeeConfig[]
   paymentLogs: IPaymentLog[]
 
+  // Coupons
+  coupons: ICoupon[]
+  couponUsages: ICouponUsage[]
+
   // Initialization
   isInitialized: boolean
   initialize: () => void
@@ -183,6 +191,12 @@ export interface MockState {
   // Balance update
   updateBalance: (eventId: string) => void
 
+  // Coupon mutations
+  addCoupon: (coupon: ICoupon) => void
+  updateCoupon: (id: string, data: Partial<ICoupon>) => void
+  deleteCoupon: (id: string) => void
+  applyCoupon: (code: string, userId: string, orderId: string, subtotal: number, category?: string) => { valid: boolean; discountAmount: number; message?: string; coupon?: ICoupon }
+
   // Query helpers (read-only)
   getTicketsByStatus: (status: TicketStatus) => ITicket[]
   getOrdersByStatus: (status: OrderStatus) => IOrder[]
@@ -222,6 +236,8 @@ export const useMockStore = create<MockState>((set, get) => ({
   balances: [],
   organizerFeeConfigs: [],
   paymentLogs: [],
+  coupons: [],
+  couponUsages: [],
   isInitialized: false,
 
   // ─── INITIALIZE ─────────────────────────────────────────────────────────
@@ -277,6 +293,8 @@ export const useMockStore = create<MockState>((set, get) => ({
       balances: data.balances,
       organizerFeeConfigs: data.organizerFeeConfigs,
       paymentLogs: data.paymentLogs,
+      coupons: data.coupons,
+      couponUsages: data.couponUsages,
       isInitialized: true,
     })
 
@@ -971,6 +989,130 @@ export const useMockStore = create<MockState>((set, get) => ({
       }),
     })
     notifyStateChange()
+  },
+
+  // ─── COUPON MUTATIONS ──────────────────────────────────────────────────
+
+  addCoupon: (coupon) => {
+    const state = get()
+    set({ coupons: [...state.coupons, coupon] })
+    notifyStateChange()
+  },
+
+  updateCoupon: (id, data) => {
+    const state = get()
+    const now = new Date().toISOString()
+    set({
+      coupons: state.coupons.map(c =>
+        c.id === id ? { ...c, ...data, updatedAt: now } : c
+      ),
+    })
+    notifyStateChange()
+  },
+
+  deleteCoupon: (id) => {
+    const state = get()
+    set({ coupons: state.coupons.filter(c => c.id !== id) })
+    notifyStateChange()
+  },
+
+  applyCoupon: (code, userId, orderId, subtotal, category) => {
+    const state = get()
+    const coupon = state.coupons.find(c => c.code.toUpperCase() === code.toUpperCase())
+
+    if (!coupon) {
+      return { valid: false, discountAmount: 0, message: 'Kupon tidak ditemukan' }
+    }
+
+    // Check status
+    if (coupon.status !== 'active') {
+      return { valid: false, discountAmount: 0, message: 'Kupon sudah tidak aktif' }
+    }
+
+    // Check date range
+    const now = new Date()
+    const startsAt = new Date(coupon.startsAt)
+    const expiresAt = new Date(coupon.expiresAt)
+    if (now < startsAt) {
+      return { valid: false, discountAmount: 0, message: 'Kupon belum berlaku' }
+    }
+    if (now > expiresAt) {
+      // Auto-expire the coupon
+      const updatedCoupons = state.coupons.map(c =>
+        c.id === coupon.id ? { ...c, status: 'expired' as const } : c
+      )
+      set({ coupons: updatedCoupons })
+      return { valid: false, discountAmount: 0, message: 'Kupon sudah kadaluarsa' }
+    }
+
+    // Check total usage limit
+    if (coupon.usedCount >= coupon.usageLimit) {
+      return { valid: false, discountAmount: 0, message: 'Kupon sudah mencapai batas penggunaan' }
+    }
+
+    // Check per-user usage limit
+    const userUsageCount = state.couponUsages.filter(
+      u => u.couponId === coupon.id && u.userId === userId
+    ).length
+    if (userUsageCount >= coupon.usageLimitPerUser) {
+      return { valid: false, discountAmount: 0, message: 'Anda sudah menggunakan kupon ini' }
+    }
+
+    // Calculate discount
+    let discountValue = coupon.discountValue
+    let minOrder = 0
+
+    // Check category-specific config
+    if (category && coupon.categoryConfigs.length > 0) {
+      const catConfig = coupon.categoryConfigs.find(cc => cc.category === category)
+      if (catConfig) {
+        discountValue = catConfig.discountValue
+        minOrder = catConfig.minOrder
+      }
+    }
+
+    // Check minimum order
+    if (minOrder > 0 && subtotal < minOrder) {
+      return { valid: false, discountAmount: 0, message: `Minimal order Rp ${minOrder.toLocaleString('id-ID')} untuk kategori ini` }
+    }
+
+    // Calculate actual discount amount
+    let discountAmount: number
+    if (coupon.discountType === 'percentage') {
+      discountAmount = Math.round(subtotal * discountValue / 100)
+      // Apply max discount cap for percentage type
+      if (coupon.maxDiscount && discountAmount > coupon.maxDiscount) {
+        discountAmount = coupon.maxDiscount
+      }
+    } else {
+      // Nominal discount
+      discountAmount = discountValue
+    }
+
+    // Ensure discount doesn't exceed subtotal (no negative)
+    discountAmount = Math.min(discountAmount, subtotal)
+
+    // Record usage
+    const usage: ICouponUsage = {
+      id: generateId('couponusage'),
+      couponId: coupon.id,
+      userId,
+      orderId,
+      discountAmount,
+      createdAt: new Date().toISOString(),
+    }
+
+    const updatedCoupons = state.coupons.map(c =>
+      c.id === coupon.id ? { ...c, usedCount: c.usedCount + 1 } : c
+    )
+
+    set({
+      couponUsages: [...state.couponUsages, usage],
+      coupons: updatedCoupons,
+    })
+    notifyStateChange()
+
+    return { valid: true, discountAmount, coupon }
   },
 
   // ─── QUERY HELPERS ─────────────────────────────────────────────────────

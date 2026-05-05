@@ -24,6 +24,7 @@ import type {
   IOrganizerBalance,
   IOrganizerFeeConfig,
   IPaymentLog,
+  ICoupon,
   ICheckTicketResponse,
   IRedeemTicketResponse,
   IGateScanResponse,
@@ -860,6 +861,87 @@ export async function handleMockRequest<T = unknown>(request: MockRequest): Prom
     const user = getCurrentUser()
     useMockStore.getState().markAllNotificationsRead(user?.id || '')
     return undefined as T
+  }
+
+  // ─── COUPON ENDPOINTS (5 endpoints) ────────────────────────────────────
+
+  // GET /api/v1/admin/coupons
+  if (endpoint === '/api/v1/admin/coupons' && method === 'GET') {
+    const store = useMockStore.getState()
+    let coupons = [...store.coupons]
+    if (params?.scope) coupons = coupons.filter((c: ICoupon) => c.scope === params.scope)
+    if (params?.status) coupons = coupons.filter((c: ICoupon) => c.status === params.status)
+    if (params?.eventId) coupons = coupons.filter((c: ICoupon) => c.scope === 'global' || c.eventId === params.eventId)
+    const { page, perPage } = extractPagination(params)
+    return paginate(coupons, page, perPage) as T
+  }
+
+  // POST /api/v1/admin/coupons
+  if (endpoint === '/api/v1/admin/coupons' && method === 'POST') {
+    await mockDelay()
+    const b = body as Record<string, unknown>
+    const now = new Date().toISOString()
+    const coupon: ICoupon = {
+      id: `coupon-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      code: String(b.code || '').toUpperCase(),
+      name: String(b.name || ''),
+      description: b.description ? String(b.description) : undefined,
+      discountType: (b.discountType as ICoupon['discountType']) || 'nominal',
+      discountValue: Number(b.discountValue || 0),
+      maxDiscount: b.maxDiscount ? Number(b.maxDiscount) : undefined,
+      scope: (b.scope as ICoupon['scope']) || 'global',
+      eventId: b.eventId ? String(b.eventId) : undefined,
+      categoryConfigs: (b.categoryConfigs as ICoupon['categoryConfigs']) || [],
+      usageLimit: Number(b.usageLimit || 1000),
+      usageLimitPerUser: Number(b.usageLimitPerUser || 1),
+      usedCount: 0,
+      status: (b.status as ICoupon['status']) || 'active',
+      startsAt: String(b.startsAt || now),
+      expiresAt: String(b.expiresAt || ''),
+      organizerId: String(b.organizerId || ''),
+      tenantId: String(b.tenantId || ''),
+      createdAt: now,
+      updatedAt: now,
+    }
+    useMockStore.getState().addCoupon(coupon)
+    return coupon as T
+  }
+
+  // PUT /api/v1/admin/coupons/:id
+  if (method === 'PUT') {
+    const couponUpdateMatch = matchRoute('/api/v1/admin/coupons/:id', endpoint)
+    if (couponUpdateMatch) {
+      await mockDelay()
+      const b = body as Record<string, unknown>
+      useMockStore.getState().updateCoupon(couponUpdateMatch.id, b as Partial<ICoupon>)
+      const updated = useMockStore.getState().coupons.find((c: ICoupon) => c.id === couponUpdateMatch.id)
+      return updated as T
+    }
+  }
+
+  // DELETE /api/v1/admin/coupons/:id
+  if (method === 'DELETE') {
+    const couponDeleteMatch = matchRoute('/api/v1/admin/coupons/:id', endpoint)
+    if (couponDeleteMatch) {
+      await mockDelay()
+      useMockStore.getState().deleteCoupon(couponDeleteMatch.id)
+      return { success: true } as T
+    }
+  }
+
+  // POST /api/v1/coupons/validate
+  if (endpoint === '/api/v1/coupons/validate' && method === 'POST') {
+    await mockDelay()
+    const b = body as Record<string, unknown>
+    const user = getCurrentUser()
+    const result = useMockStore.getState().applyCoupon(
+      String(b.code || ''),
+      user?.id || '',
+      String(b.orderId || ''),
+      Number(b.subtotal || 0),
+      b.category ? String(b.category) : undefined,
+    )
+    return result as T
   }
 
   // ─── NO MATCH FOUND ─────────────────────────────────────────────────────

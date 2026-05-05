@@ -141,6 +141,15 @@ export const API = {
   SSE: {
     STREAM:        '/api/v1/events/stream',
   },
+
+  // Coupons
+  COUPONS: {
+    LIST:           '/api/v1/admin/coupons',
+    CREATE:         '/api/v1/admin/coupons',
+    UPDATE:         (id: string) => `/api/v1/admin/coupons/${id}`,
+    DELETE:         (id: string) => `/api/v1/admin/coupons/${id}`,
+    VALIDATE:       '/api/v1/coupons/validate',
+  },
 } as const
 
 // ─── AUTH TOKEN HELPERS ────────────────────────────────────────────────────
@@ -594,6 +603,27 @@ export const notificationApi = {
 
   markAllAsRead: () =>
     apiFetch<void>(API.NOTIFICATIONS.MARK_ALL_READ, { method: 'POST' }),
+}
+
+// Coupons
+export const couponApi = {
+  getCoupons: (params?: Record<string, string>) =>
+    apiFetch<PaginatedData<unknown>>(API.COUPONS.LIST, { params }),
+
+  createCoupon: (data: Record<string, unknown>) =>
+    apiFetch<unknown>(API.COUPONS.CREATE, { method: 'POST', body: JSON.stringify(data) }),
+
+  updateCoupon: (id: string, data: Record<string, unknown>) =>
+    apiFetch<unknown>(API.COUPONS.UPDATE(id), { method: 'PUT', body: JSON.stringify(data) }),
+
+  deleteCoupon: (id: string) =>
+    apiFetch<{ success: boolean }>(API.COUPONS.DELETE(id), { method: 'DELETE' }),
+
+  validateCoupon: (data: { code: string; orderId: string; subtotal: number; category?: string }) =>
+    apiFetch<{ valid: boolean; discountAmount: number; message?: string; coupon?: unknown }>(
+      API.COUPONS.VALIDATE,
+      { method: 'POST', body: JSON.stringify(data) }
+    ),
 }
 
 // ─── DEFAULT EXPORT ────────────────────────────────────────────────────────

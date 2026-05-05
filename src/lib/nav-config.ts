@@ -77,6 +77,13 @@ export const NAV_SECTIONS: NavSection[] = [
         icon: 'Armchair',
         roles: ['ORGANIZER'],
       },
+      {
+        title: 'Coupons',
+        href: '/admin/coupons',
+        icon: 'Tag',
+        roles: ['SUPER_ADMIN', 'ORGANIZER'],
+        titleByRole: { ORGANIZER: 'My Coupons' },
+      },
     ],
   },
 
@@ -146,7 +153,8 @@ export const NAV_SECTIONS: NavSection[] = [
         title: 'Finance',
         href: '/admin/finance',
         icon: 'Wallet',
-        roles: ['ORGANIZER'],
+        roles: ['SUPER_ADMIN', 'ORGANIZER'],
+        titleByRole: { ORGANIZER: 'My Finance' },
       },
       {
         title: 'Bank Account',
@@ -158,7 +166,7 @@ export const NAV_SECTIONS: NavSection[] = [
         title: 'Withdraw',
         href: '/admin/withdraw',
         icon: 'ArrowDownToLine',
-        roles: ['ORGANIZER'],
+        roles: ['SUPER_ADMIN'],
       },
       {
         title: 'Withdrawal History',

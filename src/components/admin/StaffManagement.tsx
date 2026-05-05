@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { cn, formatDateTimeShort } from '@/lib/utils';
 import { useAdminStaff } from '@/hooks/use-api';
+import { useScopedData, useRoleLabel } from '@/hooks/use-scoped-data';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 
@@ -108,6 +109,9 @@ export function StaffManagement() {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedStaff, setSelectedStaff] = useState<Record<string, unknown> | null>(null);
+
+  const { isOrganizer, scopeParams, apiScope } = useScopedData({ filterByEvent: true });
+  const pageTitle = useRoleLabel({ superAdmin: 'Kelola Staff & Role', organizer: 'My Staff' });
 
   // Add form
   const [addForm, setAddForm] = useState({
@@ -221,10 +225,10 @@ export function StaffManagement() {
         <div>
           <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <UserCog className="w-6 h-6 text-primary" />
-            Kelola Staff &amp; Role
+            {pageTitle}
           </h2>
           <p className="text-muted-foreground text-sm mt-1">
-            Manajemen staff, role, shift, dan assignment lokasi
+            {isOrganizer ? 'Staff yang mengelola event Anda' : 'Manajemen staff, role, shift, dan assignment lokasi'}
           </p>
         </div>
         <Button size="sm" onClick={() => setAddDialogOpen(true)} className="bg-primary text-foreground hover:bg-primary/90">
