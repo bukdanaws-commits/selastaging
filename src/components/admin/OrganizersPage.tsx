@@ -56,7 +56,7 @@ import {
   TrendingUp,
   ShieldCheck,
   AlertTriangle,
-  EventIcon,
+  Calendar,
   Wallet,
 } from 'lucide-react';
 
@@ -248,7 +248,7 @@ function OrganizerDetailDialog({ org }: { org: OrganizerItem }) {
           {/* Events */}
           <div>
             <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-2">
-              <EventIcon className="w-4 h-4 text-primary" />
+              <Calendar className="w-4 h-4 text-primary" />
               Events ({org.events?.length || 0})
             </h4>
             <div className="space-y-2 max-h-40 overflow-y-auto">
