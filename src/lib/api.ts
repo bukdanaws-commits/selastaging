@@ -1,8 +1,11 @@
 // ─── SELEEVENT API CLIENT ──────────────────────────────────────────────────
 // Centralized API endpoint constants + fetch client
-// Backend: Golang Fiber v2 (Port 8080)
-// All requests go through Caddy gateway via XTransformPort
-// Dev mode: Direct to Golang backend via XTransformPort
+// Backend: Golang Fiber v3 (Port 8080)
+//
+// Routing modes:
+//   1. Caddy gateway (dev):   NEXT_PUBLIC_USE_DIRECT_BACKEND=true + XTransformPort
+//   2. Cloud Run (prod):     NEXT_PUBLIC_API_URL=https://backend-url → direct HTTP calls
+//   3. Next.js API proxy:   Default — requests go to /api/... routes
 
 import type {
   ICheckTicketRequest,
@@ -26,16 +29,22 @@ import type {
 
 // ─── CONFIG ─────────────────────────────────────────────────────────────────
 
-// API_BASE is empty — all endpoints already include their full path (e.g. /api/v1/orders)
-// We do NOT prepend anything; the endpoint string IS the final path.
-const API_BASE = ''
+// NEXT_PUBLIC_API_URL determines the routing mode:
+//   - Empty or "/api" → same-origin requests (Next.js API routes or Caddy proxy)
+//   - Full URL (https://...) → direct calls to backend (Cloud Run production)
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || '/api'
+const API_BASE = rawApiUrl.startsWith('http') ? rawApiUrl : ''
 
-// Golang backend port (for XTransformPort gateway)
+// Golang backend port (for XTransformPort gateway — only used in dev with Caddy)
 const GO_BACKEND_PORT = process.env.NEXT_PUBLIC_GO_PORT || '8080'
 
-// Whether to route directly to Go backend via Caddy (XTransformPort)
-// When false, requests go to Next.js API routes (/api/...)
+// Whether to route directly to Go backend
+// - In Caddy dev mode: adds XTransformPort query param
+// - In Cloud Run prod: API_BASE already has the full URL, no XTransformPort needed
 const USE_DIRECT_BACKEND = process.env.NEXT_PUBLIC_USE_DIRECT_BACKEND === 'true'
+
+// When API_BASE is a full URL, we're in Cloud Run production mode — no XTransformPort
+const IS_CLOUD_RUN = API_BASE.startsWith('http')
 
 // ─── API ENDPOINTS (matching Golang Fiber routes.go) ──────────────────────
 
@@ -277,9 +286,10 @@ export async function apiFetch<T>(
   // Build URL — endpoint already contains the full path (e.g. /api/v1/orders)
   let url = `${API_BASE}${endpoint}`
 
-  // Merge params with XTransformPort when routing directly to Go backend
+  // Merge params with XTransformPort when routing via Caddy gateway
+  // In Cloud Run mode (IS_CLOUD_RUN), API_BASE already has the full URL — no XTransformPort needed
   const finalParams: Record<string, string> = { ...params }
-  if (USE_DIRECT_BACKEND) {
+  if (USE_DIRECT_BACKEND && !IS_CLOUD_RUN) {
     finalParams.XTransformPort = GO_BACKEND_PORT
   }
 

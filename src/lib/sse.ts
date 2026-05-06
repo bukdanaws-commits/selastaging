@@ -26,8 +26,21 @@ class SSEClient {
   private _status: 'connecting' | 'connected' | 'disconnected' | 'error' = 'disconnected'
 
   constructor(options: SSEClientOptions = {}) {
-    const GO_BACKEND_PORT = process.env.NEXT_PUBLIC_GO_PORT || '8080'
-    this.url = `/?XTransformPort=${GO_BACKEND_PORT}/api/v1/events/stream`
+    // Determine SSE URL based on routing mode:
+    //   - Cloud Run prod: NEXT_PUBLIC_API_URL is a full URL → use it as base
+    //   - Caddy dev: XTransformPort routing
+    //   - Default: same-origin /api/v1/events/stream
+    const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || '/api'
+    const isCloudRun = rawApiUrl.startsWith('http')
+
+    if (isCloudRun) {
+      // Cloud Run production: direct backend URL
+      this.url = `${rawApiUrl}/api/v1/events/stream`
+    } else {
+      const GO_BACKEND_PORT = process.env.NEXT_PUBLIC_GO_PORT || '8080'
+      this.url = `/?XTransformPort=${GO_BACKEND_PORT}/api/v1/events/stream`
+    }
+
     this.reconnectInterval = options.reconnectInterval || 3000
     this.maxReconnectAttempts = options.maxReconnectAttempts || 10
 
