@@ -20,11 +20,11 @@ RUN apk add --no-cache libc6-compat vips-dev python3 make g++
 WORKDIR /app
 
 # Copy package files first (better layer caching)
-COPY package.json bun.lock* package-lock.json* ./
+COPY package.json ./
 
-# Install bun globally, then install dependencies
-# Project uses bun.lock so bun install is preferred
-RUN npm install -g bun@1.2.15 && bun install
+# Install ALL dependencies using npm
+# npm install resolves from package.json (no package-lock.json needed)
+RUN npm install --legacy-peer-deps
 
 # ── Stage 2: Build ───────────────────────────────────────────────────────────
 FROM node:20-alpine AS builder
