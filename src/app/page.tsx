@@ -81,7 +81,7 @@ const TOUR_CITIES = [
   { slug: 'sheila-on7-bandung', city: 'Bandung', date: '1 Juni 2025', venue: 'Baros Field', day: '01', month: 'JUN' },
   { slug: 'sheila-on7-makassar', city: 'Makassar', date: '8 Juni 2025', venue: 'Pantai Losari Arena', day: '08', month: 'JUN' },
   { slug: 'sheila-on7-medan', city: 'Medan', date: '15 Juni 2025', venue: 'Lapangan Merdeka', day: '15', month: 'JUN' },
-  { slug: 'sheila-on7-jakarta', city: 'Jakarta', date: '22 Juni 2025', venue: 'GBK Madya Stadium', day: '22', month: 'JUN' },
+  { slug: 'sheila-on7-jakarta', city: 'Jakarta', date: '22 Juni 2026', venue: 'GBK Madya Stadium', day: '22', month: 'JUN' },
   { slug: 'sheila-on7-balikpapan', city: 'Balikpapan', date: '29 Juni 2025', venue: 'Lapangan Merdeka BPN', day: '29', month: 'JUN' },
 ] as const
 

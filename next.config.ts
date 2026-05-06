@@ -10,8 +10,15 @@ const nextConfig: NextConfig = {
   // ─── Cloud Run / Docker Production Build ─────────────────────
   output: "standalone",
 
+  // ─── Allowed Dev Origins (preview) ──────────────────────────
+  allowedDevOrigins: [
+    ".space-z.ai",
+    "space-z.ai",
+  ],
+
   // ─── Image Optimization (GCS + external) ─────────────────────
   images: {
+    qualities: [75, 95],
     remotePatterns: [
       {
         protocol: "https",
