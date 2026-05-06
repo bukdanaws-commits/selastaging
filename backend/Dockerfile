@@ -9,14 +9,14 @@
 # =============================================================================
 
 # ── Build stage ─────────────────────────────────────────────────────────────
-FROM golang:1.24-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
 # Cache Go modules - copy go.mod and go.sum first
 # Paths relative to project root (Docker context = ".")
 COPY backend/go.mod backend/go.sum ./
-RUN GOTOOLCHAIN=local go mod tidy -go=1.24 && go mod download
+RUN go mod download
 
 # Copy backend source code (relative to project root)
 COPY backend/ .
@@ -24,7 +24,7 @@ COPY backend/ .
 # Build binary with CGO_ENABLED=0 for static binary (PostgreSQL only)
 ARG CGO_ENABLED=0
 ARG VERSION=dev
-RUN GOTOOLCHAIN=local CGO_ENABLED=${CGO_ENABLED} go build \
+RUN CGO_ENABLED=${CGO_ENABLED} go build \
   -ldflags="-s -w -X main.version=${VERSION}" \
   -o /eventku-api \
   ./cmd/server
