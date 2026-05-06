@@ -1,0 +1,66 @@
+# =============================================================================
+#  EVENTKU — Cloud Build: Frontend (Next.js)
+#  Builds Docker image and pushes to Artifact Registry
+# =============================================================================
+
+steps:
+  # Build the container image with production env vars
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-f'
+      - 'Dockerfile.frontend'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_API_URL=https://api.sheilaon7.eventku.co.id'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_USE_MOCK=false'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_DOKU_ENVIRONMENT=sandbox'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_DOKU_CLIENT_ID=BRN-0222-1777799032222'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_DOKU_NOTIFICATION_URL=https://api.sheilaon7.eventku.co.id/api/v1/doku/notification'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_DOKU_FINISH_URL=https://sheilaon7.eventku.co.id/payment/success'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_DOKU_ERROR_URL=https://sheilaon7.eventku.co.id/payment/error'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_DOKU_UNPAYMENT_URL=https://sheilaon7.eventku.co.id/payment/pending'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/frontend:${SHORT_SHA}'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/frontend:latest'
+      - '.'
+
+  # Push the container image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '--all-tags'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/frontend'
+
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'sheilaon7-frontend'
+      - '--image=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/frontend:${SHORT_SHA}'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--port=3000'
+      - '--memory=1Gi'
+      - '--cpu=1'
+      - '--min-instances=1'
+      - '--max-instances=5'
+      - '--timeout=300'
+      - '--allow-unauthenticated'
+
+substitutions:
+  _REGION: asia-southeast2
+  _REPO: eventku-repo
+
+images:
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/frontend:${SHORT_SHA}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/frontend:latest'

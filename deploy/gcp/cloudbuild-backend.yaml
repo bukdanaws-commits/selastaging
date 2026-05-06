@@ -1,0 +1,52 @@
+# =============================================================================
+#  EVENTKU — Cloud Build: Backend (Go Fiber)
+#  Builds Docker image and pushes to Artifact Registry
+# =============================================================================
+
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-f'
+      - 'backend/Dockerfile'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/backend:${SHORT_SHA}'
+      - '-t'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/backend:latest'
+      - '.'
+
+  # Push the container image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '--all-tags'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/backend'
+
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'eventku-api'
+      - '--image=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/backend:${SHORT_SHA}'
+      - '--region=${_REGION}'
+      - '--platform=managed'
+      - '--port=8080'
+      - '--memory=512Mi'
+      - '--cpu=1'
+      - '--min-instances=0'
+      - '--max-instances=10'
+      - '--timeout=300'
+      - '--add-cloudsql-instances=${PROJECT_ID}:${_REGION}:eventku'
+      - '--set-env-vars=DB_DRIVER=postgres,DB_HOST=/cloudsql/${PROJECT_ID}:${_REGION}:eventku,DB_PORT=5432,DB_USER=eventku,DB_NAME=eventku,DB_SSLMODE=require,APP_ENV=production,APP_PORT=8080,DOKU_CLIENT_ID=BRN-0222-1777799032222,DOKU_IS_SANDBOX=true,JWT_EXPIRATION=24h,REFRESH_JWT_EXPIRATION=168h'
+      - '--update-secrets=DB_PASSWORD=DB_PASSWORD:latest,DOKU_CLIENT_SECRET=DOKU_CLIENT_SECRET:latest,DOKU_SHARED_KEY=DOKU_SHARED_KEY:latest,DOKU_BSN=DOKU_BSN:latest,JWT_SECRET=JWT_SECRET:latest,REFRESH_JWT_SECRET=REFRESH_JWT_SECRET:latest'
+
+substitutions:
+  _REGION: asia-southeast2
+  _REPO: eventku-repo
+
+images:
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/backend:${SHORT_SHA}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPO}/backend:latest'
