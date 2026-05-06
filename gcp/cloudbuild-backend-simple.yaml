@@ -1,0 +1,53 @@
+# =============================================================================
+#  Cloud Build Config — Backend (pre-built binary approach)
+#
+#  This config is designed for Cloud Shell deployment where Docker networking
+#  is restricted. The Go binary is built on the Cloud Shell host (which has
+#  network access), then this config creates a minimal Docker image and pushes
+#  it to Artifact Registry via Cloud Build (which has full network access).
+#
+#  Usage:
+#    # 1. Build binary on host first:
+#    cd backend && CGO_ENABLED=0 go build -ldflags="-s -w" -o ../eventku-api ./cmd/server
+#    # 2. Submit to Cloud Build:
+#    gcloud builds submit --config=gcp/cloudbuild-backend-simple.yaml \
+#      --substitutions=_IMAGE_TAG=latest
+# =============================================================================
+
+steps:
+  # ── Build Docker image (just wraps the pre-built binary) ──────────────────
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-image'
+    args:
+      - 'build'
+      - '-t'
+      - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/$_IMAGE_NAME:$_IMAGE_TAG'
+      - '-t'
+      - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/$_IMAGE_NAME:latest'
+      - '-f'
+      - 'Dockerfile.backend-simple'
+      - '.'
+
+  # ── Push to Artifact Registry ─────────────────────────────────────────────
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-image'
+    waitFor: ['build-image']
+    args: ['push', '--all-tags', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/$_IMAGE_NAME']
+
+# ── Images to push via Cloud Build ────────────────────────────────────────────
+images:
+  - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/$_IMAGE_NAME:$_IMAGE_TAG'
+  - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/$_IMAGE_NAME:latest'
+
+# ── Substitution variables ────────────────────────────────────────────────────
+substitutions:
+  _REGION: asia-southeast2
+  _REPO: eventku
+  _IMAGE_NAME: eventku-api
+  _IMAGE_TAG: latest
+
+options:
+  machineType: 'E2_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: '600s'

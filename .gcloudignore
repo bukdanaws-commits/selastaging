@@ -1,0 +1,57 @@
+# =============================================================================
+#  .gcloudignore — Exclude files from Cloud Build source uploads
+#
+#  This file works like .gitignore but for gcloud builds submit
+#  Reduces upload size and speeds up Cloud Build submissions
+# =============================================================================
+
+# Git
+.git
+.gitignore
+
+# Node.js
+node_modules
+.next
+out
+
+# Go build artifacts
+backend/server
+backend/seleevent.db
+backend/seleevent.db-shm
+backend/seleevent.db-wal
+backend/seed
+eventku-api
+
+# Docker
+.docker
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.tar.gz
+*.zip
+
+# Documentation (not needed for build)
+*.md
+!README.md
+agent-ctx/
+download/
+upload/
+examples/
+
+# Terraform state
+gcp/terraform/.terraform
+gcp/terraform/*.tfstate*
+gcp/terraform/.terraform.lock.hcl
+
+# Misc
+bsi-brand-search.json
+doku-api-report.md

@@ -261,6 +261,19 @@ if should_run_step 2; then
     fi
   done
 
+  # Grant Cloud Build service account access to Artifact Registry
+  info "Granting Cloud Build service account access to Artifact Registry..."
+  if [ "$DRY_RUN" != true ]; then
+    PROJECT_NUMBER=$(gcloud projects describe "$PROJECT_ID" --format='value(projectNumber)' 2>/dev/null || echo "")
+    if [ -n "$PROJECT_NUMBER" ]; then
+      gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+        --member="serviceAccount:${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com" \
+        --role="roles/artifactregistry.writer" \
+        --quiet 2>/dev/null || true
+      success "Cloud Build SA granted artifactregistry.writer"
+    fi
+  fi
+
   echo ""
   success "Step 2 complete: APIs enabled ($(elapsed))"
 fi
@@ -353,36 +366,74 @@ fi
 # =============================================================================
 # STEP 5: Build & Push Backend Docker Image
 # =============================================================================
+# Strategy: Build Go binary on host (host has network access), then use
+# Cloud Build to create Docker image and push to Artifact Registry.
+# Cloud Build has full network access and can reach Artifact Registry.
+# =============================================================================
 if should_run_step 5; then
-  step_header 5 "Build & Push Backend Docker Image"
+  step_header 5 "Build & Push Backend Docker Image (via Cloud Build)"
 
-  confirm "Build and push backend Docker image? (This takes 3-5 minutes)"
+  confirm "Build and push backend image? (Build on host + Cloud Build push)"
 
   BACKEND_IMAGE="${AR_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${AR_REPO}/${BACKEND_SERVICE}"
-  BACKEND_TAG="${BACKEND_IMAGE}:$(date +%Y%m%d-%H%M%S)"
   BACKEND_LATEST="${BACKEND_IMAGE}:latest"
 
   info "Backend image: ${BACKEND_LATEST}"
 
   if [ "$DRY_RUN" != true ]; then
-    # Build from project root (Docker context = ".")
-    info "Building backend image..."
-    docker build \
-      --network=host \
-      -f backend/Dockerfile \
-      -t "$BACKEND_TAG" \
-      -t "$BACKEND_LATEST" \
-      --build-arg VERSION="cloudrun-$(date +%Y%m%d-%H%M%S)" \
-      .
+    # ── Phase 1: Build Go binary on host (host has network) ────────────────
+    info "Phase 1: Building Go binary on Cloud Shell host..."
+    cd backend
 
-    success "Backend image built"
+    # Ensure Go is available
+    if ! command -v go &>/dev/null; then
+      info "Installing Go 1.25..."
+      curl -sLO https://go.dev/dl/go1.25.0.linux-amd64.tar.gz
+      sudo tar -C /usr/local -xzf go1.25.0.linux-amd64.tar.gz
+      export PATH=$PATH:/usr/local/go/bin
+      rm -f go1.25.0.linux-amd64.tar.gz
+    fi
 
-    # Push to Artifact Registry
-    info "Pushing backend image to Artifact Registry..."
-    docker push "$BACKEND_TAG"
-    docker push "$BACKEND_LATEST"
+    info "Running: CGO_ENABLED=0 go build -o ../eventku-api ./cmd/server"
+    CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+      -ldflags="-s -w -X main.version=cloudrun-$(date +%Y%m%d-%H%M%S)" \
+      -o ../eventku-api ./cmd/server
 
-    success "Backend image pushed"
+    cd ..
+    success "Go binary built: $(ls -lh eventku-api | awk '{print $5}')"
+
+    # ── Phase 2: Create Dockerfile.backend-simple build context ───────────
+    info "Phase 2: Preparing Cloud Build context..."
+    mkdir -p /tmp/backend-build
+    cp eventku-api /tmp/backend-build/
+
+    # Create simple Dockerfile that just wraps the pre-built binary
+    cat > /tmp/backend-build/Dockerfile << 'DOCKERFILE'
+FROM alpine:3.19
+RUN apk --no-cache add ca-certificates tzdata libc6-compat
+ENV TZ=Asia/Jakarta
+RUN addgroup --system --gid 1001 appuser && \
+    adduser --system --uid 1001 -G appuser appuser
+WORKDIR /app
+COPY --chown=appuser:appuser eventku-api /app/eventku-api
+USER appuser
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
+ENTRYPOINT ["/app/eventku-api"]
+DOCKERFILE
+
+    # ── Phase 3: Submit to Cloud Build ─────────────────────────────────────
+    info "Phase 3: Submitting to Cloud Build (pushes to Artifact Registry)..."
+    gcloud builds submit /tmp/backend-build \
+      --tag="${BACKEND_LATEST}" \
+      --project="${PROJECT_ID}" \
+      --quiet
+
+    success "Backend image pushed to Artifact Registry via Cloud Build"
+
+    # Cleanup
+    rm -rf /tmp/backend-build
   fi
 
   echo ""
@@ -451,10 +502,14 @@ fi
 # =============================================================================
 # STEP 7: Build & Push Frontend Docker Image
 # =============================================================================
+# Strategy: Use Cloud Build to build the frontend Docker image and push to
+# Artifact Registry. Cloud Build has full network access, so Docker builds
+# can download npm packages and push images without issues.
+# =============================================================================
 if should_run_step 7; then
-  step_header 7 "Build & Push Frontend Docker Image"
+  step_header 7 "Build & Push Frontend Docker Image (via Cloud Build)"
 
-  confirm "Build and push frontend Docker image? (This takes 5-8 minutes)"
+  confirm "Build and push frontend image via Cloud Build? (5-10 minutes)"
 
   # Get backend URL for build arg
   BACKEND_URL=$(gcloud run services describe "$BACKEND_SERVICE" \
@@ -465,38 +520,21 @@ if should_run_step 7; then
   info "Backend URL for frontend: ${BACKEND_URL}"
 
   FRONTEND_IMAGE="${AR_LOCATION}-docker.pkg.dev/${PROJECT_ID}/${AR_REPO}/${FRONTEND_SERVICE}"
-  FRONTEND_TAG="${FRONTEND_IMAGE}:$(date +%Y%m%d-%H%M%S)"
   FRONTEND_LATEST="${FRONTEND_IMAGE}:latest"
 
   if [ "$DRY_RUN" != true ]; then
-    info "Building frontend image..."
-    docker build \
-      --network=host \
-      -f Dockerfile.frontend \
-      -t "$FRONTEND_TAG" \
-      -t "$FRONTEND_LATEST" \
-      --build-arg NEXT_PUBLIC_API_URL="${BACKEND_URL}" \
-      --build-arg NEXT_PUBLIC_USE_MOCK=false \
-      --build-arg NEXT_PUBLIC_DOKU_ENVIRONMENT=sandbox \
-      --build-arg NEXT_PUBLIC_DOKU_API_BASE_URL=https://api-sandbox.doku.com \
-      --build-arg NEXT_PUBLIC_DOKU_CHECKOUT_URL=https://checkout-sandbox.doku.com \
-      --build-arg NEXT_PUBLIC_DOKU_CLIENT_ID="${DOKU_CLIENT_ID}" \
-      --build-arg NEXT_PUBLIC_DOKU_NOTIFICATION_URL="${BACKEND_URL}/api/v1/doku/notification" \
-      --build-arg NEXT_PUBLIC_DOKU_FINISH_URL="https://${FRONTEND_DOMAIN}/payment/success" \
-      --build-arg NEXT_PUBLIC_DOKU_ERROR_URL="https://${FRONTEND_DOMAIN}/payment/error" \
-      --build-arg NEXT_PUBLIC_DOKU_UNPAYMENT_URL="https://${FRONTEND_DOMAIN}/payment/pending" \
-      --build-arg NEXT_PUBLIC_GOOGLE_CLIENT_ID="${GOOGLE_CLIENT_ID}" \
-      --build-arg NEXT_PUBLIC_PLATFORM_FEE_PERCENTAGE=5 \
-      --build-arg NEXT_PUBLIC_SETTLEMENT_DAYS=7 \
-      .
+    info "Submitting frontend build to Cloud Build..."
+    info "This uses Cloud Build with full network access (bypasses Cloud Shell Docker networking issues)"
 
-    success "Frontend image built"
+    gcloud builds submit . \
+      --config=gcp/cloudbuild-frontend-cloudrun.yaml \
+      --substitutions="\
+_BACKEND_URL=${BACKEND_URL},\
+_DOKU_NOTIFICATION_URL=${BACKEND_URL}/api/v1/doku/notification" \
+      --project="${PROJECT_ID}" \
+      --quiet
 
-    info "Pushing frontend image to Artifact Registry..."
-    docker push "$FRONTEND_TAG"
-    docker push "$FRONTEND_LATEST"
-
-    success "Frontend image pushed"
+    success "Frontend image pushed to Artifact Registry via Cloud Build"
   fi
 
   echo ""

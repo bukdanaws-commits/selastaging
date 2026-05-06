@@ -22,8 +22,8 @@ WORKDIR /app
 COPY package.json package-lock.json* bun.lock* ./
 
 # Install dependencies
-# Prefer bun if available, fallback to npm
-COPY --from=ghcr.io/oven-sh/bun:1 /usr/local/bin/bun /usr/local/bin/bun 2>/dev/null || true
+# Install bun for faster dependency installation
+COPY --from=ghcr.io/oven-sh/bun:1 /usr/local/bin/bun /usr/local/bin/bun
 RUN bun install --frozen-lockfile 2>/dev/null || npm ci --omit=dev
 
 # ── Stage 2: Build ───────────────────────────────────────────────────────────
