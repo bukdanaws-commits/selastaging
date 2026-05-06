@@ -1,0 +1,51 @@
+# =============================================================================
+#  .dockerignore — Exclude files from Docker build context
+#
+#  This reduces the build context size and avoids copying host node_modules
+#  which can conflict with the container's installed dependencies.
+# =============================================================================
+
+# Git
+.git
+.gitignore
+
+# Dependencies (will be installed fresh in container)
+node_modules
+
+# Build output (will be generated in container)
+.next
+out
+
+# Go / Backend
+backend/
+eventku-api
+
+# Docker
+.docker
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+!README.md
+agent-ctx/
+download/
+upload/
+examples/
+
+# Terraform
+gcp/terraform/.terraform
+gcp/terraform/*.tfstate*
+
+# Misc
+bsi-brand-search.json
+doku-api-report.md
+prisma/*.db

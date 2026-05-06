@@ -19,12 +19,11 @@ RUN apk add --no-cache libc6-compat vips-dev
 WORKDIR /app
 
 # Copy package files first (better layer caching)
-COPY package.json package-lock.json* bun.lock* ./
+COPY package.json bun.lock* package-lock.json* ./
 
-# Install dependencies
-# Install bun for faster dependency installation
-COPY --from=ghcr.io/oven-sh/bun:1 /usr/local/bin/bun /usr/local/bin/bun
-RUN bun install --frozen-lockfile 2>/dev/null || npm ci --omit=dev
+# Install ALL dependencies (including devDependencies needed for build)
+# Use npm ci as primary — more reliable in CI/Docker environments
+RUN npm ci --legacy-peer-deps 2>/dev/null || npm install
 
 # ── Stage 2: Build ───────────────────────────────────────────────────────────
 FROM node:20-alpine AS builder
@@ -36,7 +35,7 @@ WORKDIR /app
 # Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 
-# Copy all source code (Dockerfile.frontend already excluded via .dockerignore)
+# Copy all source code
 COPY . .
 
 # Build-time environment variables (baked into build, NOT secrets)
@@ -70,12 +69,14 @@ ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
 ENV NEXT_PUBLIC_PLATFORM_FEE_PERCENTAGE=$NEXT_PUBLIC_PLATFORM_FEE_PERCENTAGE
 ENV NEXT_PUBLIC_SETTLEMENT_DAYS=$NEXT_PUBLIC_SETTLEMENT_DAYS
 
-# Generate Prisma client (if using Prisma in production)
-# RUN npx prisma generate
-
 # Build Next.js application (standalone output)
+# The build script also copies static files into standalone output:
+#   "build": "next build && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/"
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN npm run build || bun run build
+RUN npm run build
+
+# Verify standalone output exists
+RUN ls -la .next/standalone/ && echo "✅ Standalone output verified"
 
 # ── Stage 3: Production Runtime ──────────────────────────────────────────────
 FROM node:20-alpine AS runner
@@ -100,14 +101,12 @@ ENV NEXT_TELEMETRY_DISABLED=1
 WORKDIR /app
 
 # Copy standalone output (minimal Next.js server + dependencies)
-# standalone mode only copies necessary files
+# The build script already copies static and public into standalone/ dir:
+#   "build": "next build && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/"
 COPY --from=builder /app/.next/standalone ./
 
-# Copy static files (public directory)
+# Also copy public and static as safety net (in case build script didn't copy)
 COPY --from=builder /app/public ./public
-
-# Copy .next/static (needed for CSS, JS, images, fonts)
-# Must be in correct relative path
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
 # Switch to non-root user
