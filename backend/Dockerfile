@@ -16,6 +16,7 @@ WORKDIR /app
 # Cache Go modules - copy go.mod and go.sum first
 # Paths relative to project root (Docker context = ".")
 COPY backend/go.mod backend/go.sum ./
+ENV GOPROXY=https://proxy.golang.org,direct
 RUN go mod download
 
 # Copy backend source code (relative to project root)

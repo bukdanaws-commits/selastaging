@@ -368,6 +368,7 @@ if should_run_step 5; then
     # Build from project root (Docker context = ".")
     info "Building backend image..."
     docker build \
+      --network=host \
       -f backend/Dockerfile \
       -t "$BACKEND_TAG" \
       -t "$BACKEND_LATEST" \
@@ -470,6 +471,7 @@ if should_run_step 7; then
   if [ "$DRY_RUN" != true ]; then
     info "Building frontend image..."
     docker build \
+      --network=host \
       -f Dockerfile.frontend \
       -t "$FRONTEND_TAG" \
       -t "$FRONTEND_LATEST" \
