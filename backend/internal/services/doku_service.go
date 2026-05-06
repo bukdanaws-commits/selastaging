@@ -94,10 +94,11 @@ const (
 
 // DokuService handles DOKU payment gateway integration (SNAP API).
 type DokuService struct {
-        ClientID     string
-        ClientSecret string
-        SharedKey    string
-        PrivateKey   string
+        ClientID     string // BRN-xxxx — X-CLIENT-KEY / X-PARTNER-ID
+        ClientSecret string // SK-xxxx — HMAC-SHA512 for API request signing
+        SharedKey    string // doku_key_xxx — verify webhook notification signature
+        BSN          string // BSN-xxxx — B2B Secret Number for token request
+        PrivateKey   string // RSA private key for B2B signing (optional)
         IsSandbox    bool
         BaseURL      string // https://api-sandbox.doku.com or https://api.doku.com
 }
@@ -305,6 +306,10 @@ func NewDokuService() *DokuService {
         if sharedKey == "" {
                 sharedKey = config.Cfg.Doku.SharedKey
         }
+        bsn := os.Getenv("DOKU_BSN")
+        if bsn == "" {
+                bsn = config.Cfg.Doku.BSN
+        }
         privateKey := os.Getenv("DOKU_PRIVATE_KEY")
         if privateKey == "" {
                 privateKey = config.Cfg.Doku.PrivateKey
@@ -314,6 +319,7 @@ func NewDokuService() *DokuService {
                 ClientID:     clientID,
                 ClientSecret: clientSecret,
                 SharedKey:    sharedKey,
+                BSN:          bsn,
                 PrivateKey:   privateKey,
                 IsSandbox:    isSandbox,
                 BaseURL:      baseURL,

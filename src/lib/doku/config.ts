@@ -13,9 +13,10 @@ export { DOKU_ENDPOINTS, DOKU_PAYMENT_METHODS, DOKU_PM_GROUPS, DOKU_PM_LABELS, D
 // ─── CONFIGURATION ─────────────────────────────────────────────
 
 export interface DokuConfig {
-  clientId: string
-  clientSecret: string
-  sharedKey: string
+  clientId: string       // BRN-xxxx — X-CLIENT-KEY / X-PARTNER-ID
+  clientSecret: string   // SK-xxxx — HMAC-SHA512 for API request signing
+  sharedKey: string      // doku_key_xxx — verify webhook notification signature
+  bsn: string            // BSN-xxxx — B2B Secret Number for token request
   environment: 'sandbox' | 'production'
   apiBaseUrl: string
   checkoutUrl: string
@@ -31,9 +32,10 @@ function getDokuConfig(): DokuConfig {
   const isSandbox = env === 'sandbox'
 
   return {
-    clientId: process.env.NEXT_PUBLIC_DOKU_CLIENT_ID || 'BRN-0222-1777799032222',
-    clientSecret: process.env.DOKU_CLIENT_SECRET || 'doku_key_3a4d17030ddd4adaa5a398f88c867556',
-    sharedKey: process.env.DOKU_SHARED_KEY || 'doku_key_3a4d17030ddd4adaa5a398f88c867556',
+    clientId: process.env.DOKU_CLIENT_ID || process.env.NEXT_PUBLIC_DOKU_CLIENT_ID || 'BRN-0222-1777799032222',
+    clientSecret: process.env.DOKU_CLIENT_SECRET || '',  // SK-xxxx, server-side only
+    sharedKey: process.env.DOKU_SHARED_KEY || '',         // doku_key_xxx, server-side only
+    bsn: process.env.DOKU_BSN || '',                      // BSN-xxxx, server-side only
     environment: isSandbox ? 'sandbox' : 'production',
     apiBaseUrl: isSandbox
       ? 'https://api-sandbox.doku.com'
