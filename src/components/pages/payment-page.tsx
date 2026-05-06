@@ -91,6 +91,12 @@ export default function PaymentPage() {
     }));
   }, []);
 
+  // ─── Fee breakdown display helpers ──────────────────────────────
+  const subTotal = order.subTotal ?? (order.totalAmount - Math.round(order.totalAmount * 13 / 113));
+  const adminFee = order.adminFee ?? Math.round(subTotal * 2 / 100);
+  const taxAmount = order.taxAmount ?? Math.round(subTotal * 11 / 100);
+  const discountAmount = order.discountAmount ?? 0;
+
   const selectedMethodInfo = selectedMethod ? getPaymentMethodInfo(selectedMethod) : null;
 
   // ─── Timer ──────────────────────────────────────────────────
@@ -185,6 +191,7 @@ export default function PaymentPage() {
   const isUrgent = timeLeft.hours < 1 && timeLeft.minutes < 30;
   const eventTitle = order.event?.title || "Event";
   const eventDate = order.event?.date || "";
+  const eventCity = order.event?.city || "";
   const totalTickets = order.items?.reduce((s, i) => s + i.quantity, 0) || 0;
 
   // Show payment result panel (VA / QRIS)
@@ -254,7 +261,7 @@ export default function PaymentPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-foreground font-semibold">{eventTitle}</p>
-                <p className="text-muted-foreground text-xs">{eventDate}</p>
+                <p className="text-muted-foreground text-xs">{eventDate}{eventCity ? ` • ${eventCity}` : ''}</p>
               </div>
               <div className="text-right">
                 <p className="text-green-400 font-bold text-xl">
@@ -265,6 +272,32 @@ export default function PaymentPage() {
                 </p>
               </div>
             </div>
+            {/* Fee breakdown */}
+            {(adminFee > 0 || taxAmount > 0 || discountAmount > 0) && (
+              <>
+                <Separator className="bg-border" />
+                <div className="space-y-1.5">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="text-foreground">{formatRupiah(subTotal)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-muted-foreground">Biaya Admin (2%)</span>
+                    <span className="text-foreground">{formatRupiah(adminFee)}</span>
+                  </div>
+                  <div className="flex justify-between text-xs">
+                    <span className="text-muted-foreground">PPN (11%)</span>
+                    <span className="text-foreground">{formatRupiah(taxAmount)}</span>
+                  </div>
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-xs">
+                      <span className="text-green-400">Diskon</span>
+                      <span className="text-green-400">-{formatRupiah(discountAmount)}</span>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
 

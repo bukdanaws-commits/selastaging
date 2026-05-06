@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -23,11 +23,11 @@ import {
   PartyPopper,
   Home,
 } from "lucide-react";
-import { formatRupiah } from "@/lib/utils";
+import { formatRupiah, cn } from "@/lib/utils";
 import type { IOrder, IPaymentStatus } from "@/lib/types";
 import { usePageStore } from "@/lib/page-store";
-import { cn } from "@/lib/utils";
 import { useOrderDetail, usePaymentStatus } from "@/hooks/use-api";
+import { useQueryClient } from "@tanstack/react-query";
 
 const TIMELINE_STEPS = [
   { label: "Pesanan Dibuat", icon: Ticket },
@@ -39,6 +39,7 @@ const TIMELINE_STEPS = [
 
 export default function PaymentStatusPage() {
   const { currentOrderId, navigateTo } = usePageStore();
+  const queryClient = useQueryClient();
 
   // ─── Fetch order detail and payment status from API ────────────
   const { data: order, isLoading: orderLoading } = useOrderDetail(currentOrderId || "");
@@ -49,6 +50,32 @@ export default function PaymentStatusPage() {
 
   const [showConfetti, setShowConfetti] = useState(false);
   const confettiRef = useRef<HTMLDivElement>(null);
+
+  // ─── Auto-refresh order detail while pending ──────────────────
+  useEffect(() => {
+    if (!typedOrder || typedOrder.status === 'paid' || typedOrder.status === 'cancelled' || typedOrder.status === 'expired') {
+      return;
+    }
+    // Poll every 3 seconds while order is still pending
+    const interval = setInterval(() => {
+      queryClient.invalidateQueries({ queryKey: ['orders', 'detail', currentOrderId] });
+      queryClient.invalidateQueries({ queryKey: ['payment', 'status', currentOrderId] });
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [typedOrder?.status, currentOrderId, queryClient]);
+
+  // ─── Auto-navigate to e-ticket when paid ──────────────────────
+  const hasNavigatedRef = useRef(false);
+  useEffect(() => {
+    if (typedOrder?.status === 'paid' && currentOrderId && !hasNavigatedRef.current) {
+      hasNavigatedRef.current = true;
+      // Auto-navigate after a short delay to let user see the success state
+      const timer = setTimeout(() => {
+        navigateTo('eticket', currentOrderId);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [typedOrder?.status, currentOrderId, navigateTo]);
 
   // ─── Determine current step from order/payment status ──────────
   const currentStep = (() => {
@@ -104,7 +131,14 @@ export default function PaymentStatusPage() {
   const isNegative = isRefunded || isCancelled || isExpired;
 
   const eventTitle = typedOrder.event?.title || "Event";
+  const eventCity = typedOrder.event?.city || "";
   const paymentMethod = typedOrder.paymentMethod || typedOrder.paymentType || typedOrder.paymentChannel || "DOKU";
+
+  // ─── Fee breakdown helpers ─────────────────────────────────────
+  const subTotal = typedOrder.subTotal ?? (typedOrder.totalAmount - Math.round(typedOrder.totalAmount * 13 / 113));
+  const adminFee = typedOrder.adminFee ?? Math.round(subTotal * 2 / 100);
+  const taxAmount = typedOrder.taxAmount ?? Math.round(subTotal * 11 / 100);
+  const discountAmount = typedOrder.discountAmount ?? 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -301,7 +335,7 @@ export default function PaymentStatusPage() {
           </CardContent>
         </Card>
 
-        {/* Order details */}
+        {/* Order details with fee breakdown */}
         <Card className="bg-card border-border">
           <CardContent className="pt-4 space-y-3">
             <div className="flex items-center justify-between">
@@ -313,18 +347,39 @@ export default function PaymentStatusPage() {
             <Separator className="bg-border" />
             <div className="flex items-center justify-between">
               <span className="text-muted-foreground text-sm">Event</span>
-              <span className="text-foreground text-sm">{eventTitle}</span>
+              <span className="text-foreground text-sm">{eventTitle}{eventCity ? ` • ${eventCity}` : ''}</span>
+            </div>
+            <Separator className="bg-border" />
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Subtotal</span>
+                <span className="text-foreground">{formatRupiah(subTotal)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Biaya Admin (2%)</span>
+                <span className="text-foreground">{formatRupiah(adminFee)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">PPN (11%)</span>
+                <span className="text-foreground">{formatRupiah(taxAmount)}</span>
+              </div>
+              {discountAmount > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-green-400">Diskon</span>
+                  <span className="text-green-400">-{formatRupiah(discountAmount)}</span>
+                </div>
+              )}
             </div>
             <Separator className="bg-border" />
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground text-sm">Total</span>
+              <span className="text-foreground font-bold text-sm">Total Bayar</span>
               <span className="text-green-400 font-bold">
                 {formatRupiah(typedOrder.totalAmount)}
               </span>
             </div>
             <Separator className="bg-border" />
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground text-sm">Metode</span>
+              <span className="text-muted-foreground text-sm">Metode Pembayaran</span>
               <span className="text-foreground text-sm">{paymentMethod}</span>
             </div>
           </CardContent>

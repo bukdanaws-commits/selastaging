@@ -565,7 +565,7 @@ export const useMockStore = create<MockState>((set, get) => ({
   createOrder: (data) => {
     const state = get()
     const now = new Date().toISOString()
-    const expiresAt = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString()
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000).toISOString()
 
     const orderCode = `SHL-JKT-${Math.random().toString(36).slice(2, 10).toUpperCase()}`
 
@@ -637,7 +637,7 @@ export const useMockStore = create<MockState>((set, get) => ({
             discountAmount = coupon.maxDiscount
           }
         } else {
-          discountAmount = coupon.discountValue
+          discountAmount = Math.round(coupon.discountValue)
         }
         // Don't exceed subtotal
         discountAmount = Math.min(discountAmount, subTotal)

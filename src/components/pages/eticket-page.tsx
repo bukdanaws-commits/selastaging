@@ -25,6 +25,7 @@ import {
   CheckCircle2,
   Copy,
   Loader2,
+  CreditCard,
 } from "lucide-react";
 import { formatRupiah, formatDate } from "@/lib/utils";
 import type { IOrder } from "@/lib/types";
@@ -89,6 +90,13 @@ export default function ETicketPage() {
   const eventTitle = order.event?.title || "Event";
   const eventDate = order.event?.date || "";
   const eventCity = order.event?.city || "";
+  const eventVenue = order.event?.venue || "";
+
+  // ─── Fee breakdown helpers ─────────────────────────────────────
+  const subTotal = order.subTotal ?? (order.totalAmount - Math.round(order.totalAmount * 13 / 113));
+  const adminFee = order.adminFee ?? Math.round(subTotal * 2 / 100);
+  const taxAmount = order.taxAmount ?? Math.round(subTotal * 11 / 100);
+  const discountAmount = order.discountAmount ?? 0;
 
   const handleDownload = () => {
     toast({ title: "E-tiket berhasil didownload! 📥" });
@@ -143,6 +151,41 @@ export default function ETicketPage() {
               >
                 {order.orderCode}
               </Badge>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Price breakdown */}
+        <Card className="bg-card border-border">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-foreground text-sm flex items-center gap-2">
+              <CreditCard className="w-4 h-4 text-green-400" />
+              Rincian Pembayaran
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Subtotal</span>
+              <span className="text-foreground">{formatRupiah(subTotal)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Biaya Admin (2%)</span>
+              <span className="text-foreground">{formatRupiah(adminFee)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">PPN (11%)</span>
+              <span className="text-foreground">{formatRupiah(taxAmount)}</span>
+            </div>
+            {discountAmount > 0 && (
+              <div className="flex justify-between text-sm">
+                <span className="text-green-400">Diskon</span>
+                <span className="text-green-400">-{formatRupiah(discountAmount)}</span>
+              </div>
+            )}
+            <Separator className="bg-border" />
+            <div className="flex justify-between font-bold">
+              <span className="text-foreground">Total Bayar</span>
+              <span className="text-green-400">{formatRupiah(order.totalAmount)}</span>
             </div>
           </CardContent>
         </Card>
@@ -271,7 +314,7 @@ export default function ETicketPage() {
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <MapPin className="w-3 h-3" />
-                      {eventCity}
+                      {eventVenue && eventCity ? `${eventVenue}, ${eventCity}` : eventCity || eventVenue}
                     </div>
                     <span>{eventDate}</span>
                     <span>Powered by SELA</span>

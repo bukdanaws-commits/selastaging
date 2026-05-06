@@ -23,20 +23,16 @@ import type {
 
 // ─── CONFIG ─────────────────────────────────────────────────────────────────
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || ''
+// API_BASE is empty — all endpoints already include their full path (e.g. /api/v1/orders)
+// We do NOT prepend anything; the endpoint string IS the final path.
+const API_BASE = ''
 
 // Golang backend port (for XTransformPort gateway)
 const GO_BACKEND_PORT = process.env.NEXT_PUBLIC_GO_PORT || '8080'
 
-// Whether to use direct Golang backend or Next.js API proxy
+// Whether to route directly to Go backend via Caddy (XTransformPort)
+// When false, requests go to Next.js API routes (/api/...)
 const USE_DIRECT_BACKEND = process.env.NEXT_PUBLIC_USE_DIRECT_BACKEND === 'true'
-
-function getBaseUrl(): string {
-  if (USE_DIRECT_BACKEND) {
-    return `/?XTransformPort=${GO_BACKEND_PORT}`
-  }
-  return API_BASE
-}
 
 // ─── API ENDPOINTS (matching Golang Fiber routes.go) ──────────────────────
 
@@ -263,10 +259,17 @@ export async function apiFetch<T>(
   // ─── REAL API CALL (below only runs when mock is disabled) ───────────
   const { timeout: realTimeout, headers: realHeaders, method: realMethod, body: realBody, ...restOptions } = options
 
-  // Build URL with query params
-  let url = `${getBaseUrl()}${endpoint}`
-  if (params) {
-    const searchParams = new URLSearchParams(params)
+  // Build URL — endpoint already contains the full path (e.g. /api/v1/orders)
+  let url = `${API_BASE}${endpoint}`
+
+  // Merge params with XTransformPort when routing directly to Go backend
+  const finalParams: Record<string, string> = { ...params }
+  if (USE_DIRECT_BACKEND) {
+    finalParams.XTransformPort = GO_BACKEND_PORT
+  }
+
+  if (Object.keys(finalParams).length > 0) {
+    const searchParams = new URLSearchParams(finalParams)
     url += `?${searchParams.toString()}`
   }
 
@@ -296,6 +299,15 @@ export async function apiFetch<T>(
     })
 
     const json = await response.json()
+
+    // ─── HANDLE 401 UNAUTHORIZED ────────────────────────────────────────────
+    if (response.status === 401) {
+      clearTokens()
+      if (typeof window !== 'undefined') {
+        window.location.href = '/'
+      }
+      throw new ApiError(401, 'Session expired. Please login again.')
+    }
 
     // ─── UNWRAP BACKEND RESPONSE ENVELOPE ─────────────────────────────────
     // Backend returns: { success: true, data: {...}, meta/pagination: {...} }

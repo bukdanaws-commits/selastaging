@@ -163,7 +163,7 @@ export async function handleMockRequest<T = unknown>(request: MockRequest): Prom
     const eventMatch = matchRoute('/api/v1/events/:slug', endpoint)
     if (eventMatch && !endpoint.includes('/ticket-types')) {
       const store = useMockStore.getState()
-      const event = store.events.find((e: IEvent) => e.slug === slug || e.id === slug) || store.events[0]
+      const event = store.events.find((e: IEvent) => e.slug === eventMatch.slug || e.id === eventMatch.slug) || store.events[0]
       if (!event || !event.id) throw new Error('Event not found')
       const ticketTypes = store.ticketTypes.filter((tt: ITicketType) => tt.eventId === event.id)
       return { event, ticketTypes } as T
@@ -224,8 +224,9 @@ export async function handleMockRequest<T = unknown>(request: MockRequest): Prom
     }
   }
 
-  // ─── PAYMENT (3 endpoints) ──────────────────────────────────────────────
+  // ─── PAYMENT (legacy + DOKU endpoints) ──────────────────────────────────
 
+  // Legacy payment create (backward compat)
   if (endpoint === '/api/v1/payment/create' && method === 'POST') {
     await mockDelay()
     const b = body as Record<string, unknown>
@@ -237,11 +238,76 @@ export async function handleMockRequest<T = unknown>(request: MockRequest): Prom
     return { success: true } as T
   }
 
-  if (endpoint === '/api/v1/doku/notification' && method === 'POST') {
-    // DOKU notification endpoint (mock)
-    return { success: true } as T
+  // ─── DOKU PAYMENT ENDPOINTS ─────────────────────────────────────────────
+
+  // POST /api/doku/create-payment — DOKU payment creation (matches FE paymentApi)
+  if (endpoint === '/api/doku/create-payment' && method === 'POST') {
+    await mockDelay()
+    const b = body as Record<string, unknown>
+    const orderId = String(b.orderId || '')
+    const paymentMethod = String(b.paymentMethod || b.paymentType || 'VIRTUAL_ACCOUNT_BCA')
+
+    if (!orderId) {
+      throw new Error('orderId is required')
+    }
+
+    // Use the mock store's createPayment which handles VA/QRIS/ewallet/CC simulation
+    const result = useMockStore.getState().createPayment(orderId, paymentMethod)
+
+    // Transform to match the Next.js API route response shape
+    // The create-payment route returns { transactionId, expiresAt, vaNumber?, qrContent?, paymentUrl? }
+    const dokuTxnId = `MOCK-DOKU-TXN-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+    const expiresAt = new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString()
+
+    const response: Record<string, unknown> = {
+      transactionId: result.dokuCheckoutUrl?.split('/').pop() || dokuTxnId,
+      expiresAt,
+    }
+
+    // Map from mock store response to DOKU API route response
+    if (result.vaNumber) {
+      response.vaNumber = result.vaNumber
+    }
+    if (result.qrContent) {
+      response.qrContent = result.qrContent
+    }
+    if (result.paymentUrl) {
+      // For e-wallet, CC, DOKU checkout — provide paymentUrl
+      response.paymentUrl = result.paymentUrl
+    }
+
+    // If no specific payment method result, determine from the input
+    if (!result.vaNumber && !result.qrContent && !result.paymentUrl) {
+      // Default: based on payment method
+      if (paymentMethod.startsWith('VIRTUAL_ACCOUNT') || paymentMethod === 'virtual_account') {
+        response.vaNumber = `1089${Math.random().toString().slice(2, 16)}`
+      } else if (paymentMethod === 'QRIS' || paymentMethod === 'qris') {
+        response.qrContent = `SELEEVENT-QRIS-MOCK-${dokuTxnId.slice(-12)}`
+      } else {
+        // E-wallet, CC, etc. → redirect to DOKU checkout
+        response.paymentUrl = `https://checkout-sandbox.doku.com/mock/${dokuTxnId}`
+      }
+    }
+
+    return response as T
   }
 
+  // GET /api/doku/check-status — Check DOKU payment status
+  if (endpoint === '/api/doku/check-status' && method === 'GET') {
+    const orderId = params?.orderId
+    if (!orderId) {
+      throw new Error('orderId query parameter is required')
+    }
+    return useMockStore.getState().getPaymentStatus(orderId) as T
+  }
+
+  // POST /api/doku/notification — DOKU webhook notification
+  if (endpoint === '/api/doku/notification' && method === 'POST') {
+    // Mock: just acknowledge
+    return 'OK' as T
+  }
+
+  // Legacy payment status
   if (method === 'GET') {
     const paymentMatch = matchRoute('/api/v1/payment/status/:orderId', endpoint)
     if (paymentMatch) {

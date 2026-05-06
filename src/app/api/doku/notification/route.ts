@@ -193,7 +193,7 @@ async function handleMockNotification(body: unknown): Promise<void> {
 }
 
 async function handleRealNotification(request: NextRequest, body: unknown): Promise<void> {
-  const { dokuConfig, generateDokuSignature, generateDokuTimestamp } = await import('@/lib/doku')
+  const { dokuConfig } = await import('@/lib/doku')
   const config = dokuConfig()
 
   // Verify signature from X-SIGNATURE header
@@ -207,19 +207,16 @@ async function handleRealNotification(request: NextRequest, body: unknown): Prom
 
   // Reconstruct signature for verification
   // DOKU uses HMAC-SHA512(sharedKey, clientId + requestId + body)
-  // For webhooks, verify using sharedKey
   const bodyStr = JSON.stringify(body)
   const crypto = await import('crypto')
   const verifier = crypto.createHmac('sha512', config.sharedKey)
   verifier.update(config.clientId)
-  verifier.update(xTimestamp || '')
+  verifier.update(xTimestamp)
   verifier.update(bodyStr)
   const expectedSignature = verifier.digest('hex')
 
   if (xSignature !== expectedSignature) {
     console.error('[DOKU Notification] Signature verification failed!')
-    console.error(`  Expected: ${expectedSignature}`)
-    console.error(`  Received: ${xSignature}`)
     // Still return 200 to prevent DOKU from retrying with bad signature
     return
   }
@@ -230,10 +227,20 @@ async function handleRealNotification(request: NextRequest, body: unknown): Prom
   const snapBody = body as DokuSnapNotification
   const nonSnapBody = body as DokuNonSnapNotification
 
-  // Extract fields from both formats
-  const transactionId = snapBody.virtualAccountData?.trxId
+  // Extract order reference from both formats
+  const orderId = String(
+    snapBody.virtualAccountData?.trxId
     || nonSnapBody.order?.invoiceNumber
     || ''
+  )
+
+  // Extract status
+  const rawStatus = String(
+    snapBody.transaction?.status
+    || nonSnapBody.transaction?.status
+    || nonSnapBody.payment?.status
+    || 'unknown'
+  ).toLowerCase()
 
   const paymentMethod = nonSnapBody.payment?.paymentMethod
     || nonSnapBody.virtualAccountInfo?.paymentCode
@@ -250,23 +257,55 @@ async function handleRealNotification(request: NextRequest, body: unknown): Prom
     || nonSnapBody.payment?.paymentDate
     || new Date().toISOString()
 
-  const status = snapBody.transaction?.status
-    || nonSnapBody.transaction?.status
-    || nonSnapBody.payment?.status
-    || 'unknown'
+  console.log(`[DOKU Notification] Order ${orderId}: status=${rawStatus}, method=${paymentMethod}, amount=${amount}`)
 
-  console.log(`[DOKU Notification] Transaction ${transactionId}: status=${status}, method=${paymentMethod}, amount=${amount}`)
+  if (!orderId) {
+    console.warn('[DOKU Notification] No orderId found in notification')
+    return
+  }
 
-  // In production, this would update the database
-  // For now, log the processed notification
-  // TODO: integrate with Prisma/database when backend is connected
-  console.log('[DOKU Notification] Processed notification:', {
-    transactionId,
-    paymentMethod,
-    amount,
-    paidTime,
-    status,
-  })
+  // Map DOKU status to order status
+  let newStatus: 'paid' | 'failed' | 'expired' | 'cancelled' | null = null
+  if (rawStatus === 'success' || rawStatus === 'paid' || rawStatus === 'settlement') {
+    newStatus = 'paid'
+  } else if (rawStatus === 'failed' || rawStatus === 'denied') {
+    newStatus = 'failed'
+  } else if (rawStatus === 'expired') {
+    newStatus = 'expired'
+  } else if (rawStatus === 'cancelled') {
+    newStatus = 'cancelled'
+  }
+
+  if (!newStatus) {
+    console.log(`[DOKU Notification] Unhandled status "${rawStatus}" for order ${orderId}`)
+    return
+  }
+
+  // Forward the payment status update to the Go backend
+  try {
+    const goPort = process.env.NEXT_PUBLIC_GO_PORT || '8080'
+    const response = await fetch(`http://localhost:${goPort}/api/v1/orders/${orderId}/payment-callback`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status: newStatus,
+        paymentMethod,
+        amount,
+        paidTime,
+        transactionId: snapBody.transaction?.id || '',
+        dokuResponseCode: snapBody.responseCode || '',
+        rawData: bodyStr,
+      }),
+    })
+
+    if (!response.ok) {
+      console.error(`[DOKU Notification] Backend payment callback failed: ${response.status}`)
+    } else {
+      console.log(`[DOKU Notification] Backend payment callback success for order ${orderId}`)
+    }
+  } catch (err) {
+    console.error('[DOKU Notification] Failed to forward to backend:', err)
+  }
 }
 
 export async function POST(request: NextRequest) {

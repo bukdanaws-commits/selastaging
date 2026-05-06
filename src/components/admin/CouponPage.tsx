@@ -1,10 +1,12 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import { cn, formatRupiah } from '@/lib/utils'
 import { toast } from 'sonner'
 import { useScopedData } from '@/hooks/use-scoped-data'
 import { Skeleton } from '@/components/ui/skeleton'
+import { couponApi, PaginatedData } from '@/lib/api'
+import { useAuthStore } from '@/lib/auth-store'
 
 import {
   Card,
@@ -59,6 +61,7 @@ import {
   Globe,
   MapPin,
   X,
+  Loader2,
 } from 'lucide-react'
 
 import type {
@@ -69,197 +72,14 @@ import type {
   CouponStatus,
 } from '@/lib/types'
 
-// ─── MOCK DATA ──────────────────────────────────────────────────────────────
+// ─── STATIC REFERENCE DATA (used in form dropdowns) ────────────────────────
 
-const MOCK_COUPONS: ICoupon[] = [
-  {
-    id: 'cpn-1',
-    code: 'MEGA50',
-    name: 'Mega Discount 50%',
-    description: 'Diskon spesial untuk penjualan awal',
-    discountType: 'percentage',
-    discountValue: 50,
-    maxDiscount: 500000,
-    scope: 'global',
-    categoryConfigs: [],
-    usageLimit: 500,
-    usageLimitPerUser: 1,
-    usedCount: 342,
-    status: 'active',
-    startsAt: '2025-05-01T00:00:00Z',
-    expiresAt: '2025-07-31T23:59:59Z',
-    organizerId: 'org-sheila-on7',
-    tenantId: 'tenant-sheila-on7',
-    createdAt: '2025-04-28T10:00:00Z',
-    updatedAt: '2025-05-15T08:30:00Z',
-  },
-  {
-    id: 'cpn-2',
-    code: 'TRIBUN100K',
-    name: 'Tribun Discount Rp 100K',
-    description: 'Diskon Rp 100.000 khusus tribun',
-    discountType: 'nominal',
-    discountValue: 100000,
-    scope: 'global',
-    categoryConfigs: [
-      { category: 'CAT 4', discountValue: 100000, minOrder: 850000 },
-      { category: 'CAT 5', discountValue: 100000, minOrder: 550000 },
-      { category: 'CAT 6', discountValue: 100000, minOrder: 350000 },
-    ],
-    usageLimit: 300,
-    usageLimitPerUser: 2,
-    usedCount: 187,
-    status: 'active',
-    startsAt: '2025-05-10T00:00:00Z',
-    expiresAt: '2025-06-30T23:59:59Z',
-    organizerId: 'org-sheila-on7',
-    tenantId: 'tenant-sheila-on7',
-    createdAt: '2025-05-08T14:00:00Z',
-    updatedAt: '2025-05-20T09:00:00Z',
-  },
-  {
-    id: 'cpn-3',
-    code: 'VVIP20',
-    name: 'VVIP Early Bird 20%',
-    description: 'Diskon early bird untuk VVIP PIT & VIP ZONE',
-    discountType: 'percentage',
-    discountValue: 20,
-    maxDiscount: 700000,
-    scope: 'event',
-    eventId: 'evt-sheila-on7-jakarta',
-    categoryConfigs: [
-      { category: 'VVIP PIT', discountValue: 20, minOrder: 3500000 },
-      { category: 'VIP ZONE', discountValue: 15, minOrder: 2800000 },
-    ],
-    usageLimit: 100,
-    usageLimitPerUser: 1,
-    usedCount: 89,
-    status: 'active',
-    startsAt: '2025-04-15T00:00:00Z',
-    expiresAt: '2025-05-15T23:59:59Z',
-    organizerId: 'org-sheila-on7',
-    tenantId: 'tenant-sheila-on7',
-    createdAt: '2025-04-10T08:00:00Z',
-    updatedAt: '2025-05-01T10:00:00Z',
-  },
-  {
-    id: 'cpn-4',
-    code: 'FESTIVAL25',
-    name: 'Festival Discount 25%',
-    description: 'Diskon festival area',
-    discountType: 'percentage',
-    discountValue: 25,
-    maxDiscount: 550000,
-    scope: 'global',
-    categoryConfigs: [],
-    usageLimit: 200,
-    usageLimitPerUser: 1,
-    usedCount: 200,
-    status: 'expired',
-    startsAt: '2025-03-01T00:00:00Z',
-    expiresAt: '2025-04-30T23:59:59Z',
-    organizerId: 'org-sheila-on7',
-    tenantId: 'tenant-sheila-on7',
-    createdAt: '2025-02-28T08:00:00Z',
-    updatedAt: '2025-05-01T00:00:00Z',
-  },
-  {
-    id: 'cpn-5',
-    code: 'GROUP50K',
-    name: 'Group Purchase Discount',
-    description: 'Diskon untuk pembelian grup',
-    discountType: 'nominal',
-    discountValue: 50000,
-    scope: 'global',
-    categoryConfigs: [],
-    usageLimit: 1000,
-    usageLimitPerUser: 3,
-    usedCount: 456,
-    status: 'active',
-    startsAt: '2025-05-01T00:00:00Z',
-    expiresAt: '2025-08-31T23:59:59Z',
-    organizerId: 'org-sheila-on7',
-    tenantId: 'tenant-sheila-on7',
-    createdAt: '2025-04-25T08:00:00Z',
-    updatedAt: '2025-05-18T12:00:00Z',
-  },
-  {
-    id: 'cpn-6',
-    code: 'LAUNCH10',
-    name: 'Launch Promo 10%',
-    description: 'Promo peluncuran',
-    discountType: 'percentage',
-    discountValue: 10,
-    maxDiscount: 350000,
-    scope: 'global',
-    categoryConfigs: [],
-    usageLimit: 2000,
-    usageLimitPerUser: 1,
-    usedCount: 1500,
-    status: 'inactive',
-    startsAt: '2025-06-01T00:00:00Z',
-    expiresAt: '2025-09-30T23:59:59Z',
-    organizerId: 'org-sheila-on7',
-    tenantId: 'tenant-sheila-on7',
-    createdAt: '2025-04-20T08:00:00Z',
-    updatedAt: '2025-05-25T15:00:00Z',
-  },
-  {
-    id: 'cpn-7',
-    code: 'STUDENT30',
-    name: 'Student Discount 30%',
-    description: 'Diskon khusus mahasiswa',
-    discountType: 'percentage',
-    discountValue: 30,
-    maxDiscount: 400000,
-    scope: 'event',
-    eventId: 'evt-sheila-on7-jakarta',
-    categoryConfigs: [
-      { category: 'FESTIVAL', discountValue: 30, minOrder: 2200000 },
-      { category: 'CAT 1', discountValue: 25, minOrder: 1750000 },
-      { category: 'CAT 2', discountValue: 20, minOrder: 1400000 },
-    ],
-    usageLimit: 150,
-    usageLimitPerUser: 1,
-    usedCount: 67,
-    status: 'active',
-    startsAt: '2025-05-20T00:00:00Z',
-    expiresAt: '2025-06-22T23:59:59Z',
-    organizerId: 'org-sheila-on7',
-    tenantId: 'tenant-sheila-on7',
-    createdAt: '2025-05-18T08:00:00Z',
-    updatedAt: '2025-05-22T14:00:00Z',
-  },
-  {
-    id: 'cpn-8',
-    code: 'SUMMER75K',
-    name: 'Summer Rp 75K Off',
-    description: 'Promo musim panas',
-    discountType: 'nominal',
-    discountValue: 75000,
-    scope: 'global',
-    categoryConfigs: [],
-    usageLimit: 500,
-    usageLimitPerUser: 2,
-    usedCount: 500,
-    status: 'expired',
-    startsAt: '2025-03-15T00:00:00Z',
-    expiresAt: '2025-05-14T23:59:59Z',
-    organizerId: 'org-sheila-on7',
-    tenantId: 'tenant-sheila-on7',
-    createdAt: '2025-03-10T08:00:00Z',
-    updatedAt: '2025-05-15T00:00:00Z',
-  },
-]
-
-// ─── MOCK EVENTS ────────────────────────────────────────────────────────────
-
-const MOCK_EVENTS = [
+const FALLBACK_EVENTS = [
   { id: 'evt-sheila-on7-jakarta', name: 'Sheila On 7 - Melompat Lebih Tinggi' },
   { id: 'evt-sheila-on7-surabaya', name: 'Sheila On 7 - Surabaya Concert' },
 ]
 
-const MOCK_CATEGORIES = [
+const TICKET_CATEGORIES = [
   'VVIP PIT', 'VIP ZONE', 'FESTIVAL', 'CAT 1', 'CAT 2', 'CAT 3',
   'CAT 4', 'CAT 5', 'CAT 6',
 ]
@@ -349,11 +169,13 @@ function CouponFormDialog({
   onOpenChange,
   editingCoupon,
   onSave,
+  isSaving,
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
   editingCoupon: ICoupon | null
   onSave: (data: CouponFormData) => void
+  isSaving: boolean
 }) {
   const [form, setForm] = useState<CouponFormData>(DEFAULT_FORM)
 
@@ -445,6 +267,7 @@ function CouponFormDialog({
                   placeholder="e.g. MEGA50"
                   className="bg-background border-primary/15 text-foreground placeholder:text-muted-foreground/50 font-mono uppercase h-9"
                   maxLength={20}
+                  disabled={isSaving}
                 />
               </div>
               <div className="space-y-1.5">
@@ -454,6 +277,7 @@ function CouponFormDialog({
                   onChange={e => updateField('name', e.target.value)}
                   placeholder="e.g. Mega Discount 50%"
                   className="bg-background border-primary/15 text-foreground placeholder:text-muted-foreground/50 h-9"
+                  disabled={isSaving}
                 />
               </div>
             </div>
@@ -464,6 +288,7 @@ function CouponFormDialog({
                 onChange={e => updateField('description', e.target.value)}
                 placeholder="Deskripsi singkat coupon..."
                 className="bg-background border-primary/15 text-foreground placeholder:text-muted-foreground/50 min-h-[50px] resize-none text-sm"
+                disabled={isSaving}
               />
             </div>
           </div>
@@ -481,6 +306,7 @@ function CouponFormDialog({
                     key={t}
                     type="button"
                     onClick={() => updateField('discountType', t)}
+                    disabled={isSaving}
                     className={cn(
                       'flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
                       form.discountType === t
@@ -505,6 +331,7 @@ function CouponFormDialog({
                   onChange={e => updateField('discountValue', e.target.value)}
                   placeholder={form.discountType === 'percentage' ? '50' : '100000'}
                   className="bg-background border-primary/15 text-foreground placeholder:text-muted-foreground/50 h-9"
+                  disabled={isSaving}
                 />
               </div>
               {form.discountType === 'percentage' && (
@@ -516,6 +343,7 @@ function CouponFormDialog({
                     onChange={e => updateField('maxDiscount', e.target.value)}
                     placeholder="500000"
                     className="bg-background border-primary/15 text-foreground placeholder:text-muted-foreground/50 h-9"
+                    disabled={isSaving}
                   />
                 </div>
               )}
@@ -535,6 +363,7 @@ function CouponFormDialog({
                     key={s}
                     type="button"
                     onClick={() => updateField('scope', s)}
+                    disabled={isSaving}
                     className={cn(
                       'flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
                       form.scope === s
@@ -551,12 +380,12 @@ function CouponFormDialog({
             {form.scope === 'event' && (
               <div className="space-y-1.5">
                 <Label className="text-xs text-muted-foreground">Event *</Label>
-                <Select value={form.eventId} onValueChange={v => updateField('eventId', v)}>
+                <Select value={form.eventId} onValueChange={v => updateField('eventId', v)} disabled={isSaving}>
                   <SelectTrigger className="bg-background border-primary/15 text-foreground h-9">
                     <SelectValue placeholder="Pilih event..." />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-primary/15">
-                    {MOCK_EVENTS.map(evt => (
+                    {FALLBACK_EVENTS.map(evt => (
                       <SelectItem key={evt.id} value={evt.id} className="text-foreground">
                         {evt.name}
                       </SelectItem>
@@ -581,6 +410,7 @@ function CouponFormDialog({
                 size="sm"
                 className="h-7 px-2 text-xs text-primary hover:bg-primary/10"
                 onClick={addCategoryConfig}
+                disabled={isSaving}
               >
                 <Plus className="w-3 h-3 mr-1" /> Add
               </Button>
@@ -605,7 +435,7 @@ function CouponFormDialog({
                         <SelectValue placeholder="Select..." />
                       </SelectTrigger>
                       <SelectContent className="bg-card border-primary/15">
-                        {MOCK_CATEGORIES.map(cat => (
+                        {TICKET_CATEGORIES.map(cat => (
                           <SelectItem key={cat} value={cat} className="text-foreground text-xs">
                             {cat}
                           </SelectItem>
@@ -618,6 +448,7 @@ function CouponFormDialog({
                       onChange={e => updateCategoryConfig(idx, 'discountValue', Number(e.target.value))}
                       placeholder={form.discountType === 'percentage' ? '%' : 'Rp'}
                       className="bg-background border-primary/15 text-foreground h-8 text-xs"
+                      disabled={isSaving}
                     />
                     <Input
                       type="number"
@@ -625,6 +456,7 @@ function CouponFormDialog({
                       onChange={e => updateCategoryConfig(idx, 'minOrder', Number(e.target.value))}
                       placeholder="Rp"
                       className="bg-background border-primary/15 text-foreground h-8 text-xs"
+                      disabled={isSaving}
                     />
                     <Button
                       type="button"
@@ -632,6 +464,7 @@ function CouponFormDialog({
                       size="icon"
                       className="h-8 w-8 text-red-400/60 hover:text-red-400"
                       onClick={() => removeCategoryConfig(idx)}
+                      disabled={isSaving}
                     >
                       <X className="w-3.5 h-3.5" />
                     </Button>
@@ -655,6 +488,7 @@ function CouponFormDialog({
                   onChange={e => updateField('usageLimit', e.target.value)}
                   placeholder="100"
                   className="bg-background border-primary/15 text-foreground placeholder:text-muted-foreground/50 h-9"
+                  disabled={isSaving}
                 />
               </div>
               <div className="space-y-1.5">
@@ -665,6 +499,7 @@ function CouponFormDialog({
                   onChange={e => updateField('usageLimitPerUser', e.target.value)}
                   placeholder="1"
                   className="bg-background border-primary/15 text-foreground placeholder:text-muted-foreground/50 h-9"
+                  disabled={isSaving}
                 />
               </div>
             </div>
@@ -683,6 +518,7 @@ function CouponFormDialog({
                   value={form.startsAt}
                   onChange={e => updateField('startsAt', e.target.value)}
                   className="bg-background border-primary/15 text-foreground h-9 text-sm"
+                  disabled={isSaving}
                 />
               </div>
               <div className="space-y-1.5">
@@ -692,6 +528,7 @@ function CouponFormDialog({
                   value={form.expiresAt}
                   onChange={e => updateField('expiresAt', e.target.value)}
                   className="bg-background border-primary/15 text-foreground h-9 text-sm"
+                  disabled={isSaving}
                 />
               </div>
             </div>
@@ -699,6 +536,7 @@ function CouponFormDialog({
               <Switch
                 checked={form.status === 'active'}
                 onCheckedChange={checked => updateField('status', checked ? 'active' : 'inactive')}
+                disabled={isSaving}
               />
               <Label className="text-sm text-foreground">
                 {form.status === 'active' ? 'Active' : 'Inactive'}
@@ -712,15 +550,23 @@ function CouponFormDialog({
             variant="ghost"
             onClick={() => onOpenChange(false)}
             className="text-muted-foreground"
+            disabled={isSaving}
           >
             Cancel
           </Button>
           <Button
             onClick={handleSave}
-            disabled={!isValid}
+            disabled={!isValid || isSaving}
             className="bg-primary hover:bg-primary/90 text-primary-foreground"
           >
-            {editingCoupon ? 'Update' : 'Create'}
+            {isSaving ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                {editingCoupon ? 'Updating...' : 'Creating...'}
+              </>
+            ) : (
+              editingCoupon ? 'Update' : 'Create'
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -735,11 +581,13 @@ function DeleteCouponDialog({
   open,
   onOpenChange,
   onConfirm,
+  isDeleting,
 }: {
   coupon: ICoupon | null
   open: boolean
   onOpenChange: (open: boolean) => void
   onConfirm: () => void
+  isDeleting: boolean
 }) {
   if (!coupon) return null
 
@@ -777,14 +625,19 @@ function DeleteCouponDialog({
           </div>
         )}
         <DialogFooter className="gap-2">
-          <Button variant="ghost" onClick={() => onOpenChange(false)} className="text-muted-foreground">
+          <Button variant="ghost" onClick={() => onOpenChange(false)} className="text-muted-foreground" disabled={isDeleting}>
             Cancel
           </Button>
           <Button
             onClick={onConfirm}
+            disabled={isDeleting}
             className="bg-red-500/15 text-red-400 border border-red-500/30 hover:bg-red-500/25"
           >
-            Delete
+            {isDeleting ? (
+              <><Loader2 className="w-4 h-4 mr-1 animate-spin" /> Deleting...</>
+            ) : (
+              'Delete'
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -796,9 +649,18 @@ function DeleteCouponDialog({
 
 export default function CouponPage() {
   const { isSuperAdmin, isOrganizer } = useScopedData()
+  const { user } = useAuthStore()
 
-  // Local state for mock CRUD
-  const [coupons, setCoupons] = useState<ICoupon[]>(MOCK_COUPONS)
+  // Data state — loaded from API
+  const [coupons, setCoupons] = useState<ICoupon[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
+
+  // Mutation loading states
+  const [isSaving, setIsSaving] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  // Filter state
   const [statusFilter, setStatusFilter] = useState<string>('all')
   const [scopeFilter, setScopeFilter] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState('')
@@ -809,19 +671,51 @@ export default function CouponPage() {
   const [editingCoupon, setEditingCoupon] = useState<ICoupon | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<ICoupon | null>(null)
 
-  // Filtered coupons
+  // ── Fetch coupons from API ──
+  const fetchCoupons = useCallback(async () => {
+    setIsLoading(true)
+    setLoadError(null)
+    try {
+      const params: Record<string, string> = {}
+      // Pass server-side filters if available
+      if (statusFilter !== 'all') params.status = statusFilter
+      if (scopeFilter !== 'all') params.scope = scopeFilter
+
+      const result = await couponApi.getCoupons(params) as PaginatedData<ICoupon>
+      // couponApi returns PaginatedData which has { data, pagination }
+      if (result && Array.isArray(result.data)) {
+        setCoupons(result.data)
+      } else if (Array.isArray(result)) {
+        // Fallback if API returns raw array
+        setCoupons(result as unknown as ICoupon[])
+      } else {
+        setCoupons([])
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Gagal memuat data coupon'
+      setLoadError(message)
+      toast.error('Gagal memuat data coupon', { description: message })
+    } finally {
+      setIsLoading(false)
+    }
+  }, [statusFilter, scopeFilter])
+
+  // Initial load + refetch when filters change
+  useEffect(() => {
+    fetchCoupons()
+  }, [fetchCoupons])
+
+  // Filtered coupons (client-side search filter on top of API data)
   const filtered = useMemo(() => {
     return coupons.filter(c => {
-      const matchStatus = statusFilter === 'all' || c.status === statusFilter
-      const matchScope = scopeFilter === 'all' || c.scope === scopeFilter
       const q = searchQuery.toLowerCase().trim()
       const matchSearch =
         !q ||
         c.code.toLowerCase().includes(q) ||
         c.name.toLowerCase().includes(q)
-      return matchStatus && matchScope && matchSearch
+      return matchSearch
     })
-  }, [coupons, statusFilter, scopeFilter, searchQuery])
+  }, [coupons, searchQuery])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const safePage = Math.min(currentPage, totalPages)
@@ -851,38 +745,10 @@ export default function CouponPage() {
     setFormOpen(true)
   }
 
-  const handleSave = (formData: CouponFormData) => {
-    if (editingCoupon) {
-      // Update
-      setCoupons(prev =>
-        prev.map(c =>
-          c.id === editingCoupon.id
-            ? {
-                ...c,
-                code: formData.code,
-                name: formData.name,
-                description: formData.description || undefined,
-                discountType: formData.discountType,
-                discountValue: Number(formData.discountValue),
-                maxDiscount: formData.maxDiscount ? Number(formData.maxDiscount) : undefined,
-                scope: formData.scope,
-                eventId: formData.scope === 'event' ? formData.eventId : undefined,
-                categoryConfigs: formData.categoryConfigs.filter(cfg => cfg.category),
-                usageLimit: Number(formData.usageLimit),
-                usageLimitPerUser: Number(formData.usageLimitPerUser),
-                startsAt: formData.startsAt ? new Date(formData.startsAt).toISOString() : c.startsAt,
-                expiresAt: formData.expiresAt ? new Date(formData.expiresAt).toISOString() : c.expiresAt,
-                status: formData.status,
-                updatedAt: new Date().toISOString(),
-              }
-            : c
-        )
-      )
-      toast.success(`Coupon ${formData.code} berhasil diupdate`)
-    } else {
-      // Create
-      const newCoupon: ICoupon = {
-        id: `cpn-${Date.now()}`,
+  const handleSave = async (formData: CouponFormData) => {
+    setIsSaving(true)
+    try {
+      const couponData: Record<string, unknown> = {
         code: formData.code,
         name: formData.name,
         description: formData.description || undefined,
@@ -894,26 +760,108 @@ export default function CouponPage() {
         categoryConfigs: formData.categoryConfigs.filter(cfg => cfg.category),
         usageLimit: Number(formData.usageLimit),
         usageLimitPerUser: Number(formData.usageLimitPerUser),
-        usedCount: 0,
-        status: formData.status,
         startsAt: formData.startsAt ? new Date(formData.startsAt).toISOString() : new Date().toISOString(),
         expiresAt: formData.expiresAt ? new Date(formData.expiresAt).toISOString() : new Date().toISOString(),
-        organizerId: 'org-sheila-on7',
-        tenantId: 'tenant-sheila-on7',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        status: formData.status,
+        organizerId: user?.organizerId || '',
+        tenantId: user?.tenantId || '',
       }
-      setCoupons(prev => [newCoupon, ...prev])
-      toast.success(`Coupon ${formData.code} berhasil dibuat`)
+
+      if (editingCoupon) {
+        // Update
+        await couponApi.updateCoupon(editingCoupon.id, couponData)
+        toast.success(`Coupon ${formData.code} berhasil diupdate`)
+      } else {
+        // Create
+        await couponApi.createCoupon(couponData)
+        toast.success(`Coupon ${formData.code} berhasil dibuat`)
+      }
+
+      setFormOpen(false)
+      // Refetch data to get the latest from API
+      await fetchCoupons()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Gagal menyimpan coupon'
+      toast.error(editingCoupon ? 'Gagal mengupdate coupon' : 'Gagal membuat coupon', {
+        description: message,
+      })
+    } finally {
+      setIsSaving(false)
     }
-    setFormOpen(false)
   }
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!deleteTarget) return
-    setCoupons(prev => prev.filter(c => c.id !== deleteTarget.id))
-    toast.success(`Coupon ${deleteTarget.code} berhasil dihapus`)
-    setDeleteTarget(null)
+    setIsDeleting(true)
+    try {
+      await couponApi.deleteCoupon(deleteTarget.id)
+      toast.success(`Coupon ${deleteTarget.code} berhasil dihapus`)
+      setDeleteTarget(null)
+      // Refetch data
+      await fetchCoupons()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Gagal menghapus coupon'
+      toast.error('Gagal menghapus coupon', { description: message })
+    } finally {
+      setIsDeleting(false)
+    }
+  }
+
+  // ── Loading skeleton ──
+  if (isLoading && coupons.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Skeleton className="w-10 h-10 rounded-xl" />
+            <div>
+              <Skeleton className="h-6 w-48 mb-1" />
+              <Skeleton className="h-3 w-32" />
+            </div>
+          </div>
+          <Skeleton className="h-10 w-36" />
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i} className="bg-card border-primary/10">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="w-9 h-9 rounded-lg" />
+                  <div>
+                    <Skeleton className="h-3 w-20 mb-1" />
+                    <Skeleton className="h-5 w-12" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <Card className="bg-card border-primary/10">
+          <CardContent className="p-4">
+            <Skeleton className="h-9 w-full" />
+          </CardContent>
+        </Card>
+        <Card className="bg-card border-primary/10">
+          <CardHeader className="pb-3">
+            <Skeleton className="h-5 w-32" />
+          </CardHeader>
+          <CardContent className="p-0">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="flex items-center gap-4 px-4 py-3 border-b border-primary/5">
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-4 w-12" />
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-6 w-16" />
+                <Skeleton className="h-4 w-12" />
+                <Skeleton className="h-6 w-16" />
+                <Skeleton className="h-8 w-16" />
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
@@ -934,6 +882,7 @@ export default function CouponPage() {
         <Button
           onClick={openCreate}
           className="bg-primary hover:bg-primary/90 text-primary-foreground"
+          disabled={isSaving}
         >
           <Plus className="w-4 h-4 mr-1" /> Create Coupon
         </Button>
@@ -1002,17 +951,40 @@ export default function CouponPage() {
         </CardContent>
       </Card>
 
+      {/* ═══ ERROR STATE ═══ */}
+      {loadError && (
+        <Card className="bg-red-500/5 border-red-500/20">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <AlertTriangle className="w-5 h-5 text-red-400 shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm text-red-400 font-medium">Gagal memuat data coupon</p>
+                <p className="text-xs text-muted-foreground">{loadError}</p>
+              </div>
+              <Button variant="outline" size="sm" onClick={fetchCoupons} className="border-red-500/30 text-red-400 hover:bg-red-500/10">
+                <Loader2 className={cn('w-4 h-4 mr-1', isLoading && 'animate-spin')} /> Retry
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* ═══ TABLE ═══ */}
       <Card className="bg-card border-primary/10">
         <CardHeader className="pb-3">
-          <div>
-            <CardTitle className="text-foreground text-base flex items-center gap-2">
-              <Tag className="w-4 h-4 text-primary" />
-              Daftar Coupon
-            </CardTitle>
-            <CardDescription className="text-muted-foreground text-xs mt-1">
-              Menampilkan {filtered.length} coupon
-            </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-foreground text-base flex items-center gap-2">
+                <Tag className="w-4 h-4 text-primary" />
+                Daftar Coupon
+              </CardTitle>
+              <CardDescription className="text-muted-foreground text-xs mt-1">
+                Menampilkan {filtered.length} coupon
+              </CardDescription>
+            </div>
+            {isLoading && coupons.length > 0 && (
+              <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
+            )}
           </div>
         </CardHeader>
         <CardContent className="p-0">
@@ -1105,6 +1077,7 @@ export default function CouponPage() {
                             size="icon"
                             className="h-8 w-8 text-muted-foreground hover:text-foreground"
                             onClick={() => openEdit(coupon)}
+                            disabled={isSaving || isDeleting}
                           >
                             <Edit2 className="h-4 w-4" />
                           </Button>
@@ -1113,6 +1086,7 @@ export default function CouponPage() {
                             size="icon"
                             className="h-8 w-8 text-red-400/60 hover:text-red-400"
                             onClick={() => setDeleteTarget(coupon)}
+                            disabled={isSaving || isDeleting}
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -1185,13 +1159,15 @@ export default function CouponPage() {
         onOpenChange={setFormOpen}
         editingCoupon={editingCoupon}
         onSave={handleSave}
+        isSaving={isSaving}
       />
 
       <DeleteCouponDialog
         coupon={deleteTarget}
         open={!!deleteTarget}
-        onOpenChange={() => setDeleteTarget(null)}
+        onOpenChange={() => !isDeleting && setDeleteTarget(null)}
         onConfirm={handleDelete}
+        isDeleting={isDeleting}
       />
     </div>
   )

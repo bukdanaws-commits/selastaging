@@ -344,12 +344,66 @@ export async function POST(request: NextRequest) {
     }
 
     // ─── REAL DOKU MODE ───────────────────────────────────────────
-    // In production, fetch order details from backend to get amount & customer info
-    // For now, use placeholder values — to be integrated with backend service
-    const orderAmount = 100000 // Fallback — should fetch from order
-    const customerName = 'SeleEvent Customer'
-    const customerEmail = 'customer@seleevent.com'
-    const customerPhone = '6281234567890'
+    // Fetch order details from mock store or backend to get amount & customer info
+    let orderAmount = 0
+    let customerName = 'SeleEvent Customer'
+    let customerEmail = 'customer@seleevent.com'
+    let customerPhone = '6281234567890'
+
+    // Try to get order from mock store first (server-side)
+    const mockMode = process.env.NEXT_PUBLIC_USE_MOCK !== 'false'
+    if (mockMode) {
+      try {
+        const { useMockStore } = await import('@/lib/mock/mock-store')
+        const store = useMockStore.getState()
+        const order = store.orders.find((o) => o.id === orderId)
+        if (order) {
+          orderAmount = order.totalAmount
+        } else {
+          return NextResponse.json(
+            { success: false, error: `Order ${orderId} not found` },
+            { status: 404 }
+          )
+        }
+      } catch {
+        return NextResponse.json(
+          { success: false, error: 'Failed to load order data' },
+          { status: 500 }
+        )
+      }
+    } else {
+      // In real mode, fetch order from Go backend
+      try {
+        const goPort = process.env.NEXT_PUBLIC_GO_PORT || '8080'
+        const orderResponse = await fetch(`http://localhost:${goPort}/api/v1/orders/${orderId}`, {
+          headers: { 'Content-Type': 'application/json' },
+        })
+        const orderData = await orderResponse.json()
+        if (orderData.success && orderData.data) {
+          orderAmount = orderData.data.totalAmount
+          customerName = orderData.data.user?.name || customerName
+          customerEmail = orderData.data.user?.email || customerEmail
+          customerPhone = orderData.data.user?.phone || customerPhone
+        } else {
+          return NextResponse.json(
+            { success: false, error: `Order ${orderId} not found in backend` },
+            { status: 404 }
+          )
+        }
+      } catch {
+        return NextResponse.json(
+          { success: false, error: 'Failed to fetch order from backend' },
+          { status: 500 }
+        )
+      }
+    }
+
+    if (!orderAmount || orderAmount <= 0) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid order amount' },
+        { status: 400 }
+      )
+    }
 
     let result: {
       paymentUrl?: string

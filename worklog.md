@@ -529,3 +529,257 @@ Stage Summary:
 - Coupon validation with category-aware logic
 - DOKU notification handler creates payment logs + broadcasts SSE
 - Full calculation: Total = SubTotal + AdminFee(2%) + PPN(11%) - Discount
+
+---
+Task ID: 2c+2d
+Agent: Backend Setup & Connection Agent
+Task: Set up Go Fiber backend as mini-service, configure FE↔BE connection, fix API routing, fix DOKU payment/notification routes
+
+Work Log:
+
+### TASK 1: Update Environment Variables
+- Updated `.env` with all required variables:
+  - `DATABASE_URL` (SQLite path), `NEXT_PUBLIC_API_URL=/api`, `NEXT_PUBLIC_GO_PORT=8080`
+  - `NEXT_PUBLIC_USE_DIRECT_BACKEND=false` (Go via Caddy proxy, not direct)
+  - `NEXT_PUBLIC_USE_MOCK=true` (mock mode ON by default)
+  - DOKU sandbox credentials, Google OAuth placeholder, App URL
+
+### TASK 2: Create Backend Startup Script
+- Created `start-backend.sh` at project root
+- Checks if Go is installed, runs `go run cmd/server/main.go` if available
+- If Go not installed, prints "Backend will use mock mode" and exits gracefully
+- Note: could not `chmod +x` due to root ownership, but script works with `bash start-backend.sh`
+
+### TASK 3: Fix Frontend API Configuration (api.ts)
+- **Critical Bug Fix**: Removed broken `getBaseUrl()` function that was creating malformed URLs
+  - Previously: `USE_DIRECT_BACKEND=true` → URL `/?XTransformPort=8080/api/v1/orders` (WRONG)
+  - Previously: `USE_DIRECT_BACKEND=false` → URL `/api/api/v1/orders` (double /api, WRONG)
+- Fixed URL construction: endpoints already contain full paths (e.g., `/api/v1/orders`)
+- When `USE_DIRECT_BACKEND=true`: appends `XTransformPort=8080` as a query parameter → `/api/v1/orders?XTransformPort=8080`
+- When `USE_DIRECT_BACKEND=false`: uses endpoint as-is for Next.js API routes → `/api/v1/orders`
+- Set `API_BASE = ''` since endpoints already include full paths
+- **Added 401 handling**: On 401 response, clears tokens and redirects to home page
+- Mock mode interception works correctly (unchanged from previous agents' work)
+
+### TASK 4: Fix Mock Store Order Creation
+- **Fixed expiry time**: Changed from 2 hours to 30 minutes (`30 * 60 * 1000`)
+  - Was: `Date.now() + 2 * 60 * 60 * 1000` (2 hours)
+  - Now: `Date.now() + 30 * 60 * 1000` (30 minutes per spec)
+- **Fixed Math.round on nominal discount**: `coupon.discountValue` → `Math.round(coupon.discountValue)`
+- Verified all monetary calculations use `Math.round()`:
+  - `adminFee = Math.round(subTotal * 0.02)` ✓
+  - `taxAmount = Math.round(subTotal * 0.11)` ✓
+  - Percentage discount: `Math.round(subTotal * coupon.discountValue / 100)` ✓
+  - Nominal discount: `Math.round(coupon.discountValue)` (fixed)
+  - `totalAmount = Math.max(0, subTotal + adminFee + taxAmount - discountAmount)` ✓
+
+### TASK 5: Fix DOKU Create Payment Route
+- **Critical Bug Fix**: Replaced hardcoded `orderAmount = 100000` with dynamic lookup
+- In mock mode: fetches order from mock store and uses `order.totalAmount`
+- In real mode: fetches order from Go backend via `localhost:{port}/api/v1/orders/{orderId}`
+- Returns 404 if order not found
+- Returns 400 if order amount is invalid (0 or negative)
+- Customer info (name, email, phone) also populated from order data in real mode
+
+### TASK 6: Fix DOKU Notification Route
+- **Enhanced real notification handler** to actually update order status (previously only logged):
+  - Added order ID extraction from both SNAP and Non-SNAP formats
+  - Added DOKU status → order status mapping (success/paid/settlement → 'paid', failed/denied → 'failed', expired → 'expired', cancelled → 'cancelled')
+  - Forwards payment callback to Go backend via `POST /api/v1/orders/{orderId}/payment-callback`
+  - Sends status, paymentMethod, amount, paidTime, transactionId, dokuResponseCode, rawData
+- Mock notification handler verified and working correctly:
+  - Finds order by ID, orderCode, dokuTransactionId, or midtransTransactionId ✓
+  - Updates order status to 'paid' ✓
+  - Updates all pending tickets to 'active' ✓
+  - Returns 200 OK to DOKU ✓
+- Both handlers always return 200 OK to prevent DOKU retry storms
+
+### TASK 7: Create Database Directory
+- Created `/home/z/my-project/db/` directory for SQLite database
+- Prisma schema is a placeholder (not used — Go backend uses GORM)
+- db.ts is a clean stub noting database is handled by Golang backend
+
+### TASK 8: Final Lint Check
+- `bun run lint` passes with zero errors ✅
+- Dev server running successfully on port 3000 ✅
+
+Stage Summary:
+- `.env` fully configured with all project variables (DB, API, DOKU, OAuth, App)
+- Backend startup script created for graceful Go/no-Go environments
+- **API URL construction bug fixed** — double `/api` and malformed XTransformPort URLs resolved
+- **401 handling added** to apiFetch (clear tokens + redirect)
+- **Order expiry changed to 30 minutes** (was 2 hours)
+- **DOKU create-payment no longer hardcoded** — uses actual order.totalAmount
+- **DOKU notification now forwards to Go backend** in real mode (was only logging)
+- db directory exists, lint clean, dev server running
+
+---
+Task ID: 2b
+Agent: Checkout & Payment Flow Fix Agent
+Task: Ensure entire checkout flow works end-to-end with correct fee calculation and coupon discount
+
+Work Log:
+
+### TASK 1: Read and Analyze the Full Checkout Flow
+- Read all relevant files: page.tsx, checkout-page.tsx, payment-page.tsx, payment-status-page.tsx, eticket-page.tsx, api.ts, page-store.ts, auth-store.ts, mock-handlers.ts, mock-store.ts, types.ts, use-api.ts, DOKU API routes
+- Identified critical issue: mock-handlers.ts was missing DOKU endpoint handlers, causing payment flow to fail in mock mode
+- Identified bug: undefined `slug` variable in event matching
+
+### TASK 2: Fix Payment Page (payment-page.tsx)
+- Added fee breakdown display (Subtotal, Biaya Admin 2%, PPN 11%, Diskon) to order summary card
+- Added computed values with fallback calculation from totalAmount when individual fee fields not available
+- Added eventCity variable for better event info display
+
+### TASK 3: Fix Payment Status Page (payment-status-page.tsx)
+- Added auto-refresh polling: every 3 seconds while order status is pending
+- Added auto-navigate to e-ticket: 4 seconds after payment confirmed (with ref guard to prevent double navigation)
+- Added fee breakdown to order details card: Subtotal, Biaya Admin (2%), PPN (11%), Diskon, Total Bayar
+
+### TASK 4: Fix E-Ticket Page (eticket-page.tsx)
+- Added CreditCard icon import from lucide-react
+- Added fee breakdown card (Rincian Pembayaran) with complete price breakdown
+- Added eventVenue variable and improved venue display format
+
+### TASK 5: Fix API Routes
+- Verified create-payment route already looks up order amount from mock store (mock mode) or Go backend (real mode)
+- Verified notification and check-status routes work correctly
+- No changes needed
+
+### TASK 6: Fix Mock Payment Flow (mock-handlers.ts)
+- Fixed critical bug: `e.slug === slug` where slug was undefined → changed to `eventMatch.slug`
+- Added `/api/doku/create-payment` POST handler transforming mock store response to DOKU API route shape
+- Added `/api/doku/check-status` GET handler routing to mock store's getPaymentStatus()
+- Added `/api/doku/notification` POST handler returning 'OK' acknowledgment
+- Kept legacy payment endpoints for backward compatibility
+
+### TASK 7: Lint Check
+- Fixed 1 lint error: Missing CreditCard import in eticket-page.tsx
+- `bun run lint` passes with zero errors
+
+Stage Summary:
+- Critical mock flow fix: Added DOKU endpoint handlers so checkout works end-to-end in mock mode
+- Bug fix: Fixed undefined slug variable in event matching
+- Fee breakdown: All 3 pages (payment, payment-status, e-ticket) now show Subtotal + 2% Admin + 11% PPN - Discount = Total
+- Auto-refresh: Payment status page polls every 3s while pending, auto-navigates to e-ticket after payment confirmed
+- Lint clean, dev server running without errors
+
+---
+Task ID: 2a
+Agent: Frontend Fix & CouponPage API Agent
+Task: Connect CouponPage to real API, fix TypeScript errors, ensure imports/exports consistent
+
+Work Log:
+
+### TASK 1: Connect CouponPage to Real API
+
+**File:** `/home/z/my-project/src/components/admin/CouponPage.tsx`
+
+Completely rewrote the main component to use API calls instead of local mock CRUD:
+
+1. **Removed MOCK_COUPONS array** — Data now comes from `couponApi.getCoupons()` via `apiFetch`
+2. **Renamed MOCK_EVENTS → FALLBACK_EVENTS**, **MOCK_CATEGORIES → TICKET_CATEGORIES** — Kept as static reference data for form dropdowns
+3. **Added new imports:** `useEffect`, `useCallback` from React; `couponApi`, `PaginatedData` from `@/lib/api`; `useAuthStore` from `@/lib/auth-store`; `Loader2` from lucide-react
+4. **Replaced `useState<ICoupon[]>(MOCK_COUPONS)` with `useState<ICoupon[]>([])` + loading state**
+5. **Added `fetchCoupons()` function** using `couponApi.getCoupons()` with server-side filter params for status/scope, proper error handling with toast notifications, loading state management, support for both `PaginatedData<ICoupon>` and raw array responses
+6. **Replaced `handleSave` create** with `couponApi.createCoupon()`: builds coupon data from form fields, uses `user.organizerId` and `user.tenantId` from auth store, shows loading spinner during save, refetches data after creation, error handling with toast
+7. **Replaced `handleSave` update** with `couponApi.updateCoupon()`: passes editing coupon ID + updated fields, refetches data after update, error handling with toast
+8. **Replaced `handleDelete`** with `couponApi.deleteCoupon()`: shows loading spinner in delete button, refetches data after deletion, error handling with toast, prevents closing dialog during deletion
+9. **Added loading states:** `isLoading` (initial fetch, shows skeleton), `isSaving` (create/update mutation, disables form fields), `isDeleting` (delete mutation, disables buttons)
+10. **Added error state UI:** Red error card with retry button when initial load fails, toast notifications for all API failures
+11. **Updated CouponFormDialog props** — Added `isSaving` prop to disable form during mutations
+12. **Updated DeleteCouponDialog props** — Added `isDeleting` prop to show spinner and prevent close
+
+### TASK 2: Verify TypeScript Types Consistency
+
+**File:** `/home/z/my-project/src/lib/types.ts`
+
+All types verified as correct — no changes needed:
+- `ICoupon` has all fields matching API returns
+- `ICouponUsage` correct
+- `ICouponCategoryConfig` correct
+- `IOrder` has `subTotal`, `adminFee`, `taxAmount`, `discountAmount`, `couponId`
+- `ICreateOrderRequest` has `couponCode`, `subTotal`, `adminFee`, `taxAmount`, `discountAmount`
+- `CouponValidationResult` type exists
+
+### TASK 3: Fix Import/Export Issues
+
+All verified correct — no changes needed:
+- `checkout-page.tsx` — `couponApi` import from `@/lib/api` is correct
+- `api.ts` — All `couponApi` methods exist (getCoupons, createCoupon, updateCoupon, deleteCoupon, validateCoupon)
+- `mock-handlers.ts` — All 5 coupon routes handled (GET list, POST create, PUT update, DELETE, POST validate)
+
+### TASK 4: Lint Check
+
+`bun run lint` passes with zero errors, zero warnings ✅
+
+Stage Summary:
+- CouponPage now uses real API calls via `couponApi` (mock mode handled by `apiFetch` interception)
+- All CRUD operations (create, read, update, delete) go through API
+- Loading states for all async operations (initial fetch, saving, deleting)
+- Error handling with toast notifications and retry UI
+- Mock mode backward compatibility maintained
+- TypeScript types verified consistent
+- All imports verified correct
+- Lint passes cleanly
+
+---
+Task ID: 2a
+Agent: Frontend Fix & CouponPage API Agent
+Task: Connect CouponPage to real API + fix FE errors
+
+Work Log:
+- Replaced all local mock CRUD in CouponPage.tsx with couponApi calls
+- Added loading skeleton, error handling, toast notifications
+- Uses useAuthStore for organizerId/tenantId when creating coupons
+- Server-side filters for status/scope, client-side search on top
+- Verified all TypeScript types consistent
+- Verified all imports correct
+- Lint passes zero errors
+
+Stage Summary:
+- CouponPage now uses real API (couponApi.getCoupons, createCoupon, updateCoupon, deleteCoupon)
+- Backward compatible with mock mode
+- Loading states + error handling on all mutations
+
+---
+Task ID: 2b
+Agent: Checkout & Payment Flow Fix Agent
+Task: Fix checkout + payment flow end-to-end
+
+Work Log:
+- Fixed mock-handlers.ts bug: e.slug === slug where slug was undefined
+- Added /api/doku/create-payment, /api/doku/check-status, /api/doku/notification handlers in mock
+- Added fee breakdown display (Subtotal, Biaya Admin 2%, PPN 11%, Diskon) to payment-page.tsx
+- Added auto-refresh polling (3s) on payment-status-page.tsx
+- Added auto-navigate to e-ticket 4s after payment confirmed
+- Added fee breakdown in e-ticket page
+- Verified all DOKU API routes work correctly
+
+Stage Summary:
+- Full checkout flow works in mock mode: Select → Data → Confirm → Payment → Status → E-ticket
+- Fee breakdown visible on all pages
+- Payment status auto-polls and auto-navigates on success
+- Mock DOKU handlers properly route to mock store
+
+---
+Task ID: 2c+2d
+Agent: Backend Setup & Connection Agent
+Task: Setup Go backend + DB + env + routing
+
+Work Log:
+- Updated .env with all required variables (DATABASE_URL, API URL, DOKU sandbox, etc.)
+- Created start-backend.sh (checks for Go, runs if available, exits gracefully otherwise)
+- Fixed critical api.ts bug: getBaseUrl() produced malformed URLs (double /api, wrong XTransformPort position)
+- Changed API_BASE to empty string, XTransformPort properly appended as query param
+- Added 401 handling (clear tokens, redirect to home)
+- Fixed mock store order expiry from 2h to 30min per spec
+- Replaced hardcoded orderAmount=100000 with dynamic lookup from order.totalAmount
+- Enhanced DOKU notification route to forward callbacks to Go backend
+- Created /db/ directory for SQLite
+- Lint passes zero errors
+
+Stage Summary:
+- API routing fixed: no more double /api prefix, XTransformPort correctly positioned
+- DOKU create-payment uses actual order total (not hardcoded)
+- Environment properly configured for mock mode (default) and real backend (when Go available)
+- Auth flow: 401 → clear tokens → redirect to home
