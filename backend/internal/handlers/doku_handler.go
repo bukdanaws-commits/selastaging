@@ -135,6 +135,7 @@ func DokuCreatePayment(db *gorm.DB) fiber.Handler {
                         "payment_method":          "doku",
                         "payment_type":            paymentMethodStr,
                         "payment_transaction_id": paymentTxID,
+                        "doku_transaction_id":    paymentTxID,
                 })
 
                 log.Printf("[DOKU] Payment created: orderCode=%s method=%s txID=%s",

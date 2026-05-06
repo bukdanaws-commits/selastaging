@@ -372,10 +372,10 @@ export async function POST(request: NextRequest) {
         )
       }
     } else {
-      // In real mode, fetch order from Go backend
+      // In real mode, fetch order from Go backend via Caddy gateway
       try {
         const goPort = process.env.NEXT_PUBLIC_GO_PORT || '8080'
-        const orderResponse = await fetch(`http://localhost:${goPort}/api/v1/orders/${orderId}`, {
+        const orderResponse = await fetch(`/api/v1/orders/${orderId}?XTransformPort=${goPort}`, {
           headers: { 'Content-Type': 'application/json' },
         })
         const orderData = await orderResponse.json()

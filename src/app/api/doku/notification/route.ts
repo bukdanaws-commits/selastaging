@@ -284,7 +284,7 @@ async function handleRealNotification(request: NextRequest, body: unknown): Prom
   // Forward the payment status update to the Go backend
   try {
     const goPort = process.env.NEXT_PUBLIC_GO_PORT || '8080'
-    const response = await fetch(`http://localhost:${goPort}/api/v1/orders/${orderId}/payment-callback`, {
+    const response = await fetch(`/api/v1/orders/${orderId}/payment-callback?XTransformPort=${goPort}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

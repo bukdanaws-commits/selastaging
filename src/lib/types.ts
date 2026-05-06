@@ -613,13 +613,6 @@ export interface ISystemSetting {
   updatedAt: string
 }
 
-export interface IFeeConfig {
-  ppnPercent: number
-  defaultAdminFeePercent: number
-  paymentTimeoutMinutes: number
-  maxTicketsPerOrder: number
-}
-
 // ─── SYSTEM HEALTH ─────────────────────────────────────────────────────────
 
 export interface ISystemHealth {

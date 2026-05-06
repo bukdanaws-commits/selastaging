@@ -270,6 +270,7 @@ func (s *OrderService) ProcessPaymentCallback(orderCode string, paymentType stri
                         "paid_at":                  now,
                         "payment_type":             paymentTypeStr,
                         "payment_transaction_id":   transactionID,
+                        "doku_transaction_id":      transactionID,
                 }
                 if err := tx.Model(&order).Updates(updates).Error; err != nil {
                         tx.Rollback()
@@ -354,7 +355,7 @@ func (s *OrderService) ProcessPaymentCallback(orderCode string, paymentType stri
                 // Restore ticket type sold counts
                 for _, item := range order.Items {
                         tx.Model(&models.TicketType{}).Where("id = ?", item.TicketTypeID).
-                                Update("sold", gorm.Expr("GREATEST(sold - ?, 0)", item.Quantity))
+                                Update("sold", gorm.Expr("CASE WHEN sold - ? > 0 THEN sold - ? ELSE 0 END", item.Quantity, item.Quantity))
                 }
 
         case "expire":
@@ -372,7 +373,7 @@ func (s *OrderService) ProcessPaymentCallback(orderCode string, paymentType stri
                 // Restore ticket type sold counts
                 for _, item := range order.Items {
                         tx.Model(&models.TicketType{}).Where("id = ?", item.TicketTypeID).
-                                Update("sold", gorm.Expr("GREATEST(sold - ?, 0)", item.Quantity))
+                                Update("sold", gorm.Expr("CASE WHEN sold - ? > 0 THEN sold - ? ELSE 0 END", item.Quantity, item.Quantity))
                 }
 
         case "pending":
@@ -444,7 +445,7 @@ func (s *OrderService) CancelOrder(orderID string, userID string) error {
         // Restore ticket type sold counts
         for _, item := range order.Items {
                 if err := tx.Model(&models.TicketType{}).Where("id = ?", item.TicketTypeID).
-                        Update("sold", gorm.Expr("GREATEST(sold - ?, 0)", item.Quantity)).Error; err != nil {
+                        Update("sold", gorm.Expr("CASE WHEN sold - ? > 0 THEN sold - ? ELSE 0 END", item.Quantity, item.Quantity)).Error; err != nil {
                         tx.Rollback()
                         return fmt.Errorf("failed to restore ticket type sold count: %w", err)
                 }

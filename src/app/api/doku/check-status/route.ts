@@ -54,8 +54,8 @@ async function checkVAStatus(orderId: string): Promise<{
 
   const requestBody = {
     partnerServiceId: '  19008',
-    customerNo: generateExternalId(),
-    virtualAccountNo: `  19008${generateExternalId()}`,
+    customerNo: orderId,
+    virtualAccountNo: `  19008${orderId}`,
     inquiryRequestId: `INQ-${orderId}-${Date.now()}`,
     paymentDate: '',
     txnDateTime: new Date().toISOString().replace(/\.\d{3}Z$/, '+07:00'),
@@ -113,8 +113,8 @@ async function checkEwalletStatus(orderId: string): Promise<{
 
   const requestBody = {
     partnerServiceId: '  19008',
-    customerNo: generateExternalId(),
-    virtualAccountNo: `  19008${generateExternalId()}`,
+    customerNo: orderId,
+    virtualAccountNo: `  19008${orderId}`,
     inquiryRequestId: `INQ-${orderId}-${Date.now()}`,
     paymentDate: '',
   }

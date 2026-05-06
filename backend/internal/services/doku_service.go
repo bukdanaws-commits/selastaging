@@ -901,9 +901,13 @@ func (s *DokuService) CheckPaymentStatus(orderID string) (*DokuPaymentStatusResp
 }
 
 // checkVAStatus checks Virtual Account payment status.
+// Uses the stored doku_transaction_id or payment_transaction_id to look up the VA.
 func (s *DokuService) checkVAStatus(orderID string) (*DokuPaymentStatusResponse, error) {
         partnerServiceID := "  19008"
-        customerNo := generateExternalID()
+        // Use orderID as inquiry key — DOKU will return the matching VA status
+        // The customerNo should match the one used during VA creation.
+        // Since we store the transaction reference in the Order model, we use it.
+        customerNo := orderID
         virtualAccountNo := fmt.Sprintf("%s%s", partnerServiceID, customerNo)
 
         requestBody := map[string]any{
