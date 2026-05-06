@@ -1,0 +1,128 @@
+# =============================================================================
+#  SELEVENT — Next.js Frontend Docker Image for Cloud Run
+#
+#  Build:  docker build -f Dockerfile.frontend -t selevent-web .
+#  Run:    docker run -p 3000:3000 selevent-web
+#
+#  IMPORTANT: Docker build context is project root (.)
+#  All COPY paths must be relative to project root.
+#
+#  Cloud Run: Uses standalone output for minimal image size (~200MB vs ~1GB)
+# =============================================================================
+
+# ── Stage 1: Dependencies ────────────────────────────────────────────────────
+FROM node:20-alpine AS deps
+
+# Install libc compatibility for sharp (image optimization)
+RUN apk add --no-cache libc6-compat vips-dev
+
+WORKDIR /app
+
+# Copy package files first (better layer caching)
+COPY package.json package-lock.json* bun.lock* ./
+
+# Install dependencies
+# Prefer bun if available, fallback to npm
+COPY --from=ghcr.io/oven-sh/bun:1 /usr/local/bin/bun /usr/local/bin/bun 2>/dev/null || true
+RUN bun install --frozen-lockfile 2>/dev/null || npm ci --omit=dev
+
+# ── Stage 2: Build ───────────────────────────────────────────────────────────
+FROM node:20-alpine AS builder
+
+RUN apk add --no-cache libc6-compat vips-dev
+
+WORKDIR /app
+
+# Copy dependencies from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+
+# Copy all source code (Dockerfile.frontend already excluded via .dockerignore)
+COPY . .
+
+# Build-time environment variables (baked into build, NOT secrets)
+# These are safe because they only contain URLs/configs, not secrets
+ARG NEXT_PUBLIC_API_URL=""
+ARG NEXT_PUBLIC_USE_MOCK="false"
+ARG NEXT_PUBLIC_DOKU_ENVIRONMENT="production"
+ARG NEXT_PUBLIC_DOKU_API_BASE_URL="https://api.doku.com"
+ARG NEXT_PUBLIC_DOKU_CHECKOUT_URL="https://checkout.doku.com"
+ARG NEXT_PUBLIC_DOKU_CLIENT_ID=""
+ARG NEXT_PUBLIC_DOKU_NOTIFICATION_URL=""
+ARG NEXT_PUBLIC_DOKU_FINISH_URL=""
+ARG NEXT_PUBLIC_DOKU_ERROR_URL=""
+ARG NEXT_PUBLIC_DOKU_UNPAYMENT_URL=""
+ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID=""
+ARG NEXT_PUBLIC_PLATFORM_FEE_PERCENTAGE="5"
+ARG NEXT_PUBLIC_SETTLEMENT_DAYS="7"
+
+# Set build-time env vars
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_USE_MOCK=$NEXT_PUBLIC_USE_MOCK
+ENV NEXT_PUBLIC_DOKU_ENVIRONMENT=$NEXT_PUBLIC_DOKU_ENVIRONMENT
+ENV NEXT_PUBLIC_DOKU_API_BASE_URL=$NEXT_PUBLIC_DOKU_API_BASE_URL
+ENV NEXT_PUBLIC_DOKU_CHECKOUT_URL=$NEXT_PUBLIC_DOKU_CHECKOUT_URL
+ENV NEXT_PUBLIC_DOKU_CLIENT_ID=$NEXT_PUBLIC_DOKU_CLIENT_ID
+ENV NEXT_PUBLIC_DOKU_NOTIFICATION_URL=$NEXT_PUBLIC_DOKU_NOTIFICATION_URL
+ENV NEXT_PUBLIC_DOKU_FINISH_URL=$NEXT_PUBLIC_DOKU_FINISH_URL
+ENV NEXT_PUBLIC_DOKU_ERROR_URL=$NEXT_PUBLIC_DOKU_ERROR_URL
+ENV NEXT_PUBLIC_DOKU_UNPAYMENT_URL=$NEXT_PUBLIC_DOKU_UNPAYMENT_URL
+ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
+ENV NEXT_PUBLIC_PLATFORM_FEE_PERCENTAGE=$NEXT_PUBLIC_PLATFORM_FEE_PERCENTAGE
+ENV NEXT_PUBLIC_SETTLEMENT_DAYS=$NEXT_PUBLIC_SETTLEMENT_DAYS
+
+# Generate Prisma client (if using Prisma in production)
+# RUN npx prisma generate
+
+# Build Next.js application (standalone output)
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build || bun run build
+
+# ── Stage 3: Production Runtime ──────────────────────────────────────────────
+FROM node:20-alpine AS runner
+
+# Security: Run as non-root user
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
+
+# Install minimal runtime deps
+RUN apk add --no-cache \
+    libc6-compat \
+    ca-certificates \
+    tzdata \
+    curl
+
+# Set timezone
+ENV TZ=Asia/Jakarta
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Set working directory
+WORKDIR /app
+
+# Copy standalone output (minimal Next.js server + dependencies)
+# standalone mode only copies necessary files
+COPY --from=builder /app/.next/standalone ./
+
+# Copy static files (public directory)
+COPY --from=builder /app/public ./public
+
+# Copy .next/static (needed for CSS, JS, images, fonts)
+# Must be in correct relative path
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Switch to non-root user
+USER nextjs
+
+# Expose port (Cloud Run will route to this)
+EXPOSE 3000
+
+# Set environment variables for server
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+# Health check (Cloud Run requires this)
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:3000/api/health || exit 1
+
+# Start Next.js server
+CMD ["node", "server.js"]

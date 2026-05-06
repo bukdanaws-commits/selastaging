@@ -1,0 +1,151 @@
+# =============================================================================
+#  Cloud Build CI — SeleEvent PR Validation Pipeline
+#
+#  Triggers:
+#    - Pull requests / feature branches (not main or doku)
+#    - Manual: gcloud builds submit --config cloudbuild-pr.yaml
+#
+#  Purpose:
+#    Lightweight validation pipeline — build, lint, type-check only.
+#    NO deployment to Cloud Run.
+#
+#  Usage:
+#    Configure Cloud Build trigger with:
+#      - Event: Pull request (or push to non-main/non-doku branch)
+#      - Config: cloudbuild-pr.yaml
+# =============================================================================
+
+steps:
+  # ── Step 1: Install dependencies ──────────────────────────────────────────
+  - name: 'node:20-slim'
+    id: 'install-deps'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "=== Installing dependencies ==="
+        apt-get update -qq && apt-get install -y -qq curl unzip > /dev/null 2>&1
+        curl -fsSL https://bun.sh/install | bash > /dev/null 2>&1
+        export PATH="$HOME/.bun/bin:$PATH"
+        bun --version
+        bun install --frozen-lockfile 2>&1 || {
+          echo "bun install failed, falling back to npm ci"
+          npm ci --legacy-peer-deps
+        }
+        echo "✅ Dependencies installed successfully"
+
+  # ── Step 2: Run linting ───────────────────────────────────────────────────
+  - name: 'node:20-slim'
+    id: 'lint'
+    waitFor: ['install-deps']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "=== Running ESLint ==="
+        npx eslint . --max-warnings=0 2>&1 || {
+          echo ""
+          echo "❌ LINT FAILED — Fix the errors above before merging"
+          exit 1
+        }
+        echo "✅ Linting passed (0 errors, 0 warnings)"
+
+  # ── Step 3: Type check ────────────────────────────────────────────────────
+  - name: 'node:20-slim'
+    id: 'typecheck'
+    waitFor: ['install-deps']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "=== Running TypeScript type check ==="
+        npx tsc --noEmit --pretty 2>&1 || {
+          echo ""
+          echo "❌ TYPE CHECK FAILED — Fix type errors before merging"
+          exit 1
+        }
+        echo "✅ Type check passed (no errors)"
+
+  # ── Step 4: Generate Prisma client ────────────────────────────────────────
+  - name: 'node:20-slim'
+    id: 'prisma-generate'
+    waitFor: ['install-deps']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "=== Generating Prisma client ==="
+        npx prisma generate 2>&1 || {
+          echo "❌ Prisma generate failed"
+          exit 1
+        }
+        echo "✅ Prisma client generated successfully"
+
+  # ── Step 5: Build Next.js (validation only, no deploy) ────────────────────
+  - name: 'node:20-slim'
+    id: 'build-nextjs'
+    waitFor: ['lint', 'typecheck', 'prisma-generate']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "=== Building Next.js (validation) ==="
+
+        # Use safe defaults for PR builds
+        export NEXT_TELEMETRY_DISABLED=1
+        export NEXT_PUBLIC_API_URL="http://localhost:8080"
+        export NEXT_PUBLIC_USE_MOCK="true"
+        export NEXT_PUBLIC_DOKU_ENVIRONMENT="sandbox"
+        export NEXT_PUBLIC_DOKU_API_BASE_URL="https://api-sandbox.doku.com"
+        export NEXT_PUBLIC_DOKU_CHECKOUT_URL="https://checkout-sandbox.doku.com"
+        export NEXT_PUBLIC_DOKU_CLIENT_ID="MCH-0001-TEST"
+        export NEXT_PUBLIC_GOOGLE_CLIENT_ID="test-google-client-id"
+
+        npm run build 2>&1 || {
+          echo ""
+          echo "❌ BUILD FAILED — Fix build errors before merging"
+          exit 1
+        }
+        echo "✅ Next.js build passed"
+
+  # ── Step 6: Report results ────────────────────────────────────────────────
+  - name: 'node:20-slim'
+    id: 'report'
+    waitFor: ['build-nextjs']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo ""
+        echo "=========================================="
+        echo "✅ PR VALIDATION PASSED"
+        echo "=========================================="
+        echo "  Branch:  $BRANCH_NAME"
+        echo "  Commit:  $SHORT_SHA"
+        echo "  Author:  $COMMIT_AUTHOR"
+        echo ""
+        echo "  ✅ Linting:       PASSED"
+        echo "  ✅ Type Check:    PASSED"
+        echo "  ✅ Prisma Gen:    PASSED"
+        echo "  ✅ Next.js Build: PASSED"
+        echo "=========================================="
+        echo ""
+        echo "This PR is ready for review and merge."
+        echo ""
+
+# ── Substitution variables ─────────────────────────────────────────────────
+substitutions:
+  _SHORT_SHA: 'latest'
+
+# ── Build options ──────────────────────────────────────────────────────────
+options:
+  machineType: 'E2_HIGHCPU_4'
+  logging: CLOUD_LOGGING_ONLY
+
+# ── Build timeout ──────────────────────────────────────────────────────────
+timeout: '600s'

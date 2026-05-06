@@ -1,13 +1,3 @@
-import { PrismaClient } from '@prisma/client'
-
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
-}
-
-export const db =
-  globalForPrisma.prisma ??
-  new PrismaClient({
-    log: ['query'],
-  })
-
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = db
+// Database is handled by the Golang backend (GORM + SQLite/PostgreSQL).
+// All data access goes through the API client (src/lib/api.ts).
+// This file is a stub — Prisma is not used in this project.

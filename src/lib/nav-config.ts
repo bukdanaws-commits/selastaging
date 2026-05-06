@@ -1,0 +1,265 @@
+import type { UserRole } from '@/lib/types'
+
+// ─── NAVIGATION TYPES ──────────────────────────────────────────────────────
+
+export interface NavItem {
+  title: string
+  href: string
+  icon: string
+  badge?: number | string
+  roles: UserRole[]
+  /** Override the nav label for specific roles. Falls back to `title` if not set. */
+  titleByRole?: Partial<Record<UserRole, string>>
+}
+
+export interface NavSection {
+  label: string
+  items: NavItem[]
+}
+
+// ─── COMPLETE NAVIGATION CONFIG ────────────────────────────────────────────
+// Merged admin/organizer dashboard under /admin/ prefix
+
+export const NAV_SECTIONS: NavSection[] = [
+  // ── Utama (Main) ──────────────────────────────────────────────────────────
+  {
+    label: 'Utama',
+    items: [
+      {
+        title: 'Dashboard',
+        href: '/admin',
+        icon: 'LayoutDashboard',
+        roles: ['SUPER_ADMIN', 'ORGANIZER'],
+      },
+      {
+        title: 'Events',
+        href: '/admin/events',
+        icon: 'CalendarDays',
+        roles: ['SUPER_ADMIN', 'ORGANIZER'],
+        titleByRole: { ORGANIZER: 'My Events' },
+      },
+      {
+        title: 'Organizers',
+        href: '/admin/organizers',
+        icon: 'Building2',
+        roles: ['SUPER_ADMIN'],
+      },
+    ],
+  },
+
+  // ── Ticketing ─────────────────────────────────────────────────────────────
+  {
+    label: 'Ticketing',
+    items: [
+      {
+        title: 'Ticket Types',
+        href: '/admin/ticket-types',
+        icon: 'Ticket',
+        roles: ['ORGANIZER'],
+      },
+      {
+        title: 'Orders',
+        href: '/admin/orders',
+        icon: 'ShoppingCart',
+        roles: ['SUPER_ADMIN', 'ORGANIZER'],
+        titleByRole: { ORGANIZER: 'My Orders' },
+      },
+      {
+        title: 'Tickets',
+        href: '/admin/tickets',
+        icon: 'ScanLine',
+        roles: ['SUPER_ADMIN', 'ORGANIZER'],
+        titleByRole: { ORGANIZER: 'My Tickets' },
+      },
+      {
+        title: 'Seat Layout',
+        href: '/admin/seat-layout',
+        icon: 'Armchair',
+        roles: ['ORGANIZER'],
+      },
+      {
+        title: 'Coupons',
+        href: '/admin/coupons',
+        icon: 'Tag',
+        roles: ['SUPER_ADMIN', 'ORGANIZER'],
+        titleByRole: { ORGANIZER: 'My Coupons' },
+      },
+    ],
+  },
+
+  // ── Operasional ───────────────────────────────────────────────────────────
+  {
+    label: 'Operasional',
+    items: [
+      {
+        title: 'Staff',
+        href: '/admin/staff',
+        icon: 'Users',
+        roles: ['SUPER_ADMIN', 'ORGANIZER'],
+        titleByRole: { ORGANIZER: 'My Staff' },
+      },
+      {
+        title: 'Counters',
+        href: '/admin/counters',
+        icon: 'Monitor',
+        roles: ['SUPER_ADMIN', 'ORGANIZER'],
+        titleByRole: { ORGANIZER: 'My Counters' },
+      },
+      {
+        title: 'Gates',
+        href: '/admin/gate-management',
+        icon: 'DoorOpen',
+        roles: ['SUPER_ADMIN', 'ORGANIZER'],
+        titleByRole: { ORGANIZER: 'My Gates' },
+      },
+      {
+        title: 'Crew & Gates',
+        href: '/admin/crew-gates',
+        icon: 'UserCog',
+        roles: ['SUPER_ADMIN'],
+      },
+      {
+        title: 'Redeem',
+        href: '/admin/redeem',
+        icon: 'Gift',
+        roles: ['ORGANIZER'],
+      },
+      {
+        title: 'Redeem History',
+        href: '/admin/redeem-history',
+        icon: 'History',
+        roles: ['ORGANIZER'],
+      },
+      {
+        title: 'Check Ticket',
+        href: '/admin/check-ticket',
+        icon: 'CircleCheckBig',
+        roles: ['ORGANIZER'],
+      },
+      {
+        title: 'Wristband Guide',
+        href: '/admin/wristband-guide',
+        icon: 'Palette',
+        roles: ['ORGANIZER'],
+      },
+    ],
+  },
+
+  // ── Keuangan ──────────────────────────────────────────────────────────────
+  {
+    label: 'Keuangan',
+    items: [
+      {
+        title: 'Finance',
+        href: '/admin/finance',
+        icon: 'Wallet',
+        roles: ['SUPER_ADMIN', 'ORGANIZER'],
+        titleByRole: { ORGANIZER: 'My Finance' },
+      },
+      {
+        title: 'Bank Account',
+        href: '/admin/bank-account',
+        icon: 'Landmark',
+        roles: ['ORGANIZER'],
+      },
+      {
+        title: 'Withdraw',
+        href: '/admin/withdraw',
+        icon: 'ArrowDownToLine',
+        roles: ['SUPER_ADMIN', 'ORGANIZER'],
+        titleByRole: { ORGANIZER: 'Withdraw' },
+      },
+      {
+        title: 'Withdrawal History',
+        href: '/admin/withdrawal-history',
+        icon: 'Receipt',
+        roles: ['ORGANIZER'],
+      },
+      {
+        title: 'Withdrawals',
+        href: '/admin/withdrawals',
+        icon: 'FileCheck',
+        roles: ['SUPER_ADMIN'],
+      },
+      {
+        title: 'Payment Logs',
+        href: '/admin/payment-logs',
+        icon: 'FileText',
+        roles: ['SUPER_ADMIN', 'ORGANIZER'],
+      },
+      {
+        title: 'Refunds',
+        href: '/admin/refunds',
+        icon: 'RotateCcw',
+        roles: ['SUPER_ADMIN', 'ORGANIZER'],
+      },
+    ],
+  },
+
+  // ── D-Day ─────────────────────────────────────────────────────────────────
+  {
+    label: 'D-Day',
+    items: [
+      {
+        title: 'Gate Monitoring',
+        href: '/admin/gate-monitoring',
+        icon: 'Activity',
+        roles: ['SUPER_ADMIN', 'ORGANIZER'],
+      },
+      {
+        title: 'Live Monitor',
+        href: '/admin/live-monitor',
+        icon: 'Radio',
+        roles: ['SUPER_ADMIN', 'ORGANIZER'],
+      },
+    ],
+  },
+
+  // ── Laporan ───────────────────────────────────────────────────────────────
+  {
+    label: 'Laporan',
+    items: [
+      {
+        title: 'Analytics',
+        href: '/admin/analytics',
+        icon: 'BarChart3',
+        roles: ['SUPER_ADMIN', 'ORGANIZER'],
+      },
+    ],
+  },
+
+  // ── System ────────────────────────────────────────────────────────────────
+  {
+    label: 'System',
+    items: [
+      {
+        title: 'Users',
+        href: '/admin/users',
+        icon: 'UserPlus',
+        roles: ['SUPER_ADMIN'],
+      },
+      {
+        title: 'Settings',
+        href: '/admin/settings',
+        icon: 'Settings',
+        roles: ['SUPER_ADMIN'],
+      },
+    ],
+  },
+]
+
+// ─── ROLE-BASED FILTER HELPER ──────────────────────────────────────────────
+
+export function getNavSectionsForRole(role: UserRole): NavSection[] {
+  return NAV_SECTIONS
+    .map((section) => ({
+      ...section,
+      items: section.items
+        .filter((item) => item.roles.includes(role))
+        .map((item) => ({
+          ...item,
+          title: item.titleByRole?.[role] ?? item.title,
+        })),
+    }))
+    .filter((section) => section.items.length > 0)
+}

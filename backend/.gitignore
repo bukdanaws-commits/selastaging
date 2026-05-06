@@ -1,0 +1,14 @@
+*.db
+*.db-journal
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+__debug_bin*
+.env.local
+.env.production
+vendor/
+tmp/
