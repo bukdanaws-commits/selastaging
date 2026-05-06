@@ -236,7 +236,7 @@ const TICKET_TYPE_DEFS: readonly TicketTypeDef[] = [
       'Fotobooth VIP',
       'Lounge eksklusif dengan catering',
     ],
-    platformFee: 5,
+    platformFee: 2,
   },
   {
     id: 'tt-vip-zone-001',
@@ -255,7 +255,7 @@ const TICKET_TYPE_DEFS: readonly TicketTypeDef[] = [
       'Fotobooth VIP',
       'Lounge eksklusif',
     ],
-    platformFee: 5,
+    platformFee: 2,
   },
   {
     id: 'tt-festival-001',
@@ -272,7 +272,7 @@ const TICKET_TYPE_DEFS: readonly TicketTypeDef[] = [
       'Welcome drink',
       'Merchandise discount 20%',
     ],
-    platformFee: 5,
+    platformFee: 2,
   },
   {
     id: 'tt-cat1-001',
@@ -288,7 +288,7 @@ const TICKET_TYPE_DEFS: readonly TicketTypeDef[] = [
       'Tribun terdepan',
       'Welcome drink',
     ],
-    platformFee: 5,
+    platformFee: 2,
   },
   {
     id: 'tt-cat2-001',
@@ -303,7 +303,7 @@ const TICKET_TYPE_DEFS: readonly TicketTypeDef[] = [
     benefits: [
       'Tribun kategori premium',
     ],
-    platformFee: 5,
+    platformFee: 2,
   },
   {
     id: 'tt-cat3-001',
@@ -318,7 +318,7 @@ const TICKET_TYPE_DEFS: readonly TicketTypeDef[] = [
     benefits: [
       'Tribun nyaman',
     ],
-    platformFee: 5,
+    platformFee: 2,
   },
   {
     id: 'tt-cat4-001',
@@ -333,7 +333,7 @@ const TICKET_TYPE_DEFS: readonly TicketTypeDef[] = [
     benefits: [
       'Tribun standar',
     ],
-    platformFee: 5,
+    platformFee: 2,
   },
   {
     id: 'tt-cat5-001',
@@ -348,7 +348,7 @@ const TICKET_TYPE_DEFS: readonly TicketTypeDef[] = [
     benefits: [
       'Akses area tribun',
     ],
-    platformFee: 5,
+    platformFee: 2,
   },
   {
     id: 'tt-cat6-001',
@@ -363,7 +363,7 @@ const TICKET_TYPE_DEFS: readonly TicketTypeDef[] = [
     benefits: [
       'Akses area konser',
     ],
-    platformFee: 5,
+    platformFee: 2,
   },
 ]
 

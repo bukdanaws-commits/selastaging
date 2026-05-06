@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import {
   Card,
   CardContent,
@@ -26,16 +26,26 @@ import {
   CheckCircle2,
   Ticket,
   Loader2,
+  Tag,
+  X,
+  Check,
+  AlertCircle,
 } from "lucide-react";
 import { formatRupiah } from "@/lib/utils";
-import type { IOrder, IOrderItem, ITicketType, IEvent } from "@/lib/types";
+import type { IOrder, IOrderItem, ITicketType, IEvent, CouponValidationResult } from "@/lib/types";
 import { useAuthStore } from "@/lib/auth-store";
 import { usePageStore } from "@/lib/page-store";
 import { useToast } from "@/hooks/use-toast";
 import { useCreateOrder, useTicketTypes, useEvent } from "@/hooks/use-api";
+import { couponApi } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { toast as sonnerToast } from "sonner";
 
 const STEPS = ["Pilih Tiket", "Data Peserta", "Konfirmasi & Bayar"];
+
+// ─── Fee & Tax constants ──────────────────────────────────────────
+const PLATFORM_FEE_PERCENT = 2; // 2% admin fee
+const PPN_PERCENT = 11; // 11% PPN
 
 // ─── Fallback event slug ──────────────────────────────────────────
 const EVENT_SLUG = "sheila-on7-jakarta";
@@ -92,6 +102,12 @@ export default function CheckoutPage() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // ─── Coupon state ────────────────────────────────────────────
+  const [couponCode, setCouponCode] = useState("");
+  const [couponResult, setCouponResult] = useState<CouponValidationResult | null>(null);
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
+  const [appliedCouponCode, setAppliedCouponCode] = useState<string | null>(null);
+
   // ─── Derived data ──────────────────────────────────────────────
   const selectedItems = useMemo<LocalOrderItem[]>(() => {
     return Object.entries(selections)
@@ -113,10 +129,80 @@ export default function CheckoutPage() {
     [selections]
   );
 
-  const totalAmount = useMemo(
+  const subTotal = useMemo(
     () => selectedItems.reduce((sum, item) => sum + item.subtotal, 0),
     [selectedItems]
   );
+
+  const adminFee = useMemo(
+    () => Math.round(subTotal * PLATFORM_FEE_PERCENT / 100),
+    [subTotal]
+  );
+
+  const taxAmount = useMemo(
+    () => Math.round(subTotal * PPN_PERCENT / 100),
+    [subTotal]
+  );
+
+  const discountAmount = useMemo(
+    () => couponResult?.valid ? couponResult.discountAmount : 0,
+    [couponResult]
+  );
+
+  const totalAmount = useMemo(
+    () => Math.max(0, subTotal + adminFee + taxAmount - discountAmount),
+    [subTotal, adminFee, taxAmount, discountAmount]
+  );
+
+  // ─── Coupon validation handler ──────────────────────────────
+  const handleApplyCoupon = useCallback(async () => {
+    if (!couponCode.trim()) {
+      sonnerToast.error("Masukkan kode kupon");
+      return;
+    }
+
+    setIsValidatingCoupon(true);
+    setCouponResult(null);
+
+    try {
+      const result = await couponApi.validateCoupon({
+        code: couponCode.trim().toUpperCase(),
+        subtotal: subTotal,
+      });
+
+      setCouponResult(result);
+
+      if (result.valid) {
+        setAppliedCouponCode(couponCode.trim().toUpperCase());
+        sonnerToast.success(`Kupon ${couponCode.trim().toUpperCase()} berhasil diterapkan! Hemat ${formatRupiah(result.discountAmount)}`);
+      } else {
+        setAppliedCouponCode(null);
+        sonnerToast.error(result.message || "Kupon tidak valid");
+      }
+    } catch (err) {
+      setCouponResult({ valid: false, discountAmount: 0, message: "Gagal memvalidasi kupon. Coba lagi." });
+      setAppliedCouponCode(null);
+      sonnerToast.error("Gagal memvalidasi kupon");
+    } finally {
+      setIsValidatingCoupon(false);
+    }
+  }, [couponCode, subTotal]);
+
+  const handleRemoveCoupon = useCallback(() => {
+    setCouponCode("");
+    setCouponResult(null);
+    setAppliedCouponCode(null);
+    sonnerToast.info("Kupon dihapus");
+  }, []);
+
+  // Reset coupon when subtotal changes (ticket selection changes)
+  useEffect(() => {
+    if (appliedCouponCode && couponResult?.valid) {
+      // Re-validate coupon with new subtotal
+      setCouponResult(null);
+      setAppliedCouponCode(null);
+    }
+  }, [subTotal, appliedCouponCode, couponResult]);
 
   // ─── Ticket selection handlers ─────────────────────────────────
   const updateQty = (ticketTypeId: string, delta: number) => {
@@ -232,10 +318,15 @@ export default function CheckoutPage() {
       const result = await createOrder.mutateAsync({
         eventId,
         items: orderItems,
+        couponCode: appliedCouponCode || undefined,
+        subTotal,
+        adminFee,
+        taxAmount,
+        discountAmount,
       });
 
       const order = result as IOrder;
-      toast({ title: "Pesanan berhasil dibuat!" });
+      sonnerToast.success("Pesanan berhasil dibuat!");
       navigateTo("payment", order.id);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Gagal membuat pesanan";
@@ -432,7 +523,7 @@ export default function CheckoutPage() {
               <span className="text-muted-foreground">Total</span>
               <div className="text-right">
                 <span className="text-green-400 font-bold text-xl">
-                  {formatRupiah(totalAmount)}
+                  {formatRupiah(subTotal)}
                 </span>
                 <p className="text-muted-foreground text-xs">
                   {totalTickets} tiket
@@ -609,6 +700,7 @@ export default function CheckoutPage() {
 
           <Separator className="bg-border" />
 
+          {/* Ticket items */}
           {selectedItems.map((item) => (
             <div
               key={item.ticketTypeId}
@@ -623,12 +715,119 @@ export default function CheckoutPage() {
 
           <Separator className="bg-border" />
 
+          {/* Price breakdown */}
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Subtotal</span>
+              <span className="text-foreground">{formatRupiah(subTotal)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Biaya Admin ({PLATFORM_FEE_PERCENT}%)</span>
+              <span className="text-foreground">{formatRupiah(adminFee)}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">PPN ({PPN_PERCENT}%)</span>
+              <span className="text-foreground">{formatRupiah(taxAmount)}</span>
+            </div>
+
+            {/* Discount line */}
+            {discountAmount > 0 && appliedCouponCode && (
+              <div className="flex justify-between text-sm">
+                <span className="text-green-400 flex items-center gap-1">
+                  <Tag className="w-3 h-3" />
+                  Kupon {appliedCouponCode}
+                </span>
+                <span className="text-green-400">-{formatRupiah(discountAmount)}</span>
+              </div>
+            )}
+          </div>
+
+          <Separator className="bg-border" />
+
+          {/* Total */}
           <div className="flex justify-between items-center">
-            <span className="text-muted-foreground font-medium">Total</span>
+            <span className="text-foreground font-bold">TOTAL BAYAR</span>
             <span className="text-green-400 font-bold text-2xl">
               {formatRupiah(totalAmount)}
             </span>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Coupon input */}
+      <Card className="bg-card border-border">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-foreground text-sm flex items-center gap-2">
+            <Tag className="w-4 h-4 text-green-400" />
+            Kupon Diskon
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {appliedCouponCode && couponResult?.valid ? (
+            /* Applied coupon display */
+            <div className="flex items-center justify-between bg-green-500/10 border border-green-500/30 rounded-lg p-3">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-5 h-5 text-green-400" />
+                <div>
+                  <p className="text-green-400 font-semibold text-sm">{appliedCouponCode}</p>
+                  <p className="text-green-400/70 text-xs">Hemat {formatRupiah(discountAmount)}</p>
+                </div>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-muted-foreground hover:text-destructive h-8 w-8 p-0"
+                onClick={handleRemoveCoupon}
+              >
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+          ) : (
+            /* Coupon input */
+            <div className="flex gap-2">
+              <div className="flex-1 relative">
+                <Input
+                  placeholder="Masukkan kode kupon"
+                  value={couponCode}
+                  onChange={(e) => {
+                    const val = e.target.value.toUpperCase();
+                    setCouponCode(val);
+                    // Clear previous result when typing
+                    if (couponResult && !couponResult.valid) {
+                      setCouponResult(null);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleApplyCoupon();
+                    }
+                  }}
+                  className="bg-background border-border text-foreground placeholder:text-muted-foreground/70 uppercase"
+                  disabled={isValidatingCoupon}
+                />
+              </div>
+              <Button
+                variant="outline"
+                className="border-green-500/50 text-green-400 hover:bg-green-500/10 hover:text-green-400"
+                onClick={handleApplyCoupon}
+                disabled={isValidatingCoupon || !couponCode.trim() || subTotal === 0}
+              >
+                {isValidatingCoupon ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  "Terapkan"
+                )}
+              </Button>
+            </div>
+          )}
+
+          {/* Error message */}
+          {couponResult && !couponResult.valid && couponResult.message && !appliedCouponCode && (
+            <div className="flex items-center gap-2 text-destructive text-xs bg-destructive/10 border border-destructive/30 rounded-lg p-2.5">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{couponResult.message}</span>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -705,8 +904,11 @@ export default function CheckoutPage() {
                 <p className="text-xs text-muted-foreground mb-1">
                   4. E-tiket akan tersedia setelah pembayaran berhasil diverifikasi.
                 </p>
+                <p className="text-xs text-muted-foreground mb-1">
+                  5. Biaya admin {PLATFORM_FEE_PERCENT}% dan PPN {PPN_PERCENT}% berlaku untuk setiap transaksi.
+                </p>
                 <p className="text-xs text-muted-foreground">
-                  5. Penyelenggara berhak menolak masuk jika data tidak sesuai.
+                  6. Penyelenggara berhak menolak masuk jika data tidak sesuai.
                 </p>
               </div>
             </div>
@@ -753,10 +955,22 @@ export default function CheckoutPage() {
       <div className="fixed bottom-0 left-0 right-0 bg-background/95 backdrop-blur-md border-t border-border p-4 z-50">
         <div className="max-w-lg mx-auto flex items-center justify-between">
           <div>
-            {totalAmount > 0 && (
-              <p className="text-green-400 font-bold">{formatRupiah(totalAmount)}</p>
+            {step === 2 ? (
+              <>
+                <p className="text-green-400 font-bold">{formatRupiah(totalAmount)}</p>
+                <p className="text-muted-foreground text-xs">
+                  {totalTickets} tiket • Termasuk fee & PPN
+                  {discountAmount > 0 && ` • Diskon ${formatRupiah(discountAmount)}`}
+                </p>
+              </>
+            ) : (
+              <>
+                {subTotal > 0 && (
+                  <p className="text-green-400 font-bold">{formatRupiah(subTotal)}</p>
+                )}
+                <p className="text-muted-foreground text-xs">{totalTickets} tiket dipilih</p>
+              </>
             )}
-            <p className="text-muted-foreground text-xs">{totalTickets} tiket dipilih</p>
           </div>
           <div className="flex gap-2">
             {step > 0 && (

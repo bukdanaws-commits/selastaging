@@ -4,6 +4,7 @@ import (
         "errors"
         "fmt"
         "log"
+        "math"
         "math/rand"
         "time"
 
@@ -52,7 +53,14 @@ func generateTicketCode() string {
 }
 
 // CreateOrder creates a new order with status "pending" and a 30-minute expiry.
+// Kept for backward compatibility; delegates to CreateOrderWithCoupon.
 func (s *OrderService) CreateOrder(userID string, eventID string, items []OrderItemInput) (*models.Order, error) {
+        return s.CreateOrderWithCoupon(userID, eventID, items, nil)
+}
+
+// CreateOrderWithCoupon creates a new order with status "pending" and a 30-minute expiry.
+// If couponCode is provided, the coupon is validated and the discount is applied.
+func (s *OrderService) CreateOrderWithCoupon(userID string, eventID string, items []OrderItemInput, couponCode *string) (*models.Order, error) {
         if len(items) == 0 {
                 return nil, errors.New("at least one item is required")
         }
@@ -63,13 +71,13 @@ func (s *OrderService) CreateOrder(userID string, eventID string, items []OrderI
                 return nil, fmt.Errorf("event %s not found", eventID)
         }
 
-        // Calculate total amount and validate ticket types
-        var totalAmount int
+        // Calculate subTotal and validate ticket types
+        var subTotal float64
         type itemCalc struct {
-                input       OrderItemInput
-                ticketType  models.TicketType
+                input          OrderItemInput
+                ticketType     models.TicketType
                 pricePerTicket int
-                subtotal    int
+                subtotal       int
         }
         var calculations []itemCalc
 
@@ -89,7 +97,7 @@ func (s *OrderService) CreateOrder(userID string, eventID string, items []OrderI
                 }
 
                 subtotal := ticketType.Price * item.Quantity
-                totalAmount += subtotal
+                subTotal += float64(subtotal)
 
                 calculations = append(calculations, itemCalc{
                         input:          item,
@@ -98,6 +106,36 @@ func (s *OrderService) CreateOrder(userID string, eventID string, items []OrderI
                         subtotal:       subtotal,
                 })
         }
+
+        // Calculate fees
+        adminFee := math.Round(subTotal*0.02*100) / 100   // 2% platform fee
+        taxAmount := math.Round(subTotal*0.11*100) / 100  // 11% PPN
+
+        // Validate and apply coupon if provided
+        var discountAmount float64
+        var couponID *string
+        if couponCode != nil && *couponCode != "" {
+                result, err := ValidateCoupon(s.DB, *couponCode, userID, subTotal, "")
+                if err != nil {
+                        log.Printf("[Order] Coupon validation error for code %s: %v", *couponCode, err)
+                        return nil, fmt.Errorf("failed to validate coupon: %v", err)
+                }
+                if result.Valid {
+                        discountAmount = result.DiscountAmount
+                        couponID = &result.Coupon.ID
+                        log.Printf("[Order] Coupon %s applied: discount=%.2f", *couponCode, discountAmount)
+                } else {
+                        log.Printf("[Order] Coupon %s invalid: %s", *couponCode, result.Message)
+                        return nil, fmt.Errorf("coupon %s is not valid: %s", *couponCode, result.Message)
+                }
+        }
+
+        // Calculate total amount
+        totalAmount := subTotal + adminFee + taxAmount - discountAmount
+        if totalAmount < 0 {
+                totalAmount = 0
+        }
+        totalAmountInt := int(math.Round(totalAmount))
 
         // Start transaction
         tx := s.DB.Begin()
@@ -112,13 +150,18 @@ func (s *OrderService) CreateOrder(userID string, eventID string, items []OrderI
         expiresAt := time.Now().Add(30 * time.Minute)
 
         order := models.Order{
-                TenantID:    event.TenantID,
-                OrderCode:   orderCode,
-                UserID:      userID,
-                EventID:     eventID,
-                TotalAmount: totalAmount,
-                Status:      "pending",
-                ExpiresAt:   &expiresAt,
+                TenantID:       event.TenantID,
+                OrderCode:      orderCode,
+                UserID:         userID,
+                EventID:        eventID,
+                SubTotal:       subTotal,
+                AdminFee:       adminFee,
+                TaxAmount:      taxAmount,
+                DiscountAmount: discountAmount,
+                TotalAmount:    totalAmountInt,
+                CouponID:       couponID,
+                Status:         "pending",
+                ExpiresAt:      &expiresAt,
         }
 
         if err := tx.Create(&order).Error; err != nil {
@@ -129,12 +172,12 @@ func (s *OrderService) CreateOrder(userID string, eventID string, items []OrderI
         // Create order items
         for _, calc := range calculations {
                 orderItem := models.OrderItem{
-                        TenantID:      event.TenantID,
-                        OrderID:       order.ID,
-                        TicketTypeID:  calc.input.TicketTypeID,
-                        Quantity:      calc.input.Quantity,
+                        TenantID:       event.TenantID,
+                        OrderID:        order.ID,
+                        TicketTypeID:   calc.input.TicketTypeID,
+                        Quantity:       calc.input.Quantity,
                         PricePerTicket: calc.pricePerTicket,
-                        Subtotal:      calc.subtotal,
+                        Subtotal:       calc.subtotal,
                 }
                 if err := tx.Create(&orderItem).Error; err != nil {
                         tx.Rollback()
@@ -146,6 +189,14 @@ func (s *OrderService) CreateOrder(userID string, eventID string, items []OrderI
                         Update("sold", gorm.Expr("sold + ?", calc.input.Quantity)).Error; err != nil {
                         tx.Rollback()
                         return nil, fmt.Errorf("failed to update ticket type sold count: %w", err)
+                }
+        }
+
+        // Apply coupon usage if a coupon was used
+        if couponID != nil && discountAmount > 0 {
+                if err := ApplyCoupon(tx, *couponID, userID, order.ID, discountAmount); err != nil {
+                        tx.Rollback()
+                        return nil, fmt.Errorf("failed to apply coupon: %w", err)
                 }
         }
 

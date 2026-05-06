@@ -18,6 +18,7 @@ import type {
   ICreatePaymentResponse,
   IPaymentStatus,
   IPagination,
+  CouponValidationResult,
 } from './types'
 
 // ─── CONFIG ─────────────────────────────────────────────────────────────────
@@ -647,8 +648,8 @@ export const couponApi = {
   deleteCoupon: (id: string) =>
     apiFetch<{ success: boolean }>(API.COUPONS.DELETE(id), { method: 'DELETE' }),
 
-  validateCoupon: (data: { code: string; orderId: string; subtotal: number; category?: string }) =>
-    apiFetch<{ valid: boolean; discountAmount: number; message?: string; coupon?: unknown }>(
+  validateCoupon: (data: { code: string; subtotal: number; category?: string }) =>
+    apiFetch<CouponValidationResult>(
       API.COUPONS.VALIDATE,
       { method: 'POST', body: JSON.stringify(data) }
     ),

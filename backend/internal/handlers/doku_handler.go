@@ -217,11 +217,78 @@ func DokuNotification(db *gorm.DB) fiber.Handler {
                         })
                 }
 
+                // Create PaymentLog entry for the notification
+                if notif.OrderID != "" {
+                        createDokuPaymentLog(db, notif, payload)
+                }
+
+                // Broadcast SSE event for real-time updates
+                if notif.Status == "settlement" || notif.Status == "capture" {
+                        broadcastPaymentSuccess(notif)
+                }
+
                 log.Printf("[DOKU] Notification processed successfully: orderID=%s status=%s",
                         notif.OrderID, notif.Status)
 
                 // DOKU expects HTTP 200 with "OK" body to acknowledge receipt
                 return c.SendString("OK")
+        }
+}
+
+// createDokuPaymentLog creates a PaymentLog entry from a DOKU notification.
+func createDokuPaymentLog(db *gorm.DB, notif *services.DokuNotificationPayload, rawPayload []byte) {
+        // Look up the order by order code to get IDs
+        var order models.Order
+        if err := db.Where("order_code = ?", notif.OrderID).First(&order).Error; err != nil {
+                log.Printf("[DOKU] Could not find order for payment log: orderCode=%s err=%v", notif.OrderID, err)
+                return
+        }
+
+        paymentMethod := notif.PaymentType
+        if notif.PaymentChannel != "" {
+                paymentMethod = notif.PaymentChannel
+        }
+
+        rawData := string(rawPayload)
+
+        paymentLog := models.PaymentLog{
+                EventID:        order.EventID,
+                OrderID:        order.ID,
+                OrderCode:      order.OrderCode,
+                TransactionID:  notif.TransactionID,
+                PaymentMethod:  "doku",
+                PaymentChannel: paymentMethod,
+                Amount:         float64(order.TotalAmount),
+                Currency:       "IDR",
+                Status:         notif.Status,
+                RawData:        &rawData,
+        }
+
+        if notif.PaidAt != "" {
+                if paidAt, err := time.Parse(time.RFC3339, notif.PaidAt); err == nil {
+                        paymentLog.PaidAt = &paidAt
+                }
+        }
+
+        if err := db.Create(&paymentLog).Error; err != nil {
+                log.Printf("[DOKU] Failed to create payment log for order %s: %v", order.OrderCode, err)
+        } else {
+                log.Printf("[DOKU] PaymentLog created: orderCode=%s status=%s", order.OrderCode, notif.Status)
+        }
+}
+
+// broadcastPaymentSuccess sends an SSE event when a payment succeeds.
+func broadcastPaymentSuccess(notif *services.DokuNotificationPayload) {
+        if services.Hub != nil {
+                services.Hub.Broadcast("payment_success", fiber.Map{
+                        "orderCode":     notif.OrderID,
+                        "transactionId": notif.TransactionID,
+                        "status":        notif.Status,
+                        "paymentType":   notif.PaymentType,
+                        "amount":        notif.Amount,
+                        "paidAt":        notif.PaidAt,
+                })
+                log.Printf("[DOKU] SSE payment_success broadcast sent for order %s", notif.OrderID)
         }
 }
 

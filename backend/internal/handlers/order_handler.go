@@ -11,8 +11,9 @@ import (
 
 // createOrderRequest is the request body for creating an order.
 type createOrderRequest struct {
-        EventID string                   `json:"eventId"`
-        Items   []services.OrderItemInput `json:"items"`
+        EventID    string                   `json:"eventId"`
+        Items      []services.OrderItemInput `json:"items"`
+        CouponCode *string                  `json:"couponCode,omitempty"`
 }
 
 // CreateOrder handles POST /api/v1/orders
@@ -52,8 +53,16 @@ func CreateOrder(db *gorm.DB) fiber.Handler {
                         }
                 }
 
+                // Create order with coupon support
                 orderService := services.NewOrderService(db)
-                order, err := orderService.CreateOrder(userID, req.EventID, req.Items)
+
+                // couponCode and category for coupon validation
+                var couponCode *string
+                if req.CouponCode != nil && *req.CouponCode != "" {
+                        couponCode = req.CouponCode
+                }
+
+                order, err := orderService.CreateOrderWithCoupon(userID, req.EventID, req.Items, couponCode)
                 if err != nil {
                         return response.BadRequest(c, err.Error())
                 }

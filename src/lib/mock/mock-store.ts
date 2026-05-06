@@ -569,7 +569,7 @@ export const useMockStore = create<MockState>((set, get) => ({
 
     const orderCode = `SHL-JKT-${Math.random().toString(36).slice(2, 10).toUpperCase()}`
 
-    let totalAmount = 0
+    let subTotal = 0
     const items: IOrderItem[] = []
     const tickets: ITicket[] = []
 
@@ -579,7 +579,7 @@ export const useMockStore = create<MockState>((set, get) => ({
       if (tt.sold + item.quantity > tt.quota) continue
 
       const subtotal = tt.price * item.quantity
-      totalAmount += subtotal
+      subTotal += subtotal
 
       const orderItemId = generateId('orderitem')
 
@@ -620,6 +620,38 @@ export const useMockStore = create<MockState>((set, get) => ({
       }
     }
 
+    // Calculate fees and tax
+    const adminFee = Math.round(subTotal * 0.02) // 2% platform fee
+    const taxAmount = Math.round(subTotal * 0.11) // 11% PPN
+
+    // Calculate coupon discount if provided
+    let discountAmount = 0
+    let couponId: string | undefined
+    if (data.couponCode) {
+      const coupon = state.coupons.find(c => c.code.toUpperCase() === data.couponCode!.toUpperCase())
+      if (coupon && coupon.status === 'active') {
+        couponId = coupon.id
+        if (coupon.discountType === 'percentage') {
+          discountAmount = Math.round(subTotal * coupon.discountValue / 100)
+          if (coupon.maxDiscount && discountAmount > coupon.maxDiscount) {
+            discountAmount = coupon.maxDiscount
+          }
+        } else {
+          discountAmount = coupon.discountValue
+        }
+        // Don't exceed subtotal
+        discountAmount = Math.min(discountAmount, subTotal)
+      }
+    }
+
+    // Use provided values if available, otherwise use calculated
+    const finalSubTotal = data.subTotal ?? subTotal
+    const finalAdminFee = data.adminFee ?? adminFee
+    const finalTaxAmount = data.taxAmount ?? taxAmount
+    const finalDiscountAmount = data.discountAmount ?? discountAmount
+
+    const totalAmount = Math.max(0, finalSubTotal + finalAdminFee + finalTaxAmount - finalDiscountAmount)
+
     const orderId = generateId('order')
     const finalItems = items.map((item) => ({ ...item, orderId }))
     const finalTickets = tickets.map((t) => ({ ...t, orderId }))
@@ -631,6 +663,11 @@ export const useMockStore = create<MockState>((set, get) => ({
       userId: 'user-participant',
       eventId: data.eventId,
       totalAmount,
+      subTotal: finalSubTotal,
+      adminFee: finalAdminFee,
+      taxAmount: finalTaxAmount,
+      discountAmount: finalDiscountAmount,
+      couponId,
       status: 'pending',
       expiresAt,
       items: finalItems,
@@ -639,7 +676,30 @@ export const useMockStore = create<MockState>((set, get) => ({
       updatedAt: now,
     }
 
-    set({ orders: [...state.orders, order], tickets: [...state.tickets, ...finalTickets], ticketTypes: [...state.ticketTypes] })
+    // If coupon was applied, record usage
+    if (data.couponCode && couponId && discountAmount > 0) {
+      const couponUsage: ICouponUsage = {
+        id: generateId('couponusage'),
+        couponId,
+        userId: 'user-participant',
+        orderId,
+        discountAmount: finalDiscountAmount,
+        createdAt: now,
+      }
+      // Increment coupon usedCount
+      const updatedCoupons = state.coupons.map(c =>
+        c.id === couponId ? { ...c, usedCount: c.usedCount + 1 } : c
+      )
+      set({
+        orders: [...state.orders, order],
+        tickets: [...state.tickets, ...finalTickets],
+        ticketTypes: [...state.ticketTypes],
+        coupons: updatedCoupons,
+        couponUsages: [...state.couponUsages, couponUsage],
+      })
+    } else {
+      set({ orders: [...state.orders, order], tickets: [...state.tickets, ...finalTickets], ticketTypes: [...state.ticketTypes] })
+    }
     notifyStateChange()
     return order
   },

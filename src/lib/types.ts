@@ -112,6 +112,11 @@ export interface IOrder {
   userId: string
   eventId: string
   totalAmount: number
+  subTotal?: number
+  adminFee?: number
+  taxAmount?: number
+  discountAmount?: number
+  couponId?: string
   status: OrderStatus
   paymentMethod?: string
   paymentType?: string
@@ -506,6 +511,11 @@ export interface IPaymentLog {
 export interface ICreateOrderRequest {
   eventId: string
   items: ICreateOrderItem[]
+  couponCode?: string
+  subTotal?: number
+  adminFee?: number
+  taxAmount?: number
+  discountAmount?: number
 }
 
 export interface ICreateOrderItem {
@@ -547,6 +557,15 @@ export interface IPaymentStatus {
   paymentChannel?: string
   paidAt?: string
   dokuTransactionId?: string
+}
+
+// ─── COUPON VALIDATION ─────────────────────────────────────────────────────
+
+export interface CouponValidationResult {
+  valid: boolean
+  discountAmount: number
+  message?: string
+  coupon?: ICoupon
 }
 
 // ─── PAGINATION ────────────────────────────────────────────────────────────

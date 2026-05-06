@@ -111,7 +111,7 @@ const FALLBACK_TICKET_TYPES = [
     sold: 247,
     tier: 'floor' as const,
     emoji: '👑',
-    platformFee: 5,
+    platformFee: 2,
     benefits: [
       'Standing paling depan (barrier VVIP)',
       'Welcome drink + F&B gratis sepuasnya',
@@ -132,7 +132,7 @@ const FALLBACK_TICKET_TYPES = [
     sold: 412,
     tier: 'floor' as const,
     emoji: '⭐',
-    platformFee: 5,
+    platformFee: 2,
     benefits: [
       'Standing zone VIP (di belakang VVIP)',
       'Dedicated bar & food stall',
@@ -150,7 +150,7 @@ const FALLBACK_TICKET_TYPES = [
     sold: 2150,
     tier: 'floor' as const,
     emoji: '🎵',
-    platformFee: 5,
+    platformFee: 2,
     benefits: [
       'General admission standing area',
       'Bebas pilih posisi dalam area festival',
@@ -166,7 +166,7 @@ const FALLBACK_TICKET_TYPES = [
     sold: 1780,
     tier: 'tribun' as const,
     emoji: '🎟️',
-    platformFee: 5,
+    platformFee: 2,
     benefits: [
       'Kursi bernomor (assigned seating)',
       'Tribun bawah kiri — view premium',
@@ -183,7 +183,7 @@ const FALLBACK_TICKET_TYPES = [
     sold: 2410,
     tier: 'tribun' as const,
     emoji: '🎫',
-    platformFee: 5,
+    platformFee: 2,
     benefits: [
       'Kursi bernomor (assigned seating)',
       'Tribun tengah kiri — view baik',
@@ -199,7 +199,7 @@ const FALLBACK_TICKET_TYPES = [
     sold: 1950,
     tier: 'tribun' as const,
     emoji: '🎫',
-    platformFee: 5,
+    platformFee: 2,
     benefits: [
       'Kursi bernomor (assigned seating)',
       'Tribun tengah kanan — view baik',
@@ -215,7 +215,7 @@ const FALLBACK_TICKET_TYPES = [
     sold: 2680,
     tier: 'tribun' as const,
     emoji: '🎟️',
-    platformFee: 5,
+    platformFee: 2,
     benefits: [
       'Kursi bernomor (assigned seating)',
       'Tribun atas kanan',
@@ -231,7 +231,7 @@ const FALLBACK_TICKET_TYPES = [
     sold: 1520,
     tier: 'tribun' as const,
     emoji: '🎟️',
-    platformFee: 5,
+    platformFee: 2,
     benefits: [
       'Kursi bernomor (assigned seating)',
       'Tribun ujung belakang',
@@ -247,7 +247,7 @@ const FALLBACK_TICKET_TYPES = [
     sold: 890,
     tier: 'tribun' as const,
     emoji: '🎫',
-    platformFee: 5,
+    platformFee: 2,
     benefits: [
       'Kursi bernomor (assigned seating)',
       'Tribun belakang',

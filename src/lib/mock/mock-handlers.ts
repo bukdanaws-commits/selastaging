@@ -951,14 +951,62 @@ export async function handleMockRequest<T = unknown>(request: MockRequest): Prom
     await mockDelay()
     const b = body as Record<string, unknown>
     const user = getCurrentUser()
-    const result = useMockStore.getState().applyCoupon(
-      String(b.code || ''),
-      user?.id || '',
-      String(b.orderId || ''),
-      Number(b.subtotal || 0),
-      b.category ? String(b.category) : undefined,
-    )
-    return result as T
+    const store = useMockStore.getState()
+    const code = String(b.code || '').toUpperCase()
+    const subtotal = Number(b.subtotal || 0)
+
+    // Find coupon
+    const coupon = store.coupons.find(c => c.code.toUpperCase() === code)
+
+    if (!coupon) {
+      return { valid: false, discountAmount: 0, message: 'Kupon tidak ditemukan' } as T
+    }
+
+    // Check status
+    if (coupon.status !== 'active') {
+      return { valid: false, discountAmount: 0, message: 'Kupon sudah tidak aktif' } as T
+    }
+
+    // Check date range
+    const now = new Date()
+    const startsAt = new Date(coupon.startsAt)
+    const expiresAt = new Date(coupon.expiresAt)
+    if (now < startsAt) {
+      return { valid: false, discountAmount: 0, message: 'Kupon belum berlaku' } as T
+    }
+    if (now > expiresAt) {
+      return { valid: false, discountAmount: 0, message: 'Kupon sudah kadaluarsa' } as T
+    }
+
+    // Check total usage limit
+    if (coupon.usedCount >= coupon.usageLimit) {
+      return { valid: false, discountAmount: 0, message: 'Kupon sudah mencapai batas penggunaan' } as T
+    }
+
+    // Check per-user usage limit
+    if (user) {
+      const userUsageCount = store.couponUsages.filter(
+        u => u.couponId === coupon.id && u.userId === user.id
+      ).length
+      if (userUsageCount >= coupon.usageLimitPerUser) {
+        return { valid: false, discountAmount: 0, message: 'Anda sudah menggunakan kupon ini' } as T
+      }
+    }
+
+    // Calculate discount
+    let discountAmt = 0
+    if (coupon.discountType === 'percentage') {
+      discountAmt = Math.round(subtotal * coupon.discountValue / 100)
+      if (coupon.maxDiscount && discountAmt > coupon.maxDiscount) {
+        discountAmt = coupon.maxDiscount
+      }
+    } else {
+      discountAmt = coupon.discountValue
+    }
+    // Don't exceed subtotal
+    discountAmt = Math.min(discountAmt, subtotal)
+
+    return { valid: true, discountAmount: discountAmt, coupon } as T
   }
 
   // ─── NO MATCH FOUND ─────────────────────────────────────────────────────

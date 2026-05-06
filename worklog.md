@@ -295,3 +295,237 @@ Stage Summary:
 - All Midtrans code removed, DOKU is sole payment gateway
 - All builds pass cleanly, zero vet errors
 - Database model field renamed: midtrans_transaction_id → payment_transaction_id
+
+---
+Task ID: 1a
+Agent: Frontend Fee & Coupon Agent
+Task: Update frontend — Platform fee 2%, PPN 11%, Coupon in checkout Step 3
+
+Work Log:
+- Updated types.ts: Added subTotal/adminFee/taxAmount/discountAmount/couponId to IOrder, couponCode/subTotal/adminFee/taxAmount/discountAmount to ICreateOrderRequest, new CouponValidationResult type
+- Updated page.tsx: Changed all 9 FALLBACK_TICKET_TYPES platformFee from 5 to 2
+- Updated mock-data.ts: Changed all 9 TICKET_TYPE_DEFS platformFee from 5 to 2
+- Updated mock-store.ts: Rewrote createOrder to calculate adminFee(2%), taxAmount(11%), discountAmount from coupon, record coupon usage
+- Updated api.ts: Changed couponApi.validateCoupon to accept {code, subtotal, category?}, return CouponValidationResult
+- Updated mock-handlers.ts: Rewrote /api/v1/coupons/validate to calculate discount directly with full validation
+- Rewrote checkout-page.tsx: Added coupon UI in Step 3 with input/apply/remove, full order breakdown (Subtotal + AdminFee 2% + PPN 11% - Discount = Total), async validation with loading state, sonner toast feedback, auto-uppercase input, error/success display
+
+Stage Summary:
+- Platform fee changed from 5% to 2% across all frontend files
+- PPN 11% added to all order calculations
+- Coupon input with "Terapkan" button integrated in checkout Step 3
+- Order summary shows: Subtotal, Biaya Admin (2%), PPN (11%), Kupon discount, TOTAL BAYAR
+- Coupon validation is async with loading state, auto-uppercase, error/success feedback
+- createOrder sends couponCode + fee breakdown to backend/mock
+- Lint passes with zero errors
+- Dev server compiles and runs successfully
+
+---
+Task ID: 1c
+Agent: Backend DOKU Fix & Coupon Integration Agent
+Task: Fix DOKU payment hardcoded amount bug, add discount/coupon fields to Order model, integrate coupon validation into CreateOrder flow, parse categoryConfigs in ValidateCoupon, update DOKU notification handler
+
+Work Log:
+
+### TASK 1: Fix DOKU Payment Amount Bug
+- Verified DokuCreatePayment handler already uses `float64(order.TotalAmount)` from DB lookup (previously fixed by Task 3 agent)
+- No changes needed — handler correctly parses orderId from request, looks up order, uses actual TotalAmount
+
+### TASK 2: Add Discount Fields to Order Model
+- Added 5 fields to Order struct in models.go: SubTotal (float64), AdminFee (float64), TaxAmount (float64), DiscountAmount (float64), CouponID (*string with index)
+- All with gorm:"default:0" for auto-migration compatibility
+
+### TASK 3: Integrate Coupon into CreateOrder
+- Updated order_handler.go: Added CouponCode *string to createOrderRequest, calls CreateOrderWithCoupon
+- Updated order_service.go: Added CreateOrderWithCoupon() method with fee calculation:
+  - subTotal = Σ (pricePerTicket × quantity)
+  - adminFee = subTotal × 0.02 (2% platform fee)
+  - taxAmount = subTotal × 0.11 (11% PPN)
+  - discountAmount from coupon validation (if provided)
+  - totalAmount = subTotal + adminFee + taxAmount - discountAmount
+- CreateOrder() kept as backward-compatible wrapper
+- Coupon validation errors return descriptive messages
+- ApplyCoupon called within same transaction for atomicity
+
+### TASK 4: Parse CategoryConfigs in ValidateCoupon
+- Added CategoryConfig struct (Category, DiscountValue, MinOrder)
+- Updated ValidateCoupon to parse categoryConfigs JSON:
+  - nil/empty → global coupon (applies to all categories)
+  - category provided + configs exist → look up category-specific discountValue and minOrder
+  - category not found in configs → coupon invalid for that category
+  - no category but configs exist → use default discountValue
+
+### TASK 5: Update DOKU Notification Handler
+- Added PaymentLog creation in DokuNotification handler
+- Added SSE broadcast for payment_success events (settlement/capture status)
+- Created createDokuPaymentLog() helper: looks up order by code, creates PaymentLog with all fields
+- Created broadcastPaymentSuccess() helper: uses services.Hub.Broadcast() for real-time updates
+- Both are non-blocking (failures logged but don't affect webhook 200 response)
+
+### Build Verification
+- go build ./cmd/server/ ✅
+- go vet ./... ✅
+
+Stage Summary:
+- Order model extended with 5 new discount/fee fields (auto-migration safe)
+- CreateOrder now calculates full fee breakdown (2% admin + 11% PPN - discount)
+- Coupon validation supports category-specific discounts via categoryConfigs JSON
+- DOKU notification handler creates PaymentLog entries and broadcasts SSE events
+- All existing functionality preserved (CreateOrder backward-compatible)
+- 5 files modified, zero breaking changes, build + vet clean
+
+---
+Task ID: 1b
+Agent: Go Seed Script Agent
+Task: Build comprehensive Go seed script that generates 15,000 tickets with random buyers
+
+Work Log:
+
+### 1. Analyzed existing seed script and models
+- Read cmd/seed/main.go (existing seed with 1 event, 3 counters, 4 gates)
+- Read internal/models/models.go (27 models including Order, Ticket, Redemption, GateLog, PaymentLog, Coupon)
+- Read internal/database/database.go (Connect() with auto-migrate)
+- Read internal/config/config.go (config loading with Viper)
+- Read database/seed-data.sql (reference data: 5 events, 45 ticket types, 15 counters, 20 gates)
+
+### 2. Expanded base seed data from 1 event to 5 events
+- seedAllEvents(): Now seeds all 5 cities (Bandung, Makassar, Medan, Jakarta, Balikpapan) with 2026 dates
+- seedAllTicketTypes(): 9 ticket types per event × 5 events = 45 total, with city-specific pricing from SQL
+- seedAllCounters(): 3 counters per event × 5 events = 15 total
+- seedAllGates(): 4 gates per event × 5 events = 20 total
+- seedAllStaffAssignments(): Rina assigned to Counter A of each event, Bayu to Gate 1 of each event
+- seedAllWristbandInventory(): 9 wristband types per event × 5 events = 45 total
+- seedOrganizer(): Creates Organizer record for Andi Wijaya (needed for coupons)
+
+### 3. Implemented bulk data generation with deterministic RNG
+- Used `rand.New(rand.NewSource(42))` for reproducible output
+- All bulk operations use batches of 500 with `CreateInBatches`
+- Progress logging: "Creating 12000 users... (500/12000)"
+
+### 4. seedBulkUsers — 12,000 PARTICIPANT users
+- Random Indonesian names from 80+ first names and 48 last names
+- Email format: firstname.lastname123@gmail.com with dedup
+- GoogleID format: fake-<uuid-8chars>
+- Also creates TenantUser entries in batches
+
+### 5. seedBulkOrdersAndTickets — ~11,500 orders + ~15,000 tickets
+- Order distribution: Bandung(2000), Makassar(2000), Medan(2200), Jakarta(3000), Balikpapan(2300)
+- Status distribution: 90% paid, 5% pending, 3% cancelled, 2% expired
+- Each order: 1-3 ticket types, qty 1-2 per type (max 3 tickets total)
+- Fee calculation: adminFee=2% subtotal, taxAmount=11% subtotal, totalAmount=subTotal+adminFee+taxAmount
+- Payment methods: VA(40%), E-Wallet(25%), QRIS(20%), CC(10%), CStore(5%)
+- OrderCode: SEL-YYYYMMDD-XXXXX, random order dates within 30 days before event
+- Ticket status: paid→active(80%)/redeemed(20%), pending→pending, cancelled→cancelled, expired→expired
+- TicketCode: TK-XXXXXX (sequential), WristbandCode: WB-{color}-XXXXXX
+- EventTitle and TicketTypeName denormalized on tickets
+- Fixed critical bug: items are saved alongside orders to ensure order amounts match actual items/tickets
+
+### 6. seedBulkRedemptions — ~10,000 redemptions
+- Created for all tickets with status "redeemed"
+- Random counter assignment from same event
+- WristbandColor based on WRISTBAND_COLORS mapping (Gold/Teal/Orange/Merah/Biru/Hijau/Ungu/Putih/Kuning)
+- RedeemedAt: random time between paidAt and event date
+
+### 7. seedBulkGateLogs — ~8,000 gate logs
+- 8,000 random tickets from active/redeemed pool
+- Actions: IN(70%), OUT(25%), denied(5%)
+- Random gate from same event
+- ScannedAt: random time on event day (09:00-16:00 UTC = 16:00-23:00 WIB)
+
+### 8. seedBulkPaymentLogs — ~10,000 payment logs
+- One per paid order (~10,350 paid orders)
+- TransactionId: DOKU format
+- PaymentMethod/Channel matching order's method
+- Status: "success", DokuResponseCode: "00"
+
+### 9. seedCoupons — 3 sample coupons
+- SAHABATDUTA: nominal 50000, global, usageLimit 1000, perUser 1
+- EARLYBIRD50: percentage 10%, maxDiscount 100000, global, usageLimit 500
+- TRENDSHEILA: nominal 75000, scope=event (Jakarta), usageLimit 200
+- All active, valid from now to 30 days from now
+
+### 10. Idempotency
+- Each seed function checks if data already exists before creating
+- Bulk data skips if >1000 participant users with "fake-" prefix exist
+- All base data functions check counts and skip if already seeded
+
+### Build Verification
+- `go build ./cmd/seed/` ✅
+- `go vet ./cmd/seed/` ✅
+- `go build ./cmd/server/` ✅ (server still compiles)
+
+Stage Summary:
+- Go seed script generates comprehensive test data: 12,000 users, ~11,500 orders, ~15,000 tickets, ~10,000 redemptions, ~8,000 gate logs, ~10,000 payment logs, 3 coupons
+- Base data expanded from 1 event to 5 events (matching seed-data.sql structure)
+- Deterministic output via rand.New(rand.NewSource(42))
+- Batch processing (500) with CreateInBatches for performance
+- Full fee calculation: subTotal + adminFee(2%) + taxAmount(11%) - discountAmount(0)
+- Proper data relationships: tickets match order items, redemptions match redeemed tickets
+- Idempotent: re-running the seed skips existing data
+- Build + vet pass cleanly
+---
+Task ID: 1a
+Agent: Frontend Fee & Coupon Agent
+Task: Update fee 2% + PPN 11% + Coupon UI in Frontend
+
+Work Log:
+- Updated platformFee from 5% to 2% in page.tsx FALLBACK_TICKET_TYPES (all 9 types)
+- Updated platformFee from 5% to 2% in mock-data.ts TICKET_TYPE_DEFS
+- Added subTotal, adminFee, taxAmount, discountAmount, couponId to IOrder type
+- Added couponCode to ICreateOrderRequest type
+- Added CouponValidationResult type
+- Added coupon input UI in checkout-page.tsx Step 3 with auto-uppercase, "Terapkan" button, green/red feedback
+- Added fee calculation: adminFee = subTotal × 2%, taxAmount = subTotal × 11%
+- Added discount calculation from coupon result
+- Updated order summary display with Subtotal, Biaya Admin, PPN, Kupon discount, Total
+- Updated mock-store createOrder to handle couponCode and calculate fees
+- Updated mock-handlers coupon validation with full logic
+- Updated couponApi.validateCoupon to return CouponValidationResult
+
+Stage Summary:
+- All 9 ticket types now show 2% platform fee
+- Checkout Step 3 has full coupon input with validation
+- Order calculation: Total = SubTotal + AdminFee(2%) + PPN(11%) - Discount
+- Coupon UI: input → validate → show discount → apply to total
+
+---
+Task ID: 1b
+Agent: Go Seed Script Agent
+Task: Build Go seed script 15K tickets
+
+Work Log:
+- Rewrote cmd/seed/main.go with comprehensive seed generation
+- Base data: 5 events, 45 ticket types, 15 counters, 20 gates
+- Bulk generation: 12K users, 11.5K orders, 15K tickets, 10K redemptions, 8K gate logs, 10K payment logs
+- Fee calculation: adminFee(2%) + taxAmount(11%) on all orders
+- 3 sample coupons: SAHABATDUTA (50K nominal), EARLYBIRD50 (10%), TRENDSHEILA (75K event-scoped)
+- Deterministic with rand.Seed(42), batch processing (500/batch)
+- Build verified: go build and go vet pass cleanly
+
+Stage Summary:
+- ~57,000 total records generated
+- All orders include proper fee breakdown (2% admin + 11% PPN)
+- 3 working coupon codes for testing
+- Script is idempotent (checks before creating)
+
+---
+Task ID: 1c
+Agent: Backend DOKU Fix & Coupon Integration Agent
+Task: Fix DOKU payment amount + Backend coupon integration
+
+Work Log:
+- Added SubTotal, AdminFee, TaxAmount, DiscountAmount, CouponID fields to Order model
+- Created CreateOrderWithCoupon() in order_service.go with full fee calculation
+- Integrated coupon validation + ApplyCoupon into order creation flow
+- Updated ValidateCoupon service to parse categoryConfigs JSON
+- Added CategoryConfig struct with category-specific discount and minOrder
+- Added createDokuPaymentLog() for payment logging on webhook
+- Added broadcastPaymentSuccess() for SSE on successful payment
+- Build verified: go build and go vet pass cleanly
+
+Stage Summary:
+- Order model now tracks all fee components
+- CreateOrder accepts optional couponCode
+- Coupon validation with category-aware logic
+- DOKU notification handler creates payment logs + broadcasts SSE
+- Full calculation: Total = SubTotal + AdminFee(2%) + PPN(11%) - Discount
