@@ -19,6 +19,9 @@ import type {
   IPaymentStatus,
   IPagination,
   CouponValidationResult,
+  IOrganizerFeeConfig,
+  IFeeConfig,
+  ISystemSetting,
 } from './types'
 
 // ─── CONFIG ─────────────────────────────────────────────────────────────────
@@ -110,8 +113,9 @@ export const API = {
     GATE_MANAGE:    '/api/v1/admin/gates',
     GATE_MONITOR:   '/api/v1/admin/gate-monitoring',
     ORGANIZERS:     '/api/v1/admin/organizers',
-    ORGANIZER_FEE:  (id: string) => `/api/v1/admin/organizers/${id}/fee`,
-    ORGANIZER_APPROVE: (id: string) => `/api/v1/admin/organizers/${id}/approve`,
+    ORGANIZER_FEE:         (id: string) => `/api/v1/admin/organizers/${id}/fee`,
+    ORGANIZER_FEE_APPROVE:  (id: string) => `/api/v1/admin/organizers/${id}/fee/approve`,
+    ORGANIZER_APPROVE:      (id: string) => `/api/v1/admin/organizers/${id}/approve`,
     WITHDRAWALS:    '/api/v1/admin/withdrawals',
     WITHDRAWAL_APPROVE: (id: string) => `/api/v1/admin/withdrawals/${id}/approve`,
     WITHDRAWAL_REJECT: (id: string) => `/api/v1/admin/withdrawals/${id}/reject`,
@@ -138,6 +142,17 @@ export const API = {
   // SSE
   SSE: {
     STREAM:        '/api/v1/events/stream',
+  },
+
+  // Fee Config (Public)
+  FEE_CONFIG: '/api/v1/settings/fee-config',
+
+  // Settings (admin CRUD)
+  SETTINGS: {
+    ALL:                  '/api/v1/admin/settings/all',
+    BY_CATEGORY:         (category: string) => `/api/v1/admin/settings/${category}`,
+    UPDATE:              (key: string) => `/api/v1/admin/settings/${key}`,
+    BULK_UPDATE:         '/api/v1/admin/settings/bulk',
   },
 
   // Coupons
@@ -577,8 +592,20 @@ export const adminApi = {
   getOrganizers: (params?: Record<string, string>) =>
     apiFetch<PaginatedData<unknown>>(API.ADMIN.ORGANIZERS, { params }),
 
-  setOrganizerFee: (organizerId: string, fee: number) =>
-    apiFetch<void>(API.ADMIN.ORGANIZER_FEE(organizerId), { method: 'PATCH', body: JSON.stringify({ fee }) }),
+  getOrganizerFee: (organizerId: string) =>
+    apiFetch<{ feeConfig: IOrganizerFeeConfig | null }>(API.ADMIN.ORGANIZER_FEE(organizerId)),
+
+  setOrganizerFee: (organizerId: string, fee: number, isApproved?: boolean) =>
+    apiFetch<IOrganizerFeeConfig>(API.ADMIN.ORGANIZER_FEE(organizerId), {
+      method: 'PATCH',
+      body: JSON.stringify({ fee, ...(isApproved !== undefined ? { isApproved } : {}) }),
+    }),
+
+  approveOrganizerFee: (organizerId: string, isApproved: boolean) =>
+    apiFetch<IOrganizerFeeConfig>(API.ADMIN.ORGANIZER_FEE_APPROVE(organizerId), {
+      method: 'PATCH',
+      body: JSON.stringify({ isApproved }),
+    }),
 
   approveOrganizer: (organizerId: string) =>
     apiFetch<void>(API.ADMIN.ORGANIZER_APPROVE(organizerId), { method: 'PATCH' }),
@@ -665,6 +692,46 @@ export const couponApi = {
       API.COUPONS.VALIDATE,
       { method: 'POST', body: JSON.stringify(data) }
     ),
+}
+
+// ─── FEE CONFIG (Public) ─────────────────────────────────────────────────────
+
+export async function getFeeConfig(): Promise<IFeeConfig> {
+  try {
+    return await apiFetch<IFeeConfig>(API.FEE_CONFIG)
+  } catch {
+    // Return defaults on failure — silently fall back
+    return {
+      ppnPercent: 11,
+      defaultAdminFeePercent: 2,
+      paymentTimeoutMinutes: 30,
+      maxTicketsPerOrder: 5,
+    }
+  }
+}
+
+// Settings (admin CRUD)
+export const settingsApi = {
+  getFeeConfig: () =>
+    apiFetch<IFeeConfig>(API.FEE_CONFIG),
+
+  getAllSettings: () =>
+    apiFetch<Record<string, ISystemSetting[]>>(API.SETTINGS.ALL),
+
+  getSettingsByCategory: (category: string) =>
+    apiFetch<ISystemSetting[]>(API.SETTINGS.BY_CATEGORY(category)),
+
+  updateSetting: (key: string, value: string) =>
+    apiFetch<void>(API.SETTINGS.UPDATE(key), {
+      method: 'PUT',
+      body: JSON.stringify({ value, updatedBy: 1 }),
+    }),
+
+  bulkUpdateSettings: (settings: { key: string; value: string }[]) =>
+    apiFetch<void>(API.SETTINGS.BULK_UPDATE, {
+      method: 'PUT',
+      body: JSON.stringify({ settings, updatedBy: 1 }),
+    }),
 }
 
 // ─── DEFAULT EXPORT ────────────────────────────────────────────────────────

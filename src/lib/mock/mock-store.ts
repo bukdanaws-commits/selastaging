@@ -187,7 +187,8 @@ export interface MockState {
   verifyBankAccount: (accountId: string) => void
 
   // Fee & organizer mutations
-  setOrganizerFee: (organizerId: string, feePercent: number) => void
+  setOrganizerFee: (organizerId: string, feePercent: number, isApproved?: boolean) => void
+  approveOrganizerFee: (organizerId: string, isApproved: boolean) => void
   approveOrganizer: (organizerId: string) => void
 
   // Balance update
@@ -1032,14 +1033,14 @@ export const useMockStore = create<MockState>((set, get) => ({
 
   // ─── FEE & ORGANIZER MUTATIONS ─────────────────────────────────────────
 
-  setOrganizerFee: (organizerId, feePercent) => {
+  setOrganizerFee: (organizerId, feePercent, isApproved) => {
     const state = get()
     const now = new Date().toISOString()
     const existing = state.organizerFeeConfigs.find(f => f.organizerId === organizerId)
     if (existing) {
       set({
         organizerFeeConfigs: state.organizerFeeConfigs.map(f =>
-          f.organizerId === organizerId ? { ...f, feePercent, isApproved: false } : f
+          f.organizerId === organizerId ? { ...f, feePercent, isApproved: isApproved ?? false } : f
         ),
       })
     } else {
@@ -1049,7 +1050,7 @@ export const useMockStore = create<MockState>((set, get) => ({
           organizerId,
           organizerName: organizer?.name || '',
           feePercent,
-          isApproved: false,
+          isApproved: isApproved ?? false,
           createdAt: now,
         }],
       })
@@ -1057,9 +1058,18 @@ export const useMockStore = create<MockState>((set, get) => ({
     notifyStateChange()
   },
 
+  approveOrganizerFee: (organizerId, isApproved) => {
+    const state = get()
+    set({
+      organizerFeeConfigs: state.organizerFeeConfigs.map(f =>
+        f.organizerId === organizerId ? { ...f, isApproved } : f
+      ),
+    })
+    notifyStateChange()
+  },
+
   approveOrganizer: (organizerId) => {
     const state = get()
-    const now = new Date().toISOString()
     set({
       organizerFeeConfigs: state.organizerFeeConfigs.map(f =>
         f.organizerId === organizerId ? { ...f, isApproved: true } : f

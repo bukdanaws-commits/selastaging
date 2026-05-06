@@ -6,6 +6,7 @@ import (
         "time"
 
         "github.com/bukdanaws-commits/seleevent/backend/internal/models"
+        "github.com/bukdanaws-commits/seleevent/backend/internal/services"
         "github.com/bukdanaws-commits/seleevent/backend/pkg/response"
         "github.com/gofiber/fiber/v3"
         "gorm.io/gorm"
@@ -493,6 +494,141 @@ func RejectRefund(db *gorm.DB) fiber.Handler {
                 return response.Success(c, "Refund rejected successfully", fiber.Map{
                         "refundId": refundID,
                         "status":   "rejected",
+                })
+        }
+}
+
+// ─── ADMIN ORGANIZER FEE MANAGEMENT ───────────────────────────────────────
+
+// GetOrganizerFee handles GET /api/v1/admin/organizers/:id/fee
+// Returns the fee config for an organizer, or null if not set.
+func GetOrganizerFee(db *gorm.DB) fiber.Handler {
+        return func(c fiber.Ctx) error {
+                organizerID := c.Params("id")
+                if organizerID == "" {
+                        return response.BadRequest(c, "Organizer ID is required")
+                }
+
+                // Verify organizer exists
+                var organizer models.Organizer
+                if err := db.Where("id = ?", organizerID).First(&organizer).Error; err != nil {
+                        if err == gorm.ErrRecordNotFound {
+                                return response.NotFound(c, "Organizer not found")
+                        }
+                        return response.InternalError(c, "Failed to retrieve organizer")
+                }
+
+                feeConfig, err := services.GetOrganizerFeeConfig(db, organizerID)
+                if err != nil {
+                        return response.InternalError(c, "Failed to retrieve fee config")
+                }
+
+                return response.OK(c, fiber.Map{
+                        "feeConfig": feeConfig, // nil if not set
+                })
+        }
+}
+
+// SetOrganizerFee handles PATCH /api/v1/admin/organizers/:id/fee
+// Creates or updates the fee config for an organizer.
+// Accepts both { fee } (from FE) and { feePercent, isApproved } (from spec).
+func SetOrganizerFee(db *gorm.DB) fiber.Handler {
+        return func(c fiber.Ctx) error {
+                organizerID := c.Params("id")
+                if organizerID == "" {
+                        return response.BadRequest(c, "Organizer ID is required")
+                }
+
+                // Verify organizer exists
+                var organizer models.Organizer
+                if err := db.Where("id = ?", organizerID).First(&organizer).Error; err != nil {
+                        if err == gorm.ErrRecordNotFound {
+                                return response.NotFound(c, "Organizer not found")
+                        }
+                        return response.InternalError(c, "Failed to retrieve organizer")
+                }
+
+                type setFeeReq struct {
+                        FeePercent *float64 `json:"feePercent"` // spec name
+                        Fee        *float64 `json:"fee"`        // FE sends this
+                        IsApproved *bool    `json:"isApproved"`
+                }
+
+                var req setFeeReq
+                if err := c.Bind().Body(&req); err != nil {
+                        return response.BadRequest(c, "Invalid request body")
+                }
+
+                // Resolve feePercent: support both "feePercent" and "fee" field names
+                var feePercent float64
+                if req.FeePercent != nil {
+                        feePercent = *req.FeePercent
+                } else if req.Fee != nil {
+                        feePercent = *req.Fee
+                } else {
+                        return response.BadRequest(c, "feePercent or fee is required")
+                }
+
+                if feePercent < 0 || feePercent > 100 {
+                        return response.BadRequest(c, "feePercent must be between 0 and 100")
+                }
+
+                // Default isApproved to false if not specified
+                isApproved := false
+                if req.IsApproved != nil {
+                        isApproved = *req.IsApproved
+                }
+
+                feeConfig, err := services.SetOrganizerFeeConfig(db, organizerID, feePercent, isApproved)
+                if err != nil {
+                        return response.InternalError(c, "Failed to set organizer fee config")
+                }
+
+                return response.Success(c, "Organizer fee updated successfully", fiber.Map{
+                        "feeConfig": feeConfig,
+                })
+        }
+}
+
+// ApproveOrganizerFee handles PATCH /api/v1/admin/organizers/:id/fee/approve
+// Approves or rejects an organizer's fee config.
+func ApproveOrganizerFee(db *gorm.DB) fiber.Handler {
+        return func(c fiber.Ctx) error {
+                organizerID := c.Params("id")
+                if organizerID == "" {
+                        return response.BadRequest(c, "Organizer ID is required")
+                }
+
+                // Verify organizer exists
+                var organizer models.Organizer
+                if err := db.Where("id = ?", organizerID).First(&organizer).Error; err != nil {
+                        if err == gorm.ErrRecordNotFound {
+                                return response.NotFound(c, "Organizer not found")
+                        }
+                        return response.InternalError(c, "Failed to retrieve organizer")
+                }
+
+                type approveFeeReq struct {
+                        IsApproved bool `json:"isApproved"`
+                }
+
+                var req approveFeeReq
+                if err := c.Bind().Body(&req); err != nil {
+                        return response.BadRequest(c, "Invalid request body")
+                }
+
+                feeConfig, err := services.ApproveOrganizerFee(db, organizerID, req.IsApproved)
+                if err != nil {
+                        return response.InternalError(c, "Failed to update fee approval status")
+                }
+
+                action := "approved"
+                if !req.IsApproved {
+                        action = "rejected"
+                }
+
+                return response.Success(c, fmt.Sprintf("Organizer fee %s successfully", action), fiber.Map{
+                        "feeConfig": feeConfig,
                 })
         }
 }

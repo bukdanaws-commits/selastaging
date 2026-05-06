@@ -665,7 +665,58 @@ Stage Summary:
 
 ---
 Task ID: 2a
-Agent: Frontend Fix & CouponPage API Agent
+Agent: Frontend SettingsPage Agent
+Task: Update SettingsPage to save PPN & admin fee via API (real persistence instead of fake toast)
+
+Work Log:
+
+### 1. Added Types (types.ts)
+- Added `ISystemSetting` interface: id, key, value, label, category, updatedBy, createdAt, updatedAt
+- Added `IFeeConfig` interface: ppnPercent, defaultAdminFeePercent, paymentTimeoutMinutes, maxTicketsPerOrder
+
+### 2. Added API Endpoints & Functions (api.ts)
+- Added `ISystemSetting` import
+- Added `API.SETTINGS` endpoint constants: ALL, BY_CATEGORY(category), UPDATE(key), BULK_UPDATE
+- Added `settingsApi` object with 5 typed methods:
+  - `getFeeConfig()` → GET /api/v1/settings/fee-config (public)
+  - `getAllSettings()` → GET /api/v1/admin/settings/all (admin, grouped by category)
+  - `getSettingsByCategory(category)` → GET /api/v1/admin/settings/:category
+  - `updateSetting(key, value)` → PUT /api/v1/admin/settings/:key
+  - `bulkUpdateSettings(settings[])` → PUT /api/v1/admin/settings/bulk
+
+### 3. Added Mock Handlers (mock-handlers.ts)
+- Added in-memory `mockSettingsStore` with 14 settings (ppn_percent, default_admin_fee_percent, payment_timeout_minutes, max_tickets_per_order, etc.)
+- Added `settingLabels` and `settingCategories` maps for grouping
+- Added handlers for 5 settings endpoints:
+  - GET /api/v1/settings/fee-config → returns IFeeConfig-shaped response
+  - GET /api/v1/admin/settings/all → returns grouped settings by category
+  - GET /api/v1/admin/settings/:category → returns settings for a category
+  - PUT /api/v1/admin/settings/:key → updates single setting in mock store
+  - PUT /api/v1/admin/settings/bulk → bulk updates settings in mock store
+
+### 4. Rewrote SettingsPage.tsx
+- **Checkout & Fee tab**: Replaced fake toast save with real API persistence
+  - Loads PPN %, Admin Fee %, Payment Timeout, Max Tickets per Order from `settingsApi.getFeeConfig()` on mount
+  - Shows loading skeleton while fetching
+  - Editable fields with validation (PPN 0-100%, Admin Fee 0-100%, timeout > 0, max tickets > 0)
+  - Quick-select buttons for admin fee (1%, 2%, 3%, 5%, 7%, 10%)
+  - Save button calls `settingsApi.bulkUpdateSettings()` with spinner + success/error toast
+  - Reset button reverts to original API values
+  - Checkout Pricing Preview with live calculation using current PPN and admin fee values
+- **Global Config tab**: Also updated to save via API
+  - Loads from `settingsApi.getAllSettings()` on mount
+  - Maps checkout/global category settings to local state
+  - Save button calls `settingsApi.bulkUpdateSettings()` with spinner + toast
+  - Loading skeleton, validation, reset support
+
+Stage Summary:
+- SettingsPage no longer uses fake toasts — all saves go through real API (or mock handlers)
+- ISystemSetting + IFeeConfig types added to types.ts
+- settingsApi with 5 typed methods added to api.ts
+- Mock handlers for all 5 settings endpoints ensure full functionality in mock mode
+- Both "Checkout & Fee" and "Global Config" tabs persist settings via API
+- Loading skeletons, input validation, save spinners, success/error toasts
+- Lint clean, dev server running without errors
 Task: Connect CouponPage to real API, fix TypeScript errors, ensure imports/exports consistent
 
 Work Log:
@@ -783,3 +834,143 @@ Stage Summary:
 - DOKU create-payment uses actual order total (not hardcoded)
 - Environment properly configured for mock mode (default) and real backend (when Go available)
 - Auth flow: 401 → clear tokens → redirect to home
+
+---
+Task ID: 1b
+Agent: Backend Organizer Fee Route Agent
+Task: Add PATCH /admin/organizers/:id/fee route with approval workflow
+
+Work Log:
+- Read worklog.md and all existing code (models.go, routes.go, organizer_service.go, admin_extended_handler.go, response.go, frontend api.ts/mock-handlers.ts/OrganizersPage.tsx)
+- Identified OrganizerFeeConfig model already exists with OrganizerID (uniqueIndex), OrganizerName, FeePercent, IsApproved fields
+- Identified existing route structure: admin group with JWT auth + role middleware
+- Identified frontend sends `{ fee }` in PATCH body (not `feePercent`), so handler must accept both field names
+- Added 3 service methods to organizer_service.go:
+  - GetOrganizerFeeConfig(db, organizerID) — returns nil if not found (not error)
+  - SetOrganizerFeeConfig(db, organizerID, feePercent, isApproved) — creates or updates, resolves organizer name from User table
+  - ApproveOrganizerFee(db, organizerID, isApproved) — updates approval status, creates default config if not exists
+- Added 3 handler functions to admin_extended_handler.go:
+  - GetOrganizerFee — GET /api/v1/admin/organizers/:id/fee → { feeConfig: ... | null }
+  - SetOrganizerFee — PATCH /api/v1/admin/organizers/:id/fee → accepts both { fee } and { feePercent, isApproved }, validates range 0-100, defaults isApproved=false
+  - ApproveOrganizerFee — PATCH /api/v1/admin/organizers/:id/fee/approve → accepts { isApproved: bool }
+- Added services import to admin_extended_handler.go
+- Added 3 routes to routes.go under admin group:
+  - admin.Get("/organizers/:id/fee", handlers.GetOrganizerFee(db))
+  - admin.Patch("/organizers/:id/fee", handlers.SetOrganizerFee(db))
+  - admin.Patch("/organizers/:id/fee/approve", handlers.ApproveOrganizerFee(db))
+- Build verified: go build ./cmd/server/ ✅, go vet ./... ✅
+
+Stage Summary:
+- 3 new admin fee management routes implemented with full approval workflow
+- PATCH /admin/organizers/:id/fee supports both FE format ({ fee }) and spec format ({ feePercent, isApproved })
+- GET /admin/organizers/:id/fee returns fee config or null
+- PATCH /admin/organizers/:id/fee/approve sets isApproved flag
+- All handlers validate organizer existence, return proper error responses
+- Fee percent validation: 0-100 range
+- Default isApproved=false when setting fee (requires separate approval step)
+- Code compiles cleanly, zero vet errors
+
+---
+Task ID: 1a
+Agent: Backend SystemSettings Agent
+Task: Add SystemSettings model + Fee Config APIs + Update order_service to read dynamic fees
+
+Work Log:
+- Read worklog.md and all existing backend files (models.go, routes.go, order_service.go, order_handler.go, main.go, admin_handler.go, go.mod)
+- Added SystemSettings model to models.go with fields: ID (uint), Key (uniqueIndex), Value (text), Label, Category (indexed), UpdatedBy, CreatedAt, UpdatedAt
+- Added SystemSettings to AllModels() array (now 29 models total)
+- Created services/settings_service.go with:
+  - Package-level settings cache (settingsCache map + RWMutex for thread safety)
+  - DefaultSettings map defining 4 defaults: ppn_percent (11), default_admin_fee_percent (2), payment_timeout_minutes (30), max_tickets_per_order (5)
+  - DefaultSettingsService global instance (similar to services.Hub pattern)
+  - SettingsService struct with methods: SeedDefaults(), RefreshCache(), Get(), GetFloat(), GetInt(), GetAll(), GetByCategory(), Update()
+  - Convenience methods: GetPPNPercent(), GetDefaultAdminFeePercent(), GetPaymentTimeoutMinutes(), GetMaxTicketsPerOrder()
+- Created handlers/settings_handler.go with Fiber v3 patterns:
+  - SettingsHandler struct with settingsService dependency
+  - GetPublicFeeConfig: GET /api/v1/settings/fee-config (no auth, for checkout page)
+  - GetAllSettings: GET /api/v1/admin/settings/all (admin only)
+  - GetSettingsByCategory: GET /api/v1/admin/settings/:category (admin only)
+  - UpdateSetting: PUT /api/v1/admin/settings/:key (admin only, with validation)
+  - BulkUpdateSettings: PUT /api/v1/admin/settings/bulk (admin only, with validation)
+  - Input validation: percentage settings 0-100, integer settings must be positive
+- Updated routes.go:
+  - Initialize SettingsService and seed defaults at Setup() start
+  - Set services.DefaultSettingsService global
+  - Create SettingsHandler instance
+  - Public route: GET /api/v1/settings/fee-config
+  - Admin routes under /admin/settings: GET /all, GET /:category, PUT /bulk, PUT /:key
+  - PUT /bulk registered before /:key to avoid route conflicts
+- Updated order_service.go CreateOrderWithCoupon():
+  - Replaced hardcoded adminFee (0.02) and taxAmount (0.11) with dynamic fee reading
+  - Logic: Check OrganizerFeeConfig (if organizer exists and has approved fee config) → use that fee percent
+  - Fallback: Use DefaultSettingsService.GetDefaultAdminFeePercent() for admin fee
+  - PPN: Use DefaultSettingsService.GetPPNPercent()
+  - Safe fallback: If DefaultSettingsService is nil (e.g., in tests), defaults to 2% admin / 11% PPN
+  - Existing orders never affected (fees stored in Order.SubTotal, Order.AdminFee, Order.TaxAmount at creation time)
+- No changes needed to main.go (SettingsService initialized in routes.Setup)
+- Build verified: go build ./cmd/server/ ✅, go vet ./... ✅, go build ./cmd/seed/ ✅
+
+Stage Summary:
+- SystemSettings model added (key-value store with category grouping)
+- 5 new API endpoints: 1 public (fee-config), 4 admin (CRUD for settings)
+- Settings auto-seeded on server start with 4 defaults (PPN 11%, admin fee 2%, payment timeout 30min, max tickets 5)
+- In-memory cache with RWMutex for fast reads, auto-refreshed on updates
+- Order creation now reads fees dynamically from SystemSettings
+- OrganizerFeeConfig takes precedence over system default when approved
+- Existing orders unaffected (fees stored at creation time, never recalculated)
+- Build + vet pass cleanly, zero breaking changes
+
+---
+Task ID: 2c
+Agent: Frontend Checkout Dynamic Fees Agent
+Task: Update checkout-page to fetch fee settings dynamically from API
+
+Work Log:
+- Added `IFeeConfig` interface to `types.ts` with ppnPercent, defaultAdminFeePercent, paymentTimeoutMinutes, maxTicketsPerOrder fields
+- Added `API.FEE_CONFIG` endpoint constant (`/api/v1/settings/fee-config`) to `api.ts`
+- Added `getFeeConfig()` async function to `api.ts` that calls the API and silently falls back to defaults (2% admin, 11% PPN, 30min timeout, 5 max tickets) on failure
+- Added `useFeeConfig()` React Query hook in `use-api.ts` with 5-minute staleTime and placeholderData for instant default values
+- Added `queryKeys.feeConfig.current()` to query key factory
+- Updated `checkout-page.tsx`: Replaced hardcoded `PLATFORM_FEE_PERCENT = 2` and `PPN_PERCENT = 11` constants with dynamic values from `useFeeConfig()` hook, falling back to defaults. Updated useMemo dependencies to include the dynamic percentages.
+- Updated `payment-page.tsx`: Added `adminFeePercent` and `ppnPercent` calculated from stored order values (adminFee/subTotal * 100, taxAmount/subTotal * 100) instead of hardcoded "2%" and "11%" labels
+- Updated `eticket-page.tsx`: Same approach — calculate percentages from stored order fee values for display
+- Updated `payment-status-page.tsx`: Same approach — calculate percentages from stored order fee values for display
+- Added mock handler for `GET /api/v1/settings/fee-config` in `mock-handlers.ts` returning default fee config values
+- Lint passes with zero errors, dev server compiles and runs successfully
+
+Stage Summary:
+- Fee config is now fetched dynamically from `/api/v1/settings/fee-config` API on checkout page mount
+- Checkout page uses `useFeeConfig()` hook — falls back to 2% admin + 11% PPN if API fails
+- Payment, e-ticket, and payment-status pages calculate fee percentages from stored order data (adminFee/subTotal, taxAmount/subTotal) for accurate display
+- Mock handler added for fee config endpoint — returns { ppnPercent: 11, defaultAdminFeePercent: 2, paymentTimeoutMinutes: 30, maxTicketsPerOrder: 5 }
+- Fee amounts stored in orders (adminFee, taxAmount) never change after creation — only new orders use updated fee configs
+- All 4 affected pages now show dynamic percentages instead of hardcoded "2%" and "11%"
+
+---
+Task ID: 2b
+Agent: Frontend OrganizersPage Agent
+Task: Update OrganizersPage fee approval workflow
+
+Work Log:
+- Read existing files: OrganizersPage.tsx, api.ts, types.ts, use-api.ts, mock-store.ts, mock-handlers.ts
+- Updated api.ts: Added ORGANIZER_FEE_APPROVE route, IOrganizerFeeConfig import, getOrganizerFee(), setOrganizerFee() with isApproved param, approveOrganizerFee() methods
+- Updated use-api.ts: Added useApproveOrganizerFee() hook, updated useSetOrganizerFee() to accept isApproved param
+- Updated mock-store.ts: Added approveOrganizerFee() method, updated setOrganizerFee() to accept optional isApproved param
+- Updated mock-handlers.ts: Added GET /api/v1/admin/organizers/:id/fee handler, PATCH /api/v1/admin/organizers/:id/fee/approve handler, updated PATCH fee handler to support isApproved and return feeConfig
+- Rewrote OrganizersPage.tsx with comprehensive fee management UI:
+  - Fee column with color-coded badges (green ✓ approved, yellow ⏳ pending, gray not set)
+  - FeeApproveButtons component with green Approve and red Reject buttons for pending fees
+  - Enhanced SetFeeDialog with fee percent input (0-100), "Approve immediately" toggle switch, fee history info card
+  - Fee filter dropdown (All / Approved / Pending / Not Set) in the filter bar
+  - Added "Pending Fee Approval" stat card
+  - OrganizerDetailDialog shows fee configuration details including approval status and creation date
+  - Proper loading states and toast notifications for all actions
+
+Stage Summary:
+- OrganizersPage now has full fee management with approval workflow
+- Fee badges: green "2% ✓" (approved), yellow "2% ⏳ Pending" (pending), gray "Not Set"
+- Set Fee dialog: fee percent input + "Approve immediately" toggle + current fee info
+- Approve/Reject buttons shown inline for pending fees
+- Fee filter added to filter bar (All/Approved/Pending/Not Set)
+- Mock backend supports all fee endpoints (GET fee, PATCH fee, PATCH fee/approve)
+- Lint passes with zero errors

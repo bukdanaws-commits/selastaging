@@ -107,9 +107,35 @@ func (s *OrderService) CreateOrderWithCoupon(userID string, eventID string, item
                 })
         }
 
-        // Calculate fees
-        adminFee := math.Round(subTotal*0.02*100) / 100   // 2% platform fee
-        taxAmount := math.Round(subTotal*0.11*100) / 100  // 11% PPN
+        // Calculate fees dynamically from SystemSettings
+        var adminFeePercent float64
+        if DefaultSettingsService != nil {
+                // Check OrganizerFeeConfig first for the event's organizer
+                var eventOrganizer models.Organizer
+                if err := s.DB.Where("id = ?", event.OrganizerID).First(&eventOrganizer).Error; err == nil {
+                        var feeConfig models.OrganizerFeeConfig
+                        if err := s.DB.Where("organizer_id = ? AND is_approved = ?", eventOrganizer.ID, true).First(&feeConfig).Error; err == nil {
+                                adminFeePercent = feeConfig.FeePercent
+                        }
+                }
+                // Fallback to system default if no approved organizer fee config
+                if adminFeePercent == 0 {
+                        adminFeePercent = DefaultSettingsService.GetDefaultAdminFeePercent()
+                }
+        } else {
+                // Fallback if settings service not initialized
+                adminFeePercent = 2.0
+        }
+
+        var ppnPercent float64
+        if DefaultSettingsService != nil {
+                ppnPercent = DefaultSettingsService.GetPPNPercent()
+        } else {
+                ppnPercent = 11.0
+        }
+
+        adminFee := math.Round(subTotal*adminFeePercent/100*100) / 100
+        taxAmount := math.Round(subTotal*ppnPercent/100*100) / 100
 
         // Validate and apply coupon if provided
         var discountAmount float64

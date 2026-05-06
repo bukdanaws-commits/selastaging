@@ -36,16 +36,16 @@ import type { IOrder, IOrderItem, ITicketType, IEvent, CouponValidationResult } 
 import { useAuthStore } from "@/lib/auth-store";
 import { usePageStore } from "@/lib/page-store";
 import { useToast } from "@/hooks/use-toast";
-import { useCreateOrder, useTicketTypes, useEvent } from "@/hooks/use-api";
+import { useCreateOrder, useTicketTypes, useEvent, useFeeConfig } from "@/hooks/use-api";
 import { couponApi } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { toast as sonnerToast } from "sonner";
 
 const STEPS = ["Pilih Tiket", "Data Peserta", "Konfirmasi & Bayar"];
 
-// ─── Fee & Tax constants ──────────────────────────────────────────
-const PLATFORM_FEE_PERCENT = 2; // 2% admin fee
-const PPN_PERCENT = 11; // 11% PPN
+// ─── Default fee percentages (fallback) ──────────────────────────
+const DEFAULT_PLATFORM_FEE_PERCENT = 2;
+const DEFAULT_PPN_PERCENT = 11;
 
 // ─── Fallback event slug ──────────────────────────────────────────
 const EVENT_SLUG = "sheila-on7-jakarta";
@@ -102,6 +102,11 @@ export default function CheckoutPage() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // ─── Fetch fee config dynamically ────────────────────────────
+  const { data: feeConfig, isLoading: feeConfigLoading } = useFeeConfig();
+  const PLATFORM_FEE_PERCENT = feeConfig?.defaultAdminFeePercent ?? DEFAULT_PLATFORM_FEE_PERCENT;
+  const PPN_PERCENT = feeConfig?.ppnPercent ?? DEFAULT_PPN_PERCENT;
+
   // ─── Coupon state ────────────────────────────────────────────
   const [couponCode, setCouponCode] = useState("");
   const [couponResult, setCouponResult] = useState<CouponValidationResult | null>(null);
@@ -136,12 +141,12 @@ export default function CheckoutPage() {
 
   const adminFee = useMemo(
     () => Math.round(subTotal * PLATFORM_FEE_PERCENT / 100),
-    [subTotal]
+    [subTotal, PLATFORM_FEE_PERCENT]
   );
 
   const taxAmount = useMemo(
     () => Math.round(subTotal * PPN_PERCENT / 100),
-    [subTotal]
+    [subTotal, PPN_PERCENT]
   );
 
   const discountAmount = useMemo(

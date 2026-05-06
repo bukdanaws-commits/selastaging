@@ -559,6 +559,15 @@ export interface IPaymentStatus {
   dokuTransactionId?: string
 }
 
+// ─── FEE CONFIG (Public) ────────────────────────────────────────────────────
+
+export interface IFeeConfig {
+  ppnPercent: number
+  defaultAdminFeePercent: number
+  paymentTimeoutMinutes: number
+  maxTicketsPerOrder: number
+}
+
 // ─── COUPON VALIDATION ─────────────────────────────────────────────────────
 
 export interface CouponValidationResult {
@@ -589,6 +598,26 @@ export interface ISSEEvent {
   data: unknown
   id: string
   timestamp: string
+}
+
+// ─── SYSTEM SETTINGS ───────────────────────────────────────────────────────
+
+export interface ISystemSetting {
+  id: number
+  key: string
+  value: string
+  label: string
+  category: string
+  updatedBy: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface IFeeConfig {
+  ppnPercent: number
+  defaultAdminFeePercent: number
+  paymentTimeoutMinutes: number
+  maxTicketsPerOrder: number
 }
 
 // ─── SYSTEM HEALTH ─────────────────────────────────────────────────────────

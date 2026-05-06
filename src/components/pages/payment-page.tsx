@@ -97,6 +97,10 @@ export default function PaymentPage() {
   const taxAmount = order.taxAmount ?? Math.round(subTotal * 11 / 100);
   const discountAmount = order.discountAmount ?? 0;
 
+  // Calculate actual percentages from stored order data (more accurate than hardcoded)
+  const adminFeePercent = subTotal > 0 ? Math.round((adminFee / subTotal) * 100) : 2;
+  const ppnPercent = subTotal > 0 ? Math.round((taxAmount / subTotal) * 100) : 11;
+
   const selectedMethodInfo = selectedMethod ? getPaymentMethodInfo(selectedMethod) : null;
 
   // ─── Timer ──────────────────────────────────────────────────
@@ -282,11 +286,11 @@ export default function PaymentPage() {
                     <span className="text-foreground">{formatRupiah(subTotal)}</span>
                   </div>
                   <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">Biaya Admin (2%)</span>
+                    <span className="text-muted-foreground">Biaya Admin ({adminFeePercent}%)</span>
                     <span className="text-foreground">{formatRupiah(adminFee)}</span>
                   </div>
                   <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">PPN (11%)</span>
+                    <span className="text-muted-foreground">PPN ({ppnPercent}%)</span>
                     <span className="text-foreground">{formatRupiah(taxAmount)}</span>
                   </div>
                   {discountAmount > 0 && (

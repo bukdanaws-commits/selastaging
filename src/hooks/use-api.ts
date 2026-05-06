@@ -22,6 +22,7 @@ import {
   adminApi,
   notificationApi,
   couponApi,
+  getFeeConfig,
   type PaginatedData,
 } from '@/lib/api'
 import apiFetch from '@/lib/api'
@@ -47,6 +48,7 @@ import type {
   IGateScanResponse,
   ISSEEvent,
   ICoupon,
+  IFeeConfig,
 } from '@/lib/types'
 
 // ─── QUERY KEY FACTORY ────────────────────────────────────────────────────
@@ -140,6 +142,11 @@ export const queryKeys = {
   // SSE
   sse: {
     status: () => ['sse', 'status'] as const,
+  },
+
+  // Fee Config
+  feeConfig: {
+    current: () => ['feeConfig', 'current'] as const,
   },
 }
 
@@ -801,8 +808,19 @@ export function useOrganizers(params?: Record<string, string>) {
 export function useSetOrganizerFee() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ organizerId, fee }: { organizerId: string; fee: number }) =>
-      adminApi.setOrganizerFee(organizerId, fee),
+    mutationFn: ({ organizerId, fee, isApproved }: { organizerId: string; fee: number; isApproved?: boolean }) =>
+      adminApi.setOrganizerFee(organizerId, fee, isApproved),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'organizers'] })
+    },
+  })
+}
+
+export function useApproveOrganizerFee() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ organizerId, isApproved }: { organizerId: string; isApproved: boolean }) =>
+      adminApi.approveOrganizerFee(organizerId, isApproved),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'organizers'] })
     },
@@ -968,6 +986,29 @@ export function useValidateCoupon() {
   return useMutation({
     mutationFn: (data: { code: string; orderId: string; subtotal: number; category?: string }) =>
       couponApi.validateCoupon(data),
+  })
+}
+
+// ─── FEE CONFIG HOOK ──────────────────────────────────────────────────────
+
+const DEFAULT_FEE_CONFIG: IFeeConfig = {
+  ppnPercent: 11,
+  defaultAdminFeePercent: 2,
+  paymentTimeoutMinutes: 30,
+  maxTicketsPerOrder: 5,
+}
+
+/**
+ * useFeeConfig() — fetches fee configuration from the public API.
+ * Falls back to defaults (2% admin, 11% PPN) if the API call fails.
+ * Cached for 5 minutes since fee settings rarely change.
+ */
+export function useFeeConfig() {
+  return useQuery({
+    queryKey: queryKeys.feeConfig.current(),
+    queryFn: getFeeConfig,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    placeholderData: DEFAULT_FEE_CONFIG,
   })
 }
 

@@ -576,6 +576,20 @@ type Refund struct {
         RejectionReason *string    `gorm:"type:text" json:"rejectionReason,omitempty"`
 }
 
+// ─── SYSTEM SETTINGS ──────────────────────────────────────────────────────
+
+// SystemSettings stores global configurable settings (key-value pairs)
+type SystemSettings struct {
+        ID        uint      `gorm:"primaryKey" json:"id"`
+        Key       string    `gorm:"uniqueIndex;size:100;not null" json:"key"`
+        Value     string    `gorm:"type:text;not null" json:"value"`
+        Label     string    `gorm:"size:255" json:"label"`
+        Category  string    `gorm:"size:50;index" json:"category"` // "fee", "payment", "general"
+        UpdatedBy uint      `json:"updatedBy"`
+        CreatedAt time.Time `json:"createdAt"`
+        UpdatedAt time.Time `json:"updatedAt"`
+}
+
 // ─── ALL MODELS ─────────────────────────────────────────────────────────────
 
 // AllModels returns all GORM models for auto-migration.
@@ -609,5 +623,6 @@ func AllModels() []any {
                 &PaymentLog{},
                 &OrganizerFeeConfig{},
                 &Refund{},
+                &SystemSettings{},
         }
 }

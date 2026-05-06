@@ -159,6 +159,16 @@ export async function handleMockRequest<T = unknown>(request: MockRequest): Prom
 
   // ─── PUBLIC (3 endpoints) ───────────────────────────────────────────────
 
+  // GET /api/v1/settings/fee-config — Public fee configuration
+  if (endpoint === '/api/v1/settings/fee-config' && method === 'GET') {
+    return {
+      ppnPercent: 11,
+      defaultAdminFeePercent: 2,
+      paymentTimeoutMinutes: 30,
+      maxTicketsPerOrder: 5,
+    } as T
+  }
+
   if (method === 'GET') {
     const eventMatch = matchRoute('/api/v1/events/:slug', endpoint)
     if (eventMatch && !endpoint.includes('/ticket-types')) {
@@ -785,12 +795,34 @@ export async function handleMockRequest<T = unknown>(request: MockRequest): Prom
 
   // PATCH /api/v1/admin/organizers/:id/fee
   if (method === 'PATCH') {
+    // Must check approve route BEFORE the fee route (more specific first)
+    const orgFeeApproveMatch = matchRoute('/api/v1/admin/organizers/:id/fee/approve', endpoint)
+    if (orgFeeApproveMatch) {
+      await mockDelay()
+      const b = body as Record<string, unknown>
+      useMockStore.getState().approveOrganizerFee(orgFeeApproveMatch.id, Boolean(b.isApproved))
+      const feeConfig = useMockStore.getState().organizerFeeConfigs.find(f => f.organizerId === orgFeeApproveMatch.id)
+      return feeConfig as T
+    }
+
     const orgFeeMatch = matchRoute('/api/v1/admin/organizers/:id/fee', endpoint)
     if (orgFeeMatch) {
       await mockDelay()
       const b = body as Record<string, unknown>
-      useMockStore.getState().setOrganizerFee(orgFeeMatch.id, Number(b.feePercent || 5))
-      return undefined as T
+      useMockStore.getState().setOrganizerFee(orgFeeMatch.id, Number(b.fee || b.feePercent || 5), b.isApproved as boolean | undefined)
+      const feeConfig = useMockStore.getState().organizerFeeConfigs.find(f => f.organizerId === orgFeeMatch.id)
+      return feeConfig as T
+    }
+  }
+
+  // GET /api/v1/admin/organizers/:id/fee
+  if (method === 'GET') {
+    const orgFeeGetMatch = matchRoute('/api/v1/admin/organizers/:id/fee', endpoint)
+    if (orgFeeGetMatch) {
+      await mockDelay()
+      const store = useMockStore.getState()
+      const feeConfig = store.organizerFeeConfigs.find(f => f.organizerId === orgFeeGetMatch.id) || null
+      return { feeConfig } as T
     }
   }
 
@@ -1073,6 +1105,145 @@ export async function handleMockRequest<T = unknown>(request: MockRequest): Prom
     discountAmt = Math.min(discountAmt, subtotal)
 
     return { valid: true, discountAmount: discountAmt, coupon } as T
+  }
+
+  // ─── SETTINGS API ───────────────────────────────────────────────────────
+
+  // In-memory mock settings store (persists during session)
+  const mockSettingsStore: Record<string, string> = {
+    ppn_percent: '11',
+    default_admin_fee_percent: '2',
+    payment_timeout_minutes: '30',
+    max_tickets_per_order: '5',
+    auto_expire_pending_minutes: '30',
+    max_tickets_per_event: '50000',
+    max_events_per_tenant: '10',
+    maintenance_mode: 'false',
+    enable_sse: 'true',
+    enable_qrcode: 'true',
+    enable_wristband: 'true',
+    currency: 'IDR',
+    locale: 'id-ID',
+    timezone: 'Asia/Jakarta',
+  }
+
+  const settingLabels: Record<string, string> = {
+    ppn_percent: 'PPN (%)',
+    default_admin_fee_percent: 'Default Admin Fee (%)',
+    payment_timeout_minutes: 'Payment Timeout (minutes)',
+    max_tickets_per_order: 'Max Tickets per Order',
+    auto_expire_pending_minutes: 'Auto-expire Pending (minutes)',
+    max_tickets_per_event: 'Max Tickets per Event',
+    max_events_per_tenant: 'Max Events per Tenant',
+    maintenance_mode: 'Maintenance Mode',
+    enable_sse: 'Enable SSE',
+    enable_qrcode: 'Enable QR Code',
+    enable_wristband: 'Enable Wristband',
+    currency: 'Currency',
+    locale: 'Locale',
+    timezone: 'Timezone',
+  }
+
+  const settingCategories: Record<string, string> = {
+    ppn_percent: 'fee',
+    default_admin_fee_percent: 'fee',
+    payment_timeout_minutes: 'checkout',
+    max_tickets_per_order: 'checkout',
+    auto_expire_pending_minutes: 'checkout',
+    max_tickets_per_event: 'global',
+    max_events_per_tenant: 'global',
+    maintenance_mode: 'global',
+    enable_sse: 'feature',
+    enable_qrcode: 'feature',
+    enable_wristband: 'feature',
+    currency: 'general',
+    locale: 'general',
+    timezone: 'general',
+  }
+
+  // GET /api/v1/settings/fee-config (public)
+  if (endpoint === '/api/v1/settings/fee-config' && method === 'GET') {
+    return {
+      ppnPercent: Number(mockSettingsStore.ppn_percent),
+      defaultAdminFeePercent: Number(mockSettingsStore.default_admin_fee_percent),
+      paymentTimeoutMinutes: Number(mockSettingsStore.payment_timeout_minutes),
+      maxTicketsPerOrder: Number(mockSettingsStore.max_tickets_per_order),
+    } as T
+  }
+
+  // GET /api/v1/admin/settings/all
+  if (endpoint === '/api/v1/admin/settings/all' && method === 'GET') {
+    const grouped: Record<string, Array<{
+      id: number; key: string; value: string; label: string; category: string;
+      updatedBy: number; createdAt: string; updatedAt: string;
+    }>> = {}
+    let idx = 1
+    for (const [key, value] of Object.entries(mockSettingsStore)) {
+      const cat = settingCategories[key] || 'general'
+      if (!grouped[cat]) grouped[cat] = []
+      grouped[cat].push({
+        id: idx++,
+        key,
+        value,
+        label: settingLabels[key] || key,
+        category: cat,
+        updatedBy: 1,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+    }
+    return grouped as T
+  }
+
+  // GET /api/v1/admin/settings/:category
+  const settingsCategoryMatch = endpoint.match(/^\/api\/v1\/admin\/settings\/([a-z]+)$/)
+  if (settingsCategoryMatch && method === 'GET') {
+    const category = settingsCategoryMatch[1]
+    const result: Array<{
+      id: number; key: string; value: string; label: string; category: string;
+      updatedBy: number; createdAt: string; updatedAt: string;
+    }> = []
+    let idx = 1
+    for (const [key, value] of Object.entries(mockSettingsStore)) {
+      const cat = settingCategories[key] || 'general'
+      if (cat === category) {
+        result.push({
+          id: idx++,
+          key,
+          value,
+          label: settingLabels[key] || key,
+          category: cat,
+          updatedBy: 1,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        })
+      }
+    }
+    return result as T
+  }
+
+  // PUT /api/v1/admin/settings/:key (single update)
+  const settingsKeyMatch = endpoint.match(/^\/api\/v1\/admin\/settings\/([a-z_]+)$/)
+  if (settingsKeyMatch && method === 'PUT') {
+    const key = settingsKeyMatch[1]
+    const value = (body as Record<string, unknown>)?.value as string
+    if (key in mockSettingsStore && value !== undefined) {
+      mockSettingsStore[key] = value
+    }
+    return { success: true } as T
+  }
+
+  // PUT /api/v1/admin/settings/bulk (bulk update)
+  if (endpoint === '/api/v1/admin/settings/bulk' && method === 'PUT') {
+    const settings = (body as Record<string, unknown>)?.settings as Array<{ key: string; value: string }>
+    if (Array.isArray(settings)) {
+      for (const s of settings) {
+        if (s.key in mockSettingsStore) {
+          mockSettingsStore[s.key] = s.value
+        }
+      }
+    }
+    return { success: true } as T
   }
 
   // ─── NO MATCH FOUND ─────────────────────────────────────────────────────
