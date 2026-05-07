@@ -554,6 +554,10 @@ if should_run_step 8; then
   if [ "$DRY_RUN" != true ]; then
     info "Deploying ${FRONTEND_SERVICE} to Cloud Run..."
 
+    # Get the frontend URL for NEXTAUTH_URL
+    FRONTEND_RUN_URL=$(gcloud run services describe "$FRONTEND_SERVICE" \
+      --region="$REGION" --format='value(status.url)' 2>/dev/null || echo "")
+
     gcloud run deploy "$FRONTEND_SERVICE" \
       --image="$FRONTEND_IMAGE" \
       --region="$REGION" \
@@ -568,7 +572,8 @@ if should_run_step 8; then
       --set-secrets="\
 NEXTAUTH_SECRET=nextauth-secret:latest" \
       --set-env-vars="\
-NODE_ENV=production" \
+NODE_ENV=production,\
+NEXTAUTH_URL=${FRONTEND_RUN_URL}" \
       --allow-unauthenticated \
       --quiet
 
