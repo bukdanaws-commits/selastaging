@@ -17,8 +17,13 @@ node_modules
 out
 
 # Go / Backend
-backend/
-eventku-api
+# Note: Do NOT exclude 'eventku-api' or 'backend/' here — 
+# Cloud Build backend pipeline needs both in the Docker context.
+# backend/  — needed by backend/Dockerfile multi-stage build
+# eventku-api — needed by Dockerfile.backend-simple (pre-built binary wrap)
+backend/seleevent.db*
+backend/server
+backend/seed
 
 # Docker
 .docker
