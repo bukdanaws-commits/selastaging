@@ -94,7 +94,7 @@ const FALLBACK_EVENT = {
   id: '30000000-0000-0000-0000-000000000001',
   slug: 'sheila-on7-jakarta',
   title: 'Sheila On 7 — JAKARTA',
-  subtitle: 'Melompat Lebih Tinggi Tour 2026',
+  subtitle: 'Meloncat Lebih Tinggi Tour 2026',
   date: '2026-06-22',
   time: '19:00 WIB',
   doorsOpen: '16:00 WIB',
@@ -366,36 +366,23 @@ function HeroSection({ onLoginClick, isAuthenticated, selectedCity }: { onLoginC
 
   return (
     <section id="beranda" className="relative h-screen min-h-[600px] max-h-[1200px] flex items-center justify-center overflow-hidden">
-      {/* Hero image background with parallax */}
-      <div className="absolute inset-0 z-0" style={{ transform: `translateY(${scrollY * 0.08}px)` }}>
+      {/* Hero image background - full visible, no crop */}
+      <div className="absolute inset-0 z-0">
         <Image
           src="/images/hero-concert.png"
-          alt="Sheila On 7 — Melompat Lebih Tinggi Live Concert"
+          alt="Sheila On 7 — Meloncat Lebih Tinggi Live Concert"
           fill
-          className="object-cover object-center sm:object-contain sm:object-center"
+          className="object-cover object-top sm:object-contain sm:object-center"
           priority
           sizes="100vw"
           quality={95}
         />
       </div>
 
-      {/* Multi-layer gradient overlay */}
-      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-black/50 via-black/30 to-black/70" />
-      <div className="absolute inset-0 z-[2] bg-gradient-to-r from-black/30 via-transparent to-black/30" />
-      <div className="absolute inset-0 z-[3]" style={{
-        background: 'radial-gradient(ellipse at 50% 60%, rgba(248,173,60,0.08) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(0,163,157,0.06) 0%, transparent 50%)'
-      }} />
-
-      {/* Animated light rays */}
-      <div className="absolute inset-0 z-[4] opacity-20 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-1 h-full bg-gradient-to-b from-gold/0 via-gold/30 to-gold/0 animate-float-slow" />
-        <div className="absolute top-0 right-1/3 w-0.5 h-full bg-gradient-to-b from-primary/0 via-primary/20 to-primary/0 animate-float delay-500" />
-      </div>
-
-      {/* Animated particles / blobs */}
-      <div className="absolute top-20 left-10 w-72 h-72 bg-gold/5 rounded-full blur-[120px] animate-blob" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-primary/5 rounded-full blur-[120px] animate-blob delay-2000" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gold/3 rounded-full blur-[200px] animate-float-slow" />
+      {/* Subtle gradient overlay - only bottom for text readability */}
+      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-black/20 via-transparent to-black/60" />
+      {/* Very subtle side vignette */}
+      <div className="absolute inset-0 z-[2] bg-gradient-to-r from-black/10 via-transparent to-black/10" />
 
       {/* Content */}
       <div className="container mx-auto px-4 relative z-10 text-center py-20">
@@ -408,10 +395,10 @@ function HeroSection({ onLoginClick, isAuthenticated, selectedCity }: { onLoginC
         </div>
 
         {/* Main heading */}
-        <h1 className={cn('text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black tracking-tight leading-[0.9] mb-6 transition-all duration-1000 delay-200', mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
-          <span className="gradient-text-gold">MELOMPAT</span>
+        <h1 className={cn('font-black tracking-tight leading-[0.95] mb-6 transition-all duration-1000 delay-200', mounted ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95', 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl')}>
+          <span className="inline-block gradient-text-gold animate-fade-in-up">MELONCAT</span>
           <br />
-          <span className="text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.15)]">LEBIH TINGGI</span>
+          <span className="inline-block text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.2)] animate-fade-in-up" style={{ animationDelay: '0.2s' }}>LEBIH TINGGI</span>
         </h1>
 
         {/* Tour subtitle */}
@@ -419,7 +406,7 @@ function HeroSection({ onLoginClick, isAuthenticated, selectedCity }: { onLoginC
           <p className="text-lg sm:text-2xl md:text-3xl text-white/80 font-light mt-4 mb-1 tracking-[0.15em] uppercase">
             Tour 2026
           </p>
-          <div className="w-16 h-[2px] bg-gradient-to-r from-transparent via-gold to-transparent mx-auto my-4" />
+          <div className="w-16 h-[2px] bg-gradient-to-r from-transparent via-gold to-transparent mx-auto my-4 animate-scale-in" style={{ animationDelay: '0.6s' }} />
         </div>
 
         {/* City & Date pills */}

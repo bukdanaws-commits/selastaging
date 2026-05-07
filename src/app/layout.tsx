@@ -14,22 +14,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sheila On 7 — Melompat Lebih Tinggi Tour 2026 | Jakarta",
-  description: "Konser Sheila On 7 Melompat Lebih Tinggi Tour 2026 di GBK Madya Stadium Jakarta. 25 April 2026. Dapatkan tiket sekarang — Sobat Duta!",
-  keywords: ["Sheila On 7", "Melompat Lebih Tinggi", "Konser Jakarta", "GBK Madya", "Tiket Konser", "Sobat Duta"],
+  title: "Sheila On 7 — Meloncat Lebih Tinggi Tour 2026 | Jakarta",
+  description: "Konser Sheila On 7 Meloncat Lebih Tinggi Tour 2026 di GBK Madya Stadium Jakarta. 25 April 2026. Dapatkan tiket sekarang — Sobat Duta!",
+  keywords: ["Sheila On 7", "Meloncat Lebih Tinggi", "Konser Jakarta", "GBK Madya", "Tiket Konser", "Sobat Duta"],
   authors: [{ name: "Sheila On 7 Tour 2026" }],
   icons: {
     icon: "/logo.svg",
   },
   openGraph: {
-    title: "Sheila On 7 — Melompat Lebih Tinggi Tour 2026 | Jakarta",
-    description: "Konser Sheila On 7 Melompat Lebih Tinggi Tour 2026 di GBK Madya Stadium Jakarta. 25 April 2026.",
+    title: "Sheila On 7 — Meloncat Lebih Tinggi Tour 2026 | Jakarta",
+    description: "Konser Sheila On 7 Meloncat Lebih Tinggi Tour 2026 di GBK Madya Stadium Jakarta. 25 April 2026.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Sheila On 7 — Melompat Lebih Tinggi Tour 2026",
-    description: "Konser Sheila On 7 Melompat Lebih Tinggi Tour 2026. GBK Madya, 25 April 2026.",
+    title: "Sheila On 7 — Meloncat Lebih Tinggi Tour 2026",
+    description: "Konser Sheila On 7 Meloncat Lebih Tinggi Tour 2026. GBK Madya, 25 April 2026.",
   },
 };
 
