@@ -1,53 +1,31 @@
 # =============================================================================
 #  Cloud Build Configuration — EVENTKU Golang Backend API
 #
-#  Triggers:
-#    - Push to main branch
-#    - Manual: gcloud builds submit --config gcp/cloudbuild-backend.yaml
+#  Full pipeline: Docker build (in-repo Go compile) → Push → Deploy Cloud Run
+#
+#  Usage:
+#    gcloud builds submit . --config=gcp/cloudbuild-backend.yaml \
+#      --project=eventku-494416
 #
 #  Artifact Registry:
-#    Repository: eventku (the AR Docker repo, NOT eventku-api-staging)
-#    Image name: eventku-api-staging (a Docker image within the eventku repo)
-#    Full path:  asia-southeast2-docker.pkg.dev/eventku-494416/eventku/eventku-api-staging
+#    Repository: eventku | Image: eventku-api
+#    Full path:  asia-southeast2-docker.pkg.dev/eventku-494416/eventku/eventku-api
 #
-#  IMPORTANT: The Artifact Registry URL in console shows:
-#    /artifacts/docker/PROJECT/REGION/REPOSITORY = eventku
-#    eventku-api-staging and eventku-web-staging are IMAGES, not repositories!
+#  Secrets in Secret Manager (created by update-staging.sh Step 2):
+#    db-password, jwt-secret, jwt-refresh-secret, google-client-secret,
+#    doku-client-secret, doku-shared-key, doku-bsn
 # =============================================================================
 
 steps:
-  # ── Build Go binary (verification + version stamp) ─────────────────────────
-  - name: 'golang:1.24'
-    id: 'build-binary'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        cd backend
-        echo "=== Running go mod tidy ==="
-        GOTOOLCHAIN=local go mod tidy -go=1.24 2>&1 || { echo "❌ go mod tidy FAILED"; exit 1; }
-        echo "=== Running go mod download ==="
-        go mod download 2>&1 || { echo "❌ go mod download FAILED"; exit 1; }
-        echo "=== Building static binary (CGO_ENABLED=0) ==="
-        echo "   Image tag: $_SHORT_SHA"
-        GOTOOLCHAIN=local CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
-          -ldflags="-s -w -X main.version=$_SHORT_SHA" \
-          -o /workspace/eventku-api ./cmd/server 2>&1 || { echo "❌ go build FAILED"; exit 1; }
-        echo "✅ Binary built successfully (version: $_SHORT_SHA)"
-        ls -lh /workspace/eventku-api
-
-  # ── Build Docker image ────────────────────────────────────────────────────
-  #  Repository: eventku | Image: eventku-api-staging
+  # ── Build Docker image (multi-stage: Go build + minimal runtime) ────────────
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-image'
-    waitFor: ['build-binary']
     args:
       - 'build'
       - '-t'
-      - '$_REGION-docker.pkg.dev/$PROJECT_ID/eventku/eventku-api-staging:$_SHORT_SHA'
+      - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/$_IMAGE_NAME:$_SHORT_SHA'
       - '-t'
-      - '$_REGION-docker.pkg.dev/$PROJECT_ID/eventku/eventku-api-staging:latest'
+      - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/$_IMAGE_NAME:latest'
       - '-f'
       - 'backend/Dockerfile'
       - '--build-arg=VERSION=$_SHORT_SHA'
@@ -57,7 +35,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-image'
     waitFor: ['build-image']
-    args: ['push', '--all-tags', '$_REGION-docker.pkg.dev/$PROJECT_ID/eventku/eventku-api-staging']
+    args: ['push', '--all-tags', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/$_IMAGE_NAME']
 
   # ── Deploy to Cloud Run ───────────────────────────────────────────────────
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -67,37 +45,39 @@ steps:
     args:
       - 'run'
       - 'deploy'
-      - 'eventku-api'
-      - '--image=$_REGION-docker.pkg.dev/$PROJECT_ID/eventku/eventku-api-staging:$_SHORT_SHA'
+      - '$_SERVICE_NAME'
+      - '--image=$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/$_IMAGE_NAME:$_SHORT_SHA'
       - '--region=$_REGION'
       - '--platform=managed'
-      - '--cpu=2'
-      - '--memory=1Gi'
+      - '--cpu=1'
+      - '--memory=512Mi'
       - '--min-instances=0'
       - '--max-instances=10'
-      - '--concurrency=200'
-      - '--timeout=30'
+      - '--concurrency=80'
+      - '--timeout=300'
       - '--port=8080'
-      - '--set-env-vars=APP_ENV=production,DB_DRIVER=postgres,DB_HOST=/cloudsql/$PROJECT_ID:$_REGION:$_INSTANCE_NAME,DB_NAME=eventku,DB_USER=eventku,DB_PORT=5432,GOOGLE_CLIENT_ID=503551786622-k3uajo9c2d6om6qnqofsa3b47fvo5o6g.apps.googleusercontent.com'
-      - '--set-secrets=DB_PASSWORD=database-password:latest,JWT_SECRET=jwt-secret:latest,REFRESH_JWT_SECRET=refresh-jwt-secret:latest,GOOGLE_CLIENT_SECRET=google-client-secret:latest'
+      - '--set-env-vars=APP_ENV=staging,DB_DRIVER=postgres,DB_HOST=/cloudsql/$PROJECT_ID:$_REGION:$_INSTANCE_NAME,DB_PORT=5432,DB_USER=eventku,DB_NAME=eventku,DB_SSLMODE=disable,DOKU_CLIENT_ID=BRN-0252-1778130371806,DOKU_IS_SANDBOX=true,GOOGLE_CLIENT_ID=503551786622-k3uajo9c2d6om6qnqofsa3b47fvo5o6g.apps.googleusercontent.com,SUPER_ADMIN_EMAILS=bukdan101@gmail.com'
+      - '--set-secrets=DB_PASSWORD=db-password:latest,JWT_SECRET=jwt-secret:latest,REFRESH_JWT_SECRET=jwt-refresh-secret:latest,GOOGLE_CLIENT_SECRET=google-client-secret:latest,DOKU_CLIENT_SECRET=doku-client-secret:latest,DOKU_SHARED_KEY=doku-shared-key:latest,DOKU_BSN=doku-bsn:latest'
       - '--add-cloudsql-instances=$PROJECT_ID:$_REGION:$_INSTANCE_NAME'
-      - '--service-account=eventku-sa@$PROJECT_ID.iam.gserviceaccount.com'
       - '--allow-unauthenticated'
-      - '--no-cpu-throttling'
 
-# ── Push images via Cloud Build's built-in mechanism (backup) ───────────────
+# ── Push images via Cloud Build's built-in mechanism ──────────────────────────
 images:
-  - '$_REGION-docker.pkg.dev/$PROJECT_ID/eventku/eventku-api-staging:$_SHORT_SHA'
-  - '$_REGION-docker.pkg.dev/$PROJECT_ID/eventku/eventku-api-staging:latest'
+  - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/$_IMAGE_NAME:$_SHORT_SHA'
+  - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/$_IMAGE_NAME:latest'
 
 # ── Default substitution values ─────────────────────────────────────────────
 substitutions:
   _REGION: asia-southeast2
+  _REPO: eventku
+  _IMAGE_NAME: eventku-api
+  _SERVICE_NAME: eventku-api
   _INSTANCE_NAME: eventku
   _SHORT_SHA: 'latest'
 
 # ── Build options ───────────────────────────────────────────────────────────
 options:
   machineType: 'E2_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
 
 timeout: '1200s'
