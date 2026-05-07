@@ -2,7 +2,7 @@
 #  Cloud Build Configuration — EVENTKU Golang Backend API
 #
 #  Strategy: Docker multi-stage build (Go compile inside Docker)
-#  Uses golang:1.24-alpine + GOTOOLCHAIN=auto (auto-downloads Go 1.25)
+#  Uses golang:1.25-alpine (matches go.mod go 1.25.0)
 #
 #  Usage:
 #    gcloud builds submit . --config=gcp/cloudbuild-backend.yaml \
