@@ -29,6 +29,11 @@ gcloud config set project ${PROJECT_ID}
 echo ""
 echo "🔨 Step 2: Building Docker image with Cloud Build..."
 echo "   This may take 5-10 minutes..."
+echo ""
+echo "   ⚠️  KEY: NEXT_PUBLIC_USE_MOCK=false is set in Dockerfile"
+echo "   ⚠️  KEY: NEXT_PUBLIC_API_URL points to Cloud Run backend"
+echo "   ⚠️  KEY: NEXT_PUBLIC_GOOGLE_CLIENT_ID is set"
+echo ""
 gcloud builds submit \
   --tag ${IMAGE_NAME} \
   --project ${PROJECT_ID} \
@@ -51,9 +56,7 @@ gcloud run deploy ${SERVICE_NAME} \
   --memory 1Gi \
   --cpu 1 \
   --min-instances 0 \
-  --max-instances 10 \
-  --set-env-vars "NEXTAUTH_URL=https://sheilaon7.eventku.co.id" \
-  --set-secrets "NEXTAUTH_SECRET=nextauth-secret:latest"
+  --max-instances 10
 
 echo ""
 echo "============================================"
@@ -65,4 +68,9 @@ echo "   https://sheilaon7.eventku.co.id"
 echo ""
 echo "🔧 Cloud Run URL:"
 gcloud run services describe ${SERVICE_NAME} --region ${REGION} --project ${PROJECT_ID} --format="value(status.url)"
+echo ""
+echo "📋 Checklist setelah deploy:"
+echo "   1. Cek apakah data tiket real (bukan mock)"
+echo "   2. Cek apakah Google Login bisa jalan"
+echo "   3. Pastikan backend API CORS mengizinkan frontend URL"
 echo ""
