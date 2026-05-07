@@ -386,28 +386,6 @@ function HeroSection({ onLoginClick, isAuthenticated, selectedCity }: { onLoginC
 
       {/* Content */}
       <div className="container mx-auto px-4 relative z-10 text-center py-20">
-        {/* Pre-title badge */}
-        <div className={cn('transition-all duration-1000', mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8')}>
-          <div className="inline-flex items-center gap-2 mb-8 mx-auto w-fit px-6 py-2.5 rounded-full text-sm sm:text-base font-bold tracking-[0.2em] uppercase text-white/90 border border-gold/30 bg-black/40 backdrop-blur-md shadow-[0_0_30px_rgba(248,173,60,0.1)]">
-            <Music className="h-4 w-4 text-gold" />
-            <span className="gradient-text-gold">Sheila On 7</span>
-          </div>
-        </div>
-
-        {/* Main heading */}
-        <h1 className={cn('font-black tracking-tight leading-[0.95] mb-6 transition-all duration-1000 delay-200', mounted ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95', 'text-3xl sm:text-4xl md:text-5xl lg:text-6xl')}>
-          <span className="inline-block gradient-text-gold animate-fade-in-up">MELONCAT</span>
-          <br />
-          <span className="inline-block text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.2)] animate-fade-in-up" style={{ animationDelay: '0.2s' }}>LEBIH TINGGI</span>
-        </h1>
-
-        {/* Tour subtitle */}
-        <div className={cn('transition-all duration-1000 delay-400', mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
-          <p className="text-lg sm:text-2xl md:text-3xl text-white/80 font-light mt-4 mb-1 tracking-[0.15em] uppercase">
-            Tour 2026
-          </p>
-          <div className="w-16 h-[2px] bg-gradient-to-r from-transparent via-gold to-transparent mx-auto my-4 animate-scale-in" style={{ animationDelay: '0.6s' }} />
-        </div>
 
         {/* City & Date pills */}
         <div className={cn('flex items-center justify-center gap-3 flex-wrap mt-6 transition-all duration-1000 delay-500', mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
