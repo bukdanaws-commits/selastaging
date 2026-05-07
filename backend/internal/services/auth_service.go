@@ -206,6 +206,15 @@ func (s *AuthService) RefreshToken(refreshToken string) (accessToken, newRefresh
 
 // GoogleOAuth handles Google OAuth login with REAL Google token verification.
 // idToken is the Google ID token received from the frontend.
+//
+// Lookup strategy:
+//   1. Find user by google_id (normal login for returning users)
+//   2. If not found, find by email — "claim" a seed/placeholder user by updating
+//      their google_id with the real Google Sub ID. This allows seed data users
+//      (which have fake google_id like "google-superadmin") to be claimed by
+//      real Google logins on first sign-in.
+//   3. If still not found, create a brand-new user (PARTICIPANT by default,
+//      SUPER_ADMIN if email matches SUPER_ADMIN_EMAILS).
 func (s *AuthService) GoogleOAuth(idToken string) (*models.User, string, string, error) {
         // Step 1: Verify the Google ID token
         tokenInfo, err := s.verifyGoogleToken(idToken)
@@ -219,40 +228,67 @@ func (s *AuthService) GoogleOAuth(idToken string) (*models.User, string, string,
 
         if result.Error != nil {
                 if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-                        // Build user name from Google data
-                        name := tokenInfo.Name
-                        if name == "" {
-                                name = tokenInfo.GivenName
-                                if tokenInfo.FamilyName != "" {
-                                        name += " " + tokenInfo.FamilyName
+                        // ── Fallback: Claim by email ───────────────────────────
+                        // Seed data users have fake google_id (e.g. "google-superadmin").
+                        // When a real Google user logs in with the same email, we "claim"
+                        // that seed user by updating their google_id to the real one.
+                        // This preserves the seed user's role, associations, and data.
+                        emailResult := s.DB.Where("email = ? AND google_id != ?", tokenInfo.Email, tokenInfo.Sub).First(&user)
+                        if emailResult.Error == nil {
+                                // Found a user with matching email but different (fake) google_id → claim it
+                                now := time.Now()
+                                updates := map[string]any{
+                                        "google_id":     tokenInfo.Sub,
+                                        "last_login_at": now,
                                 }
-                        }
-                        if name == "" {
-                                name = "User"
-                        }
-
-                        avatar := tokenInfo.Picture
-
-                        // Determine role: auto-promote if email matches SUPER_ADMIN_EMAILS
-                        role := "PARTICIPANT"
-                        for _, adminEmail := range config.Cfg.Google.AdminEmails {
-                                if strings.EqualFold(tokenInfo.Email, adminEmail) {
-                                        role = "SUPER_ADMIN"
-                                        break
+                                if tokenInfo.Picture != "" {
+                                        updates["avatar"] = tokenInfo.Picture
                                 }
-                        }
+                                if err := s.DB.Model(&user).Updates(updates).Error; err != nil {
+                                        return nil, "", "", fmt.Errorf("failed to claim user by email: %w", err)
+                                }
+                                user.GoogleID = tokenInfo.Sub
+                                user.LastLoginAt = &now
+                                if tokenInfo.Picture != "" {
+                                        user.Avatar = &tokenInfo.Picture
+                                }
+                        } else {
+                                // ── Truly new user: create from scratch ──────────
+                                // Build user name from Google data
+                                name := tokenInfo.Name
+                                if name == "" {
+                                        name = tokenInfo.GivenName
+                                        if tokenInfo.FamilyName != "" {
+                                                name += " " + tokenInfo.FamilyName
+                                        }
+                                }
+                                if name == "" {
+                                        name = "User"
+                                }
 
-                        // Create new user
-                        user = models.User{
-                                GoogleID: tokenInfo.Sub,
-                                Email:    tokenInfo.Email,
-                                Name:     name,
-                                Avatar:   &avatar,
-                                Role:     role,
-                                Status:   "active",
-                        }
-                        if err := s.DB.Create(&user).Error; err != nil {
-                                return nil, "", "", fmt.Errorf("failed to create user: %w", err)
+                                avatar := tokenInfo.Picture
+
+                                // Determine role: auto-promote if email matches SUPER_ADMIN_EMAILS
+                                role := "PARTICIPANT"
+                                for _, adminEmail := range config.Cfg.Google.AdminEmails {
+                                        if strings.EqualFold(tokenInfo.Email, adminEmail) {
+                                                role = "SUPER_ADMIN"
+                                                break
+                                        }
+                                }
+
+                                // Create new user
+                                user = models.User{
+                                        GoogleID: tokenInfo.Sub,
+                                        Email:    tokenInfo.Email,
+                                        Name:     name,
+                                        Avatar:   &avatar,
+                                        Role:     role,
+                                        Status:   "active",
+                                }
+                                if err := s.DB.Create(&user).Error; err != nil {
+                                        return nil, "", "", fmt.Errorf("failed to create user: %w", err)
+                                }
                         }
                 } else {
                         return nil, "", "", fmt.Errorf("database error: %w", result.Error)

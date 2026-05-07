@@ -49,7 +49,7 @@ VALUES (
 
 -- ─── USERS ─────────────────────────────────────────────────────────────
 INSERT INTO users (id, google_id, email, name, role, status, created_at, updated_at) VALUES
-    ('40000000-0000-0000-0000-000000000001', 'google-superadmin', 'bukdan@seleevent.id', 'Bukdan Admin', 'SUPER_ADMIN', 'active', '2025-03-01 12:00:00+00', '2025-03-01 12:00:00+00'),
+    ('40000000-0000-0000-0000-000000000001', 'google-superadmin', 'bukdan101@gmail.com', 'Bukdan Admin', 'SUPER_ADMIN', 'active', '2025-03-01 12:00:00+00', '2025-03-01 12:00:00+00'),
     ('40000000-0000-0000-0000-000000000002', 'google-admin', 'rizky@seleevent.id', 'Rizky Pratama', 'ADMIN', 'active', '2025-03-01 12:00:00+00', '2025-03-01 12:00:00+00'),
     ('40000000-0000-0000-0000-000000000003', 'google-organizer', 'andi.wijaya@gmail.com', 'Andi Wijaya', 'ORGANIZER', 'active', '2025-03-01 12:00:00+00', '2025-03-01 12:00:00+00'),
     ('40000000-0000-0000-0000-000000000004', 'google-counter', 'rina.w@gmail.com', 'Rina Wulandari', 'COUNTER_STAFF', 'active', '2025-03-01 12:00:00+00', '2025-03-01 12:00:00+00'),

@@ -54,11 +54,11 @@ AR_LOCATION="${REGION}"
 FRONTEND_DOMAIN="sheilaon7.eventku.co.id"
 BACKEND_DOMAIN="api.sheilaon7.eventku.co.id"
 
-# DOKU Credentials (Sandbox)
-DOKU_CLIENT_ID="BRN-0222-1777799032222"
-DOKU_CLIENT_SECRET="SK-zgNQt47nzv2f3sPTDPG4"
-DOKU_SHARED_KEY="doku_key_3a4d17030ddd4adaa5a398f88c867556"
-DOKU_BSN="BSN-0222-1777799032208"
+# DOKU Credentials (Sandbox — updated March 2025)
+DOKU_CLIENT_ID="BRN-0252-1778130371806"
+DOKU_CLIENT_SECRET="SK-X1oIgyQUlXcdxBeGvWrB"
+DOKU_SHARED_KEY="doku_key_sandbox_ed97f1c31f0b4119bfa35d6aa39e1d82"
+DOKU_BSN="SK-zvnfHvsAy59mNLUDfxSb"
 DOKU_IS_SANDBOX="true"
 
 # Google OAuth
@@ -476,7 +476,7 @@ DB_SSLMODE=disable,\
 DOKU_CLIENT_ID=${DOKU_CLIENT_ID},\
 DOKU_IS_SANDBOX=${DOKU_IS_SANDBOX},\
 GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID},\
-SUPER_ADMIN_EMAILS=${SUPER_ADMIN_EMAILS:-bukdan@seleevent.id}" \
+SUPER_ADMIN_EMAILS=${SUPER_ADMIN_EMAILS:-bukdan101@gmail.com}" \
       --set-secrets="\
 DB_PASSWORD=db-password:latest,\
 JWT_SECRET=jwt-secret:latest,\
