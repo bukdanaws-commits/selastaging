@@ -73,7 +73,7 @@ export function Footer() {
               <span>GBK Madya Stadium,<br />Gelora Bung Karno, Jakarta Pusat</span>
             </div>
             <p className="text-[11px] text-muted-foreground">
-              24 Mei 2025 • Pukul 19:00 WIB
+              24 Mei 2026 • Pukul 19:00 WIB
             </p>
           </div>
 
