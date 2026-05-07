@@ -1,7 +1,7 @@
 # =============================================================================
 #  Cloud Build Configuration — EVENTKU Golang Backend API
 #
-#  Full pipeline: Docker build (in-repo Go compile) → Push → Deploy Cloud Run
+#  Strategy: Build Go binary in a Cloud Build step, then wrap in minimal Docker
 #
 #  Usage:
 #    gcloud builds submit . --config=gcp/cloudbuild-backend.yaml \
@@ -10,16 +10,35 @@
 #  Artifact Registry:
 #    Repository: eventku | Image: eventku-api
 #    Full path:  asia-southeast2-docker.pkg.dev/eventku-494416/eventku/eventku-api
-#
-#  Secrets in Secret Manager (created by update-staging.sh Step 2):
-#    db-password, jwt-secret, jwt-refresh-secret, google-client-secret,
-#    doku-client-secret, doku-shared-key, doku-bsn
 # =============================================================================
 
 steps:
-  # ── Build Docker image (multi-stage: Go build + minimal runtime) ────────────
+  # ── Step 1: Build Go binary ────────────────────────────────────────────────
+  #  Use golang Docker image directly (no Docker-in-Docker needed)
+  #  Uses GOTOOLCHAIN=auto so Go 1.24 will auto-download Go 1.25 as needed by go.mod
+  - name: 'golang:1.24'
+    id: 'build-binary'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        cd backend
+        echo "=== Go version ==="
+        go version
+        echo "=== Downloading Go modules ==="
+        GOTOOLCHAIN=auto go mod download 2>&1 || { echo "❌ go mod download FAILED"; exit 1; }
+        echo "=== Building static binary (CGO_ENABLED=0) ==="
+        GOTOOLCHAIN=auto CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+          -ldflags="-s -w -X main.version=$_SHORT_SHA" \
+          -o /workspace/eventku-api ./cmd/server 2>&1 || { echo "❌ go build FAILED"; exit 1; }
+        echo "✅ Binary built successfully"
+        ls -lh /workspace/eventku-api
+
+  # ── Step 2: Build Docker image (wraps the pre-built binary) ────────────────
   - name: 'gcr.io/cloud-builders/docker'
     id: 'build-image'
+    waitFor: ['build-binary']
     args:
       - 'build'
       - '-t'
@@ -27,17 +46,16 @@ steps:
       - '-t'
       - '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/$_IMAGE_NAME:latest'
       - '-f'
-      - 'backend/Dockerfile'
-      - '--build-arg=VERSION=$_SHORT_SHA'
+      - 'Dockerfile.backend-simple'
       - '.'
 
-  # ── Push to Artifact Registry ─────────────────────────────────────────────
+  # ── Step 3: Push to Artifact Registry ─────────────────────────────────────
   - name: 'gcr.io/cloud-builders/docker'
     id: 'push-image'
     waitFor: ['build-image']
     args: ['push', '--all-tags', '$_REGION-docker.pkg.dev/$PROJECT_ID/$_REPO/$_IMAGE_NAME']
 
-  # ── Deploy to Cloud Run ───────────────────────────────────────────────────
+  # ── Step 4: Deploy to Cloud Run ───────────────────────────────────────────
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'deploy'
     waitFor: ['push-image']
