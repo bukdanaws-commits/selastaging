@@ -41,6 +41,7 @@ type JWTConfig struct {
 type GoogleConfig struct {
         ClientID     string
         ClientSecret string
+        AdminEmails  []string // Emails that auto-promote to SUPER_ADMIN on first login
 }
 
 // DokuConfig holds DOKU payment gateway configuration.
@@ -56,6 +57,23 @@ type DokuConfig struct {
 }
 
 var Cfg Config
+
+// parseEmailList parses a comma-separated list of emails.
+// e.g. "admin@example.com,super@example.com" → ["admin@example.com", "super@example.com"]
+func parseEmailList(s string) []string {
+        if s == "" {
+                return nil
+        }
+        parts := strings.Split(s, ",")
+        result := make([]string, 0, len(parts))
+        for _, p := range parts {
+                email := strings.TrimSpace(p)
+                if email != "" {
+                        result = append(result, email)
+                }
+        }
+        return result
+}
 
 // loadSecretFromFile reads a secret from a file path.
 // Cloud Run mounts secrets from Secret Manager as files at the specified mount path.
@@ -94,6 +112,7 @@ func Load() {
         _ = viper.BindEnv("REFRESH_JWT_SECRET")
         _ = viper.BindEnv("GOOGLE_CLIENT_ID")
         _ = viper.BindEnv("GOOGLE_CLIENT_SECRET")
+        _ = viper.BindEnv("SUPER_ADMIN_EMAILS")
 
         // DOKU env vars
         _ = viper.BindEnv("DOKU_CLIENT_ID")
@@ -149,6 +168,7 @@ func Load() {
                 Google: GoogleConfig{
                         ClientID:     viper.GetString("GOOGLE_CLIENT_ID"),
                         ClientSecret: viper.GetString("GOOGLE_CLIENT_SECRET"),
+                        AdminEmails:  parseEmailList(viper.GetString("SUPER_ADMIN_EMAILS")),
                 },
                 Doku: DokuConfig{
                         ClientID:     viper.GetString("DOKU_CLIENT_ID"),

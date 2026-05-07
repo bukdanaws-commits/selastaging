@@ -6,6 +6,7 @@ import (
         "fmt"
         "io"
         "net/http"
+        "strings"
         "time"
 
         "github.com/bukdanaws-commits/seleevent/backend/internal/config"
@@ -232,13 +233,22 @@ func (s *AuthService) GoogleOAuth(idToken string) (*models.User, string, string,
 
                         avatar := tokenInfo.Picture
 
+                        // Determine role: auto-promote if email matches SUPER_ADMIN_EMAILS
+                        role := "PARTICIPANT"
+                        for _, adminEmail := range config.Cfg.Google.AdminEmails {
+                                if strings.EqualFold(tokenInfo.Email, adminEmail) {
+                                        role = "SUPER_ADMIN"
+                                        break
+                                }
+                        }
+
                         // Create new user
                         user = models.User{
                                 GoogleID: tokenInfo.Sub,
                                 Email:    tokenInfo.Email,
                                 Name:     name,
                                 Avatar:   &avatar,
-                                Role:     "PARTICIPANT",
+                                Role:     role,
                                 Status:   "active",
                         }
                         if err := s.DB.Create(&user).Error; err != nil {

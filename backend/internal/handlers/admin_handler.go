@@ -1004,3 +1004,80 @@ func ExpirePendingTickets(db *gorm.DB) fiber.Handler {
                 })
         }
 }
+
+// ─── USER ROLE MANAGEMENT ──────────────────────────────────────────────────
+
+// UpdateUserRole handles PATCH /api/v1/admin/users/:userId/role
+// Allows SUPER_ADMIN to change any user's role (except other SUPER_ADMINs).
+func UpdateUserRole(db *gorm.DB) fiber.Handler {
+        validRoles := map[string]bool{
+                "SUPER_ADMIN":    true,
+                "ORGANIZER":      true,
+                "COUNTER_STAFF":  true,
+                "GATE_STAFF":     true,
+                "PARTICIPANT":    true,
+        }
+
+        return func(c fiber.Ctx) error {
+                userID := c.Params("userId")
+                if userID == "" {
+                        return response.BadRequest(c, "User ID is required")
+                }
+
+                // Parse request body
+                type roleRequest struct {
+                        Role string `json:"role"`
+                }
+                var req roleRequest
+                if err := c.Bind().JSON(&req); err != nil {
+                        return response.BadRequest(c, "Invalid request body")
+                }
+
+                // Validate role
+                if !validRoles[req.Role] {
+                        return response.BadRequest(c, "Invalid role. Must be one of: SUPER_ADMIN, ORGANIZER, COUNTER_STAFF, GATE_STAFF, PARTICIPANT")
+                }
+
+                // Find target user
+                var user models.User
+                if err := db.Where("id = ?", userID).First(&user).Error; err != nil {
+                        if err == gorm.ErrRecordNotFound {
+                                return response.NotFound(c, "User not found")
+                        }
+                        return response.InternalError(c, "Failed to retrieve user")
+                }
+
+                // Prevent changing another SUPER_ADMIN's role (only SUPER_ADMIN can change roles,
+                // and they shouldn't be able to demote other SUPER_ADMINs)
+                adminRole, _ := c.Locals("userRole").(string)
+                if user.Role == "SUPER_ADMIN" && adminRole == "SUPER_ADMIN" && user.ID != c.Locals("userID").(string) {
+                        return response.BadRequest(c, "Cannot change another SUPER_ADMIN's role")
+                }
+
+                // Update role
+                oldRole := user.Role
+                if err := db.Model(&user).Update("role", req.Role).Error; err != nil {
+                        return response.InternalError(c, "Failed to update user role")
+                }
+
+                // Log the role change
+                adminID, _ := c.Locals("userID").(string)
+                auditLog := models.AuditLog{
+                        UserID:  adminID,
+                        Action:  "UPDATE_USER_ROLE",
+                        Module:  "admin",
+                        Details: func() *string { s := fmt.Sprintf("Changed user %s (%s) role from %s to %s", user.Name, user.Email, oldRole, req.Role); return &s }(),
+                }
+                db.Create(&auditLog)
+
+                // Reload user to get updated data
+                db.Where("id = ?", userID).First(&user)
+
+                return response.OK(c, fiber.Map{
+                        "user":     user,
+                        "oldRole":  oldRole,
+                        "newRole":  req.Role,
+                        "message":  fmt.Sprintf("User role updated from %s to %s. User must re-login for changes to take effect.", oldRole, req.Role),
+                })
+        }
+}

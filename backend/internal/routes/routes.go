@@ -157,6 +157,7 @@ func Setup(app *fiber.App, db *gorm.DB, hub *services.SSEHub) {
         admin.Get("/dashboard", handlers.GetAdminDashboard(db))
         admin.Get("/orders", handlers.GetAdminOrders(db))
         admin.Get("/users", handlers.GetAdminUsers(db))
+        admin.Patch("/users/:userId/role", handlers.UpdateUserRole(db))
         admin.Get("/events", handlers.GetAdminEvents(db))
         admin.Get("/analytics", handlers.GetAdminAnalytics(db))
 
