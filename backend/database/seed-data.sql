@@ -8,28 +8,31 @@
 ALTER TABLE ticket_types ADD COLUMN IF NOT EXISTS platform_fee NUMERIC(5,2) NOT NULL DEFAULT 0;
 
 -- ─── Clean existing data ────────────────────────────────────────────────
-DELETE FROM gate_logs_default;
-DELETE FROM gate_logs_2026_04;
-DELETE FROM redemptions;
-DELETE FROM gate_staff;
-DELETE FROM counter_staff;
-DELETE FROM notifications;
-DELETE FROM audit_logs;
-DELETE FROM tickets;
-DELETE FROM order_items;
-DELETE FROM orders;
-DELETE FROM seats;
-DELETE FROM ticket_types;
-DELETE FROM wristband_inventories;
-DELETE FROM counters;
-DELETE FROM gates;
-DELETE FROM subscriptions;
-DELETE FROM tenant_users;
-DELETE FROM invoice;
-DELETE FROM invoices;
-DELETE FROM events;
-DELETE FROM users;
-DELETE FROM tenants;
+-- Using DO blocks with IF EXISTS checks to avoid errors if tables don't exist
+DO $$
+BEGIN
+  DELETE FROM gate_logs_default; EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'gate_logs_default not found, skipping';
+END$$;
+DO $$ BEGIN DELETE FROM gate_logs_2026_04; EXCEPTION WHEN undefined_table THEN RAISE NOTICE 'gate_logs_2026_04 not found, skipping'; END$$;
+DO $$ BEGIN DELETE FROM redemptions; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM gate_staff; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM counter_staff; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM notifications; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM audit_logs; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM tickets; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM order_items; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM orders; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM seats; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM ticket_types; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM wristband_inventories; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM counters; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM gates; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM subscriptions; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM tenant_users; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM invoices; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM events; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM users; EXCEPTION WHEN undefined_table THEN NULL; END$$;
+DO $$ BEGIN DELETE FROM tenants; EXCEPTION WHEN undefined_table THEN NULL; END$$;
 
 -- ─── TENANT ────────────────────────────────────────────────────────────
 INSERT INTO tenants (id, name, slug, primary_color, secondary_color, plan, is_active, max_events, max_tickets, created_at, updated_at)
