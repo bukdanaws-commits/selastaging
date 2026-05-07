@@ -367,12 +367,12 @@ function HeroSection({ onLoginClick, isAuthenticated, selectedCity }: { onLoginC
   return (
     <section id="beranda" className="relative h-screen min-h-[600px] max-h-[1200px] flex items-center justify-center overflow-hidden">
       {/* Hero image background with parallax */}
-      <div className="absolute inset-0 z-0" style={{ transform: `translateY(${scrollY * 0.15}px) scale(1.15)` }}>
+      <div className="absolute inset-0 z-0" style={{ transform: `translateY(${scrollY * 0.08}px)` }}>
         <Image
           src="/images/hero-concert.png"
           alt="Sheila On 7 — Melompat Lebih Tinggi Live Concert"
           fill
-          className="object-cover object-center"
+          className="object-cover object-center sm:object-contain sm:object-center"
           priority
           sizes="100vw"
           quality={95}
@@ -380,8 +380,8 @@ function HeroSection({ onLoginClick, isAuthenticated, selectedCity }: { onLoginC
       </div>
 
       {/* Multi-layer gradient overlay */}
-      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-black/60 via-black/40 to-black/80" />
-      <div className="absolute inset-0 z-[2] bg-gradient-to-r from-black/50 via-transparent to-black/50" />
+      <div className="absolute inset-0 z-[1] bg-gradient-to-b from-black/50 via-black/30 to-black/70" />
+      <div className="absolute inset-0 z-[2] bg-gradient-to-r from-black/30 via-transparent to-black/30" />
       <div className="absolute inset-0 z-[3]" style={{
         background: 'radial-gradient(ellipse at 50% 60%, rgba(248,173,60,0.08) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(0,163,157,0.06) 0%, transparent 50%)'
       }} />
