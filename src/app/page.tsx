@@ -385,10 +385,57 @@ function HeroSection({ onLoginClick, isAuthenticated, selectedCity }: { onLoginC
       <div className="absolute inset-0 z-[2] bg-gradient-to-r from-black/10 via-transparent to-black/10" />
 
       {/* Content */}
-      <div className="container mx-auto px-4 relative z-10 text-center py-20">
+      <div className="container mx-auto px-4 relative z-10 text-center py-20 flex flex-col items-center justify-center h-full">
+
+        {/* TOUR 2026 — Animated Text */}
+        <div className="hero-text-container relative mb-8">
+          {/* Sparkle particles around text */}
+          {mounted && (
+            <>
+              <div className="hero-sparkle-dot" style={{ top: '-15px', left: '5%', animationDelay: '0.8s' }} />
+              <div className="hero-sparkle-dot" style={{ top: '-10px', right: '8%', animationDelay: '1.5s' }} />
+              <div className="hero-sparkle-dot" style={{ bottom: '-12px', left: '12%', animationDelay: '2.2s' }} />
+              <div className="hero-sparkle-dot" style={{ bottom: '-8px', right: '15%', animationDelay: '1.1s' }} />
+              <div className="hero-sparkle-dot" style={{ top: '50%', left: '-20px', animationDelay: '1.8s' }} />
+              <div className="hero-sparkle-dot" style={{ top: '50%', right: '-20px', animationDelay: '2.5s' }} />
+            </>
+          )}
+
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black tracking-tight leading-none select-none">
+            {'TOUR 2026'.split('').map((char, i) => (
+              <span
+                key={i}
+                className={cn(
+                  'hero-letter-glow gradient-text-gold',
+                  char === ' ' ? 'mr-4' : ''
+                )}
+                style={{
+                  animationDelay: `${0.3 + i * 0.1}s`,
+                }}
+              >
+                {char === ' ' ? '\u00A0' : char}
+              </span>
+            ))}
+          </h1>
+
+          {/* Animated underline */}
+          {mounted && (
+            <div className="flex items-center justify-center mt-4">
+              <div
+                className="hero-underline h-[3px] rounded-full bg-gradient-to-r from-transparent via-gold to-transparent"
+                style={{
+                  width: '80%',
+                  maxWidth: '400px',
+                  animationDelay: '1.4s',
+                  animationFillMode: 'both',
+                }}
+              />
+            </div>
+          )}
+        </div>
 
         {/* City & Date pills */}
-        <div className={cn('flex items-center justify-center gap-3 flex-wrap mt-6 transition-all duration-1000 delay-500', mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
+        <div className={cn('flex items-center justify-center gap-3 flex-wrap mt-2 transition-all duration-1000', mounted ? 'opacity-100 translate-y-0 delay-1000' : 'opacity-0 translate-y-8')}>
           <div className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-gold/30 bg-black/40 backdrop-blur-md text-sm">
             <MapPin className="h-4 w-4 text-gold" />
             <span className="font-semibold text-white">{selectedCity.city}</span>
@@ -404,7 +451,7 @@ function HeroSection({ onLoginClick, isAuthenticated, selectedCity }: { onLoginC
         </div>
 
         {/* CTA Buttons */}
-        <div className={cn('flex flex-col sm:flex-row items-center justify-center gap-4 mt-10 transition-all duration-1000 delay-700', mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
+        <div className={cn('flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 transition-all duration-1000', mounted ? 'opacity-100 translate-y-0 delay-[1200ms]' : 'opacity-0 translate-y-8')}>
           <Button
             size="lg"
             className="btn-shine text-sm px-10 h-13 rounded-full bg-gradient-to-r from-gold via-amber-500 to-gold text-black font-bold hover:from-amber-400 hover:via-yellow-400 hover:to-amber-400 shadow-[0_0_40px_rgba(248,173,60,0.3)] hover:shadow-[0_0_60px_rgba(248,173,60,0.5)] transition-all duration-500 animate-pulse-glow-gold"
@@ -436,7 +483,7 @@ function HeroSection({ onLoginClick, isAuthenticated, selectedCity }: { onLoginC
 
         {/* Google Login hint */}
         {!isAuthenticated && (
-          <div className={cn('mt-6 transition-all duration-1000 delay-900', mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8')}>
+          <div className={cn('mt-6 transition-all duration-1000', mounted ? 'opacity-100 translate-y-0 delay-[1500ms]' : 'opacity-0 translate-y-8')}>
             <Button
               variant="ghost"
               className="text-xs text-white/40 hover:text-white/70 gap-2 transition-colors duration-300"

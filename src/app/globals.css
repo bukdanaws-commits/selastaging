@@ -511,3 +511,132 @@
     line-height: 1.1 !important;
   }
 }
+
+/* ── HERO TOUR 2026 ANIMATIONS ─────────────────────── */
+@keyframes hero-letter-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(60px) rotateX(90deg) scale(0.5);
+    filter: blur(8px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-8px) rotateX(-5deg) scale(1.05);
+    filter: blur(0);
+  }
+  80% {
+    transform: translateY(3px) rotateX(2deg) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes hero-glow-pulse {
+  0%, 100% {
+    text-shadow:
+      0 0 20px rgba(248,173,60,0.4),
+      0 0 40px rgba(248,173,60,0.2),
+      0 0 80px rgba(248,173,60,0.1);
+  }
+  50% {
+    text-shadow:
+      0 0 30px rgba(248,173,60,0.6),
+      0 0 60px rgba(248,173,60,0.35),
+      0 0 120px rgba(248,173,60,0.15),
+      0 0 200px rgba(255,215,0,0.08);
+  }
+}
+
+@keyframes hero-line-expand {
+  0% {
+    width: 0;
+    opacity: 0;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+@keyframes hero-sparkle {
+  0%, 100% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(180deg);
+  }
+}
+
+@keyframes hero-float-gentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes hero-underline-draw {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes hero-particle-drift {
+  0% {
+    opacity: 0;
+    transform: translateY(0) translateX(0) scale(0);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-10px) translateX(5px) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-80px) translateX(-20px) scale(0);
+  }
+}
+
+.hero-letter {
+  display: inline-block;
+  opacity: 0;
+  animation: hero-letter-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hero-letter-glow {
+  animation: hero-letter-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+             hero-glow-pulse 3s ease-in-out infinite 1.5s;
+}
+
+.hero-text-container {
+  perspective: 1000px;
+}
+
+.hero-sparkle-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #FFD700;
+  box-shadow: 0 0 6px 2px rgba(255,215,0,0.6), 0 0 15px 4px rgba(248,173,60,0.3);
+  animation: hero-sparkle 2.5s ease-in-out infinite;
+}
+
+.hero-underline {
+  transform-origin: center;
+  animation: hero-underline-draw 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hero-float {
+  animation: hero-float-gentle 4s ease-in-out infinite;
+}
