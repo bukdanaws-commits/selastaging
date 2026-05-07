@@ -42,6 +42,10 @@ import {
   Crown,
   Gem,
   CircleDot,
+  Navigation,
+  Bus,
+  Car,
+  TrainFront,
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
@@ -860,7 +864,225 @@ function TicketsSection({ ticketTypes, onBuy }: { ticketTypes: TicketTypeDisplay
 }
 
 // ─────────────────────────────────────────────────────────
-// Section 4 — Wristband Color Guide
+// Section 4 — Venue Info
+// ─────────────────────────────────────────────────────────
+function VenueSection({ selectedCity }: { selectedCity: typeof TOUR_CITIES[number] }) {
+  const { ref, inView } = useInView()
+
+  // Venue details per city
+  const VENUE_DETAILS: Record<string, {
+    address: string
+    mapUrl: string
+    transport: { icon: React.ReactNode; label: string; desc: string }[]
+    facilities: { icon: React.ReactNode; label: string }[]
+  }> = {
+    'Bandung': {
+      address: 'Jl. Baros No.1, Cimahi, Jawa Barat 40511',
+      mapUrl: 'https://maps.google.com/?q=Baros+Field+Cimahi',
+      transport: [
+        { icon: <TrainFront className="h-4 w-4" />, label: 'Kereta', desc: 'Stasiun Cimahi (5 menit)' },
+        { icon: <Bus className="h-4 w-4" />, label: 'Bus', desc: 'Terminal Cimahi (10 menit)' },
+        { icon: <Car className="h-4 w-4" />, label: 'Mobil', desc: 'Parkir tersedia di area venue' },
+      ],
+      facilities: [
+        { icon: <Utensils className="h-4 w-4" />, label: 'Food Court' },
+        { icon: <Volume2 className="h-4 w-4" />, label: 'Sound System' },
+        { icon: <Camera className="h-4 w-4" />, label: 'Photobooth' },
+        { icon: <Handshake className="h-4 w-4" />, label: 'Merch Area' },
+      ],
+    },
+    'Makassar': {
+      address: 'Pantai Losari, Makassar, Sulawesi Selatan 90173',
+      mapUrl: 'https://maps.google.com/?q=Pantai+Losari+Makassar',
+      transport: [
+        { icon: <TrainFront className="h-4 w-4" />, label: 'Kereta', desc: 'Stasiun Manggala (15 menit)' },
+        { icon: <Bus className="h-4 w-4" />, label: 'Bus', desc: 'Terminal Daya (20 menit)' },
+        { icon: <Car className="h-4 w-4" />, label: 'Mobil', desc: 'Parkir tersedia' },
+      ],
+      facilities: [
+        { icon: <Utensils className="h-4 w-4" />, label: 'Food Court' },
+        { icon: <Volume2 className="h-4 w-4" />, label: 'Sound System' },
+        { icon: <Camera className="h-4 w-4" />, label: 'Photobooth' },
+        { icon: <Handshake className="h-4 w-4" />, label: 'Merch Area' },
+      ],
+    },
+    'Medan': {
+      address: 'Jl. Balai Kota, Medan, Sumatera Utara 20112',
+      mapUrl: 'https://maps.google.com/?q=Lapangan+Merdeka+Medan',
+      transport: [
+        { icon: <TrainFront className="h-4 w-4" />, label: 'Kereta', desc: 'Stasiun Medan (10 menit)' },
+        { icon: <Bus className="h-4 w-4" />, label: 'Bus', desc: 'Terminal Amplas (20 menit)' },
+        { icon: <Car className="h-4 w-4" />, label: 'Mobil', desc: 'Parkir tersedia' },
+      ],
+      facilities: [
+        { icon: <Utensils className="h-4 w-4" />, label: 'Food Court' },
+        { icon: <Volume2 className="h-4 w-4" />, label: 'Sound System' },
+        { icon: <Camera className="h-4 w-4" />, label: 'Photobooth' },
+        { icon: <Handshake className="h-4 w-4" />, label: 'Merch Area' },
+      ],
+    },
+    'Jakarta': {
+      address: 'Jl. Gatot Subroto, Senayan, Kebayoran Baru, Jakarta Pusat 10270',
+      mapUrl: 'https://maps.google.com/?q=GBK+Madya+Stadium+Jakarta',
+      transport: [
+        { icon: <TrainFront className="h-4 w-4" />, label: 'MRT', desc: 'Stasiun Senayan (5 menit jalan)' },
+        { icon: <Bus className="h-4 w-4" />, label: 'TransJakarta', desc: 'Halte Senayan (3 menit)' },
+        { icon: <Car className="h-4 w-4" />, label: 'Mobil', desc: 'Parkir GBK tersedia' },
+      ],
+      facilities: [
+        { icon: <Utensils className="h-4 w-4" />, label: 'Food Court' },
+        { icon: <Volume2 className="h-4 w-4" />, label: 'Sound System' },
+        { icon: <Camera className="h-4 w-4" />, label: 'Photobooth' },
+        { icon: <Handshake className="h-4 w-4" />, label: 'Merch Area' },
+        { icon: <ShieldCheck className="h-4 w-4" />, label: 'Medical Tent' },
+        { icon: <CreditCard className="h-4 w-4" />, label: 'Top-up Area' },
+      ],
+    },
+    'Balikpapan': {
+      address: 'Jl. MT Haryono, Balikpapan, Kalimantan Timur 76114',
+      mapUrl: 'https://maps.google.com/?q=Lapangan+Merdeka+Balikpapan',
+      transport: [
+        { icon: <TrainFront className="h-4 w-4" />, label: 'Kereta', desc: 'Belum tersedia' },
+        { icon: <Bus className="h-4 w-4" />, label: 'Bus', desc: 'Terminal Damai (15 menit)' },
+        { icon: <Car className="h-4 w-4" />, label: 'Mobil', desc: 'Parkir tersedia' },
+      ],
+      facilities: [
+        { icon: <Utensils className="h-4 w-4" />, label: 'Food Court' },
+        { icon: <Volume2 className="h-4 w-4" />, label: 'Sound System' },
+        { icon: <Camera className="h-4 w-4" />, label: 'Photobooth' },
+        { icon: <Handshake className="h-4 w-4" />, label: 'Merch Area' },
+      ],
+    },
+  }
+
+  const details = VENUE_DETAILS[selectedCity.city] || VENUE_DETAILS['Jakarta']!
+
+  return (
+    <section id="venue" className="py-24 md:py-32 relative overflow-hidden" ref={ref}>
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-section-mesh opacity-50" />
+      </div>
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
+
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="text-center mb-14">
+          <div className={cn(inView && 'animate-fade-in-up')}>
+            <div className="section-badge section-badge-gold mb-5 mx-auto w-fit">
+              <MapPin className="h-3 w-3" />
+              Lokasi
+            </div>
+          </div>
+          <h2 className={cn('text-3xl sm:text-4xl md:text-5xl font-black tracking-tight', inView && 'animate-fade-in-up delay-100')}>
+            <span className="gradient-text-gold">VENUE</span> KONSER
+          </h2>
+          <p className="text-muted-foreground mt-3 text-sm">Informasi lokasi dan akses menuju venue</p>
+        </div>
+
+        <div className={cn('max-w-5xl mx-auto', inView && 'animate-fade-in-up delay-200')}>
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Left: Venue image & map */}
+            <div className="space-y-4">
+              {/* Venue image */}
+              <div className="relative rounded-2xl overflow-hidden border border-white/10 aspect-video">
+                <Image
+                  src="/images/sections/venue.png"
+                  alt={`Venue ${selectedCity.venue}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4">
+                  <div className="flex items-center gap-2 mb-1">
+                    <MapPin className="h-4 w-4 text-gold" />
+                    <span className="font-bold text-white text-sm">{selectedCity.venue}</span>
+                  </div>
+                  <span className="text-[11px] text-white/60">{selectedCity.city}</span>
+                </div>
+              </div>
+
+              {/* Google Maps link */}
+              <a
+                href={details.mapUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 p-4 rounded-xl glass border border-white/5 hover:border-gold/20 hover:bg-white/[0.04] transition-all duration-300 group"
+              >
+                <div className="w-10 h-10 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center group-hover:bg-gold/20 transition-colors">
+                  <Navigation className="h-4 w-4 text-gold" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold">Buka di Google Maps</p>
+                  <p className="text-[11px] text-muted-foreground">{details.address}</p>
+                </div>
+                <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-gold transition-colors" />
+              </a>
+            </div>
+
+            {/* Right: Transport & Facilities */}
+            <div className="space-y-6">
+              {/* Transport */}
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-gold mb-4 flex items-center gap-2">
+                  <Navigation className="h-4 w-4" />
+                  Cara Menuju Venue
+                </h3>
+                <div className="space-y-3">
+                  {details.transport.map((t) => (
+                    <div key={t.label} className="flex items-center gap-4 p-3 rounded-xl glass border border-white/5">
+                      <div className="w-9 h-9 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center text-primary">
+                        {t.icon}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold">{t.label}</p>
+                        <p className="text-[11px] text-muted-foreground">{t.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Facilities */}
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-gold mb-4 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4" />
+                  Fasilitas Venue
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {details.facilities.map((f) => (
+                    <div key={f.label} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-white/[0.02] border border-white/5">
+                      <div className="text-primary">{f.icon}</div>
+                      <span className="text-xs font-medium text-muted-foreground">{f.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Important notice */}
+              <div className="p-4 rounded-xl border border-gold/20 bg-gold/[0.04]">
+                <div className="flex items-start gap-3">
+                  <ShieldCheck className="h-5 w-5 text-gold shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-semibold mb-1">Penting untuk Diketahui</p>
+                    <ul className="text-[11px] text-muted-foreground space-y-1">
+                      <li>• Pintu dibuka pukul 16:00 WIB, datanglah lebih awal</li>
+                      <li>• Wajib menukarkan e-tiket dengan gelang di booth redeem</li>
+                      <li>• Dilarang membawa makanan/minuman dari luar</li>
+                      <li>• Parkir terbatas, disarankan gunakan transportasi umum</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ─────────────────────────────────────────────────────────
+// Section 5 — Wristband Color Guide
 // ─────────────────────────────────────────────────────────
 function WristbandSection() {
   const { ref, inView } = useInView()
@@ -1198,6 +1420,7 @@ export default function HomePage() {
         <HeroSection onLoginClick={openLoginModal} isAuthenticated={isAuthenticated} selectedCity={selectedCity} />
         <TourScheduleSection selectedCity={selectedCity} onSelectCity={handleSelectCity} />
         <TicketsSection ticketTypes={ticketTypes} onBuy={handleBuyTicket} />
+        <VenueSection selectedCity={selectedCity} />
         <WristbandSection />
         <FAQSection faqs={faqs} />
         <TrustCTASection onLoginClick={openLoginModal} isAuthenticated={isAuthenticated} />
