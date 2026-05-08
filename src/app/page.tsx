@@ -1293,9 +1293,14 @@ export default function HomePage() {
     async function fetchEventData() {
       try {
         const response = await publicApi.getEventBySlug(selectedSlug)
-        if (response && typeof response === 'object' && 'event' in response) {
-          const event = (response as { event: Record<string, unknown> }).event
-          if (event) {
+        if (!response || typeof response !== 'object') return
+
+        // Backend returns event data directly - handle both formats
+        const event = ('event' in response)
+          ? (response as { event: Record<string, unknown> }).event
+          : (response as Record<string, unknown>)
+
+        if (event && typeof event === 'object') {
             setEventData(prev => ({
               ...prev,
               id: (event.id as string) || prev.id,

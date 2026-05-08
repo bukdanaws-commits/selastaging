@@ -149,8 +149,12 @@ function loadGIS(): Promise<void> {
   })
 }
 
-// Get Google ID token using One Tap / popup
+// Get Google ID token using popup (more reliable than One Tap)
 async function getGoogleIdToken(): Promise<string> {
+  if (!GOOGLE_CLIENT_ID) {
+    throw new Error('Google Client ID not configured. Set NEXT_PUBLIC_GOOGLE_CLIENT_ID environment variable.')
+  }
+
   await loadGIS()
 
   const google = (window as unknown as { google: { accounts: { id: { initialize: (config: Record<string, unknown>) => void; prompt: (callback: (notification: Record<string, unknown>) => void) => void; renderButton: (parent: HTMLElement, config: Record<string, unknown>) => void } } } }).google
@@ -170,14 +174,64 @@ async function getGoogleIdToken(): Promise<string> {
     })
 
     google.accounts.id.prompt((notification: Record<string, unknown>) => {
-      if (notification.isNotDisplayed) {
-        reject(new Error('Google One Tap not available'))
-      }
-      if (notification.isSkippedMoment) {
-        reject(new Error('Google sign-in was skipped'))
+      if (notification.isNotDisplayed || notification.isSkippedMoment) {
+        console.warn('[Auth] Google One Tap not available, trying popup flow...')
+        tryOAuth2Popup(GOOGLE_CLIENT_ID, resolve, reject)
       }
     })
   })
+}
+
+// Fallback: OAuth2 popup-based sign-in when One Tap fails
+function tryOAuth2Popup(
+  clientId: string,
+  resolve: (token: string) => void,
+  reject: (error: Error) => void
+) {
+  const redirectUri = \`\${window.location.origin}/\`
+  const scope = 'openid email profile'
+  const authUrl = \`https://accounts.google.com/o/oauth2/v2/auth?\` +
+    \`client_id=\${encodeURIComponent(clientId)}\` +
+    \`&redirect_uri=\${encodeURIComponent(redirectUri)}\` +
+    \`&response_type=id_token\` +
+    \`&scope=\${encodeURIComponent(scope)}\` +
+    \`&prompt=select_account\` +
+    \`&nonce=\${Date.now()}\`
+
+  const popup = window.open(authUrl, 'google-signin', 'width=500,height=600,left=100,top=100')
+
+  if (!popup) {
+    reject(new Error('Popup blocked. Please allow popups for this site.'))
+    return
+  }
+
+  const checkPopup = setInterval(() => {
+    try {
+      if (popup.closed) {
+        clearInterval(checkPopup)
+        reject(new Error('Sign-in popup was closed'))
+        return
+      }
+      const popupUrl = popup.location.href
+      if (popupUrl) {
+        const hashParams = new URLSearchParams(popupUrl.split('#')[1] || '')
+        const idToken = hashParams.get('id_token')
+        if (idToken) {
+          popup.close()
+          clearInterval(checkPopup)
+          resolve(idToken)
+        }
+      }
+    } catch {
+      // Cross-origin error - popup hasn't redirected yet
+    }
+  }, 500)
+
+  setTimeout(() => {
+    clearInterval(checkPopup)
+    if (!popup.closed) popup.close()
+    reject(new Error('Sign-in timed out'))
+  }, 60000)
 }
 
 // ─── STORE ─────────────────────────────────────────────────────────────────
