@@ -1,12 +1,21 @@
 # =============================================================================
 #  SELEVENT — Next.js Frontend Docker Image for Cloud Run
 #
-#  Uses Node 22 — required by Next.js 16 (requires Node >= 20.9.0)
-#  Tested & proven on Cloud Run (asia-southeast2)
+#  Build:  docker build -f Dockerfile.frontend -t selevent-web .
+#  Run:    docker run -p 3000:3000 selevent-web
+#
+#  IMPORTANT: Docker build context is project root (.)
+#  All COPY paths must be relative to project root.
+#
+#  Uses node:20-slim (Debian) for deps+builder stages because:
+#  - sharp has prebuilt binaries for glibc (Debian) but NOT musl (Alpine)
+#  - Alpine requires building sharp from source which is fragile
+#  Runtime stage uses Alpine for smaller image (sharp not needed at runtime)
 # =============================================================================
 
 # ── Stage 1: Dependencies ────────────────────────────────────────────────────
-FROM node:22-slim AS deps
+# Use Debian-slim because sharp has prebuilt binaries for glibc, NOT musl (Alpine)
+FROM node:20-slim AS deps
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libc6 \
@@ -22,7 +31,7 @@ COPY package.json ./
 RUN npm install --legacy-peer-deps
 
 # ── Stage 2: Build ───────────────────────────────────────────────────────────
-FROM node:22-slim AS builder
+FROM node:20-slim AS builder
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libc6 \
@@ -43,15 +52,34 @@ ARG NEXT_PUBLIC_USE_MOCK="false"
 ARG NEXT_PUBLIC_API_URL="https://eventku-api-lkfw4e5kna-et.a.run.app"
 ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID="503551786622-k3uajo9c2d6om6qnqofsa3b47fvo5o6g.apps.googleusercontent.com"
 ARG NEXT_PUBLIC_DOKU_ENVIRONMENT="production"
+ARG NEXT_PUBLIC_DOKU_API_BASE_URL="https://api.doku.com"
+ARG NEXT_PUBLIC_DOKU_CHECKOUT_URL="https://checkout.doku.com"
+ARG NEXT_PUBLIC_DOKU_CLIENT_ID=""
+ARG NEXT_PUBLIC_DOKU_NOTIFICATION_URL=""
+ARG NEXT_PUBLIC_DOKU_FINISH_URL=""
+ARG NEXT_PUBLIC_DOKU_ERROR_URL=""
+ARG NEXT_PUBLIC_DOKU_UNPAYMENT_URL=""
 ARG NEXT_PUBLIC_PLATFORM_FEE_PERCENTAGE="5"
+ARG NEXT_PUBLIC_SETTLEMENT_DAYS="7"
 
+# Set build-time env vars
 ENV NEXT_PUBLIC_USE_MOCK=$NEXT_PUBLIC_USE_MOCK
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=$NEXT_PUBLIC_GOOGLE_CLIENT_ID
 ENV NEXT_PUBLIC_DOKU_ENVIRONMENT=$NEXT_PUBLIC_DOKU_ENVIRONMENT
+ENV NEXT_PUBLIC_DOKU_API_BASE_URL=$NEXT_PUBLIC_DOKU_API_BASE_URL
+ENV NEXT_PUBLIC_DOKU_CHECKOUT_URL=$NEXT_PUBLIC_DOKU_CHECKOUT_URL
+ENV NEXT_PUBLIC_DOKU_CLIENT_ID=$NEXT_PUBLIC_DOKU_CLIENT_ID
+ENV NEXT_PUBLIC_DOKU_NOTIFICATION_URL=$NEXT_PUBLIC_DOKU_NOTIFICATION_URL
+ENV NEXT_PUBLIC_DOKU_FINISH_URL=$NEXT_PUBLIC_DOKU_FINISH_URL
+ENV NEXT_PUBLIC_DOKU_ERROR_URL=$NEXT_PUBLIC_DOKU_ERROR_URL
+ENV NEXT_PUBLIC_DOKU_UNPAYMENT_URL=$NEXT_PUBLIC_DOKU_UNPAYMENT_URL
 ENV NEXT_PUBLIC_PLATFORM_FEE_PERCENTAGE=$NEXT_PUBLIC_PLATFORM_FEE_PERCENTAGE
+ENV NEXT_PUBLIC_SETTLEMENT_DAYS=$NEXT_PUBLIC_SETTLEMENT_DAYS
 
 # Build Next.js application (standalone output)
+# The build script also copies static files into standalone output:
+#   "build": "next build && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/"
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
@@ -59,7 +87,8 @@ RUN npm run build
 RUN ls -la .next/standalone/ && echo "✅ Standalone output verified"
 
 # ── Stage 3: Production Runtime ──────────────────────────────────────────────
-FROM node:22-alpine AS runner
+# Runtime uses Alpine for smaller image (sharp prebuilt included in standalone)
+FROM node:20-alpine AS runner
 
 # Security: Run as non-root user
 RUN addgroup --system --gid 1001 nodejs && \
@@ -98,7 +127,7 @@ ENV HOSTNAME="0.0.0.0"
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD curl -f http://localhost:3000/ || exit 1
+    CMD curl -f http://localhost:3000/api/health || exit 1
 
 # Start Next.js server
 CMD ["node", "server.js"]
