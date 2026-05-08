@@ -1295,54 +1295,53 @@ export default function HomePage() {
         const response = await publicApi.getEventBySlug(selectedSlug)
         if (!response || typeof response !== 'object') return
 
-        // Backend returns event data directly - handle both formats
         const event = ('event' in response)
           ? (response as { event: Record<string, unknown> }).event
           : (response as Record<string, unknown>)
 
         if (event && typeof event === 'object') {
-            setEventData(prev => ({
-              ...prev,
-              id: (event.id as string) || prev.id,
-              slug: (event.slug as string) || prev.slug,
-              title: (event.title as string) || prev.title,
-              subtitle: (event.subtitle as string) || prev.subtitle,
-              date: (event.date as string) || prev.date,
-              venue: (event.venue as string) || prev.venue,
-              city: (event.city as string) || prev.city,
-              capacity: (event.capacity as number) || prev.capacity,
-              status: (event.status as 'published' | 'draft' | 'sold_out') || prev.status,
-            }))
+          setEventData(prev => ({
+            ...prev,
+            id: (event.id as string) || prev.id,
+            slug: (event.slug as string) || prev.slug,
+            title: (event.title as string) || prev.title,
+            subtitle: (event.subtitle as string) || prev.subtitle,
+            date: (event.date as string) || prev.date,
+            venue: (event.venue as string) || prev.venue,
+            city: (event.city as string) || prev.city,
+            capacity: (event.capacity as number) || prev.capacity,
+            status: (event.status as 'published' | 'draft' | 'sold_out') || prev.status,
+          }))
 
-            const eventTicketTypes = event.ticketTypes
-            if (Array.isArray(eventTicketTypes) && eventTicketTypes.length > 0) {
-              const apiTickets: TicketTypeDisplay[] = eventTicketTypes.map((tt: Record<string, unknown>) => ({
-                id: (tt.id as string) || '',
-                name: (tt.name as string) || '',
-                description: (tt.description as string) || '',
-                price: (tt.price as number) || 0,
-                quota: (tt.quota as number) || 0,
-                sold: (tt.sold as number) || 0,
-                tier: ((tt.tier as string) === 'tribun' ? 'tribun' : 'floor') as 'floor' | 'tribun',
-                emoji: (tt.emoji as string) || '🎟️',
-                platformFee: (tt.platformFee as number) || 0,
-                benefits: (() => {
-                  if (Array.isArray(tt.benefits)) return tt.benefits as string[]
-                  if (typeof tt.benefits === 'string') {
-                    try { const parsed = JSON.parse(tt.benefits); return Array.isArray(parsed) ? parsed : [] }
-                    catch { return [] }
-                  }
-                  return []
-                })(),
-              }))
-              setTicketTypes(apiTickets)
-            }
+          const eventTicketTypes = event.ticketTypes
+          if (Array.isArray(eventTicketTypes) && eventTicketTypes.length > 0) {
+            const apiTickets: TicketTypeDisplay[] = eventTicketTypes.map((tt: Record<string, unknown>) => ({
+              id: (tt.id as string) || '',
+              name: (tt.name as string) || '',
+              description: (tt.description as string) || '',
+              price: (tt.price as number) || 0,
+              quota: (tt.quota as number) || 0,
+              sold: (tt.sold as number) || 0,
+              tier: ((tt.tier as string) === 'tribun' ? 'tribun' : 'floor') as 'floor' | 'tribun',
+              emoji: (tt.emoji as string) || '🎟️',
+              platformFee: (tt.platformFee as number) || 0,
+              benefits: (() => {
+                if (Array.isArray(tt.benefits)) return tt.benefits as string[]
+                if (typeof tt.benefits === 'string') {
+                  try { const parsed = JSON.parse(tt.benefits); return Array.isArray(parsed) ? parsed : [] }
+                  catch { return [] }
+                }
+                return []
+              })(),
+            }))
+            setTicketTypes(apiTickets)
           }
         }
       } catch (err) {
-        // Silently use fallback data
+        console.warn('[fetchEventData] API error, using fallback data:', err)
       }
     }
+
 
     fetchEventData()
   }, [selectedSlug])
