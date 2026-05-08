@@ -1339,7 +1339,7 @@ export default function HomePage() {
             }
           }
         }
-      } catch {
+      } catch (err) {
         // Silently use fallback data
       }
     }
