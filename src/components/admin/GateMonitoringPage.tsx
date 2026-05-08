@@ -234,7 +234,7 @@ export function GateMonitoringPage() {
               </span>
             </h2>
             <p className="text-muted-foreground text-xs">
-              D-Day Real-time — 24 Mei 2025, GBK Madya Stadium
+              D-Day Real-time — 22 Juni 2026, GBK Madya Stadium
             </p>
           </div>
         </div>

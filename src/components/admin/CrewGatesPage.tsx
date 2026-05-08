@@ -155,28 +155,28 @@ const mockScannerDevices: ScannerDevice[] = [
     name: 'Redeem Booth Alpha',
     type: 'redeem',
     status: 'online',
-    lastPing: '2025-05-24T18:10:00',
+    lastPing: '2026-06-22T18:10:00',
   },
   {
     id: 'dev-002',
     name: 'Gate A Scanner',
     type: 'entry',
     status: 'online',
-    lastPing: '2025-05-24T18:09:30',
+    lastPing: '2026-06-22T18:09:30',
   },
   {
     id: 'dev-003',
     name: 'Gate B Scanner',
     type: 'entry',
     status: 'online',
-    lastPing: '2025-05-24T18:10:15',
+    lastPing: '2026-06-22T18:10:15',
   },
   {
     id: 'dev-004',
     name: 'Exit Main Scanner',
     type: 'exit',
     status: 'offline',
-    lastPing: '2025-05-24T16:00:00',
+    lastPing: '2026-06-22T16:00:00',
   },
 ];
 
@@ -276,7 +276,7 @@ export function CrewGatesPage() {
   };
 
   const formatRelativeTime = (dateStr: string) => {
-    const now = new Date('2025-05-24T18:10:00');
+    const now = new Date('2026-06-22T18:10:00');
     const d = new Date(dateStr);
     const diffMs = now.getTime() - d.getTime();
     const diffMins = Math.floor(diffMs / 60000);

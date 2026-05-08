@@ -1318,11 +1318,11 @@ export function generateAllMockData(): MockDataBundle {
       usageLimitPerUser: 1,
       usedCount: 200,
       status: 'expired',
-      startsAt: '2025-12-01T00:00:00+07:00',
+      startsAt: '2026-05-01T00:00:00+07:00',
       expiresAt: '2026-01-31T23:59:59+07:00',
       organizerId: ORGANIZER_ID,
       tenantId: TENANT_ID,
-      createdAt: '2025-12-01T00:00:00+07:00',
+      createdAt: '2026-05-01T00:00:00+07:00',
       updatedAt: '2026-02-01T00:00:00+07:00',
     },
   ]

@@ -64,7 +64,7 @@ const myTickets: MyTicket[] = [
     wristbandColor: 'Gold',
     wristbandColorHex: '#FFD700',
     qrData: 'SHL-JKT-VVIPPIT-0001',
-    entryTime: '2025-05-24T16:30:00',
+    entryTime: '2026-06-22T16:30:00',
     entryGate: 'VIP Gate',
   },
   {
@@ -96,7 +96,7 @@ const myTickets: MyTicket[] = [
     wristbandColor: 'Orange',
     wristbandColorHex: '#FF6B35',
     qrData: 'SHL-JKT-FESTIV-0003',
-    entryTime: '2025-05-24T16:45:00',
+    entryTime: '2026-06-22T16:45:00',
     entryGate: 'Gate A',
   },
   {
@@ -222,7 +222,7 @@ export default function MyTicketPage() {
           <Calendar className="w-4 h-4 text-primary shrink-0" />
           <div>
             <p className="text-sm text-foreground font-medium">Sheila On 7 — JAKARTA</p>
-            <p className="text-xs text-muted-foreground">Sabtu, 24 Mei 2025 • GBK Madya Stadium</p>
+            <p className="text-xs text-muted-foreground">Sabtu, 22 Juni 2026 • GBK Madya Stadium</p>
           </div>
         </div>
 

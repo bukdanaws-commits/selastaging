@@ -112,7 +112,7 @@ export function Footer() {
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-[10px] text-muted-foreground/60">
-            © 2025 Sheila On 7. All rights reserved.
+            © 2026 Sheila On 7. All rights reserved.
           </p>
           <p className="text-[10px] text-muted-foreground/60">
             Powered By <span className="text-primary/60 font-medium">pakD_Sinnay</span>
