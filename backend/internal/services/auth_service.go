@@ -22,7 +22,7 @@ type GoogleTokenInfo struct {
         Azp           string `json:"azp"`           // Client ID
         Aud           string `json:"aud"`           // Client ID (who the token is for)
         Email         string `json:"email"`
-        EmailVerified bool   `json:"email_verified"`
+        EmailVerified string `json:"email_verified"`
         Name          string `json:"name"`
         Picture       string `json:"picture"`
         GivenName     string `json:"given_name"`
@@ -87,7 +87,7 @@ func (s *AuthService) verifyGoogleToken(idToken string) (*GoogleTokenInfo, error
         }
 
         // Verify email is verified (if present)
-        if tokenInfo.Email != "" && !tokenInfo.EmailVerified {
+        if tokenInfo.Email != "" && tokenInfo.EmailVerified != "true" {
                 return nil, errors.New("google email is not verified")
         }
 
