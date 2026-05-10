@@ -1,0 +1,35 @@
+      table_name       
+-----------------------
+ audit_logs
+ counter_staff
+ counters
+ coupon_usages
+ coupons
+ events
+ gate_logs
+ gate_logs_2026_04
+ gate_logs_2026_05
+ gate_logs_2026_06
+ gate_logs_default
+ gate_staff
+ gates
+ invoices
+ notifications
+ order_items
+ orders
+ payment_logs
+ redemptions
+ refunds
+ schema_migrations
+ seats
+ subscriptions
+ system_settings
+ tenant_users
+ tenants
+ ticket_types
+ tickets
+ users
+ withdrawal_requests
+ wristband_inventories
+(31 rows)
+

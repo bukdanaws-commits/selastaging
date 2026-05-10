@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
@@ -40,6 +40,7 @@ import {
   UserCircle,
   Shield,
   ArrowLeftRight,
+  Tag,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -62,7 +63,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useAuthStore, ROLE_LABELS, ROLE_BADGE_COLORS } from '@/lib/auth-store'
-import { MOCK_EVENTS } from '@/lib/mock-events'
+import { isMockMode } from '@/lib/api'
+import { useAdminEvents } from '@/hooks/use-api'
 import { getNavSectionsForRole, type NavSection, type NavItem } from '@/lib/nav-config'
 import type { UserRole } from '@/lib/types'
 
@@ -97,10 +99,8 @@ const ICON_MAP: Record<string, React.ElementType> = {
   Radio,
   Monitor,
   Store,
+  Tag,
 }
-
-// ─── MOCK EVENTS FOR EVENT SELECTOR ────────────────────────────────────────
-// (imported from @/lib/mock-events)
 
 // ─── COMPONENT ─────────────────────────────────────────────────────────────
 
@@ -113,6 +113,29 @@ export function AdminLayout({ children, onExit }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pathname = usePathname()
   const { user, logout, hasRole, selectedEventId, setSelectedEvent, loginAsRole } = useAuthStore()
+
+  // ─── Event selector data ─────────────────────────────────────────────
+  // Always fetch events from API. In mock mode, the mock handler provides events.
+  // In production, the real backend returns events with UUIDs.
+  const { data: apiEvents, isLoading: eventsLoading, error: eventsError } = useAdminEvents()
+
+  const eventsForSelector = useMemo(() => {
+    if (apiEvents && Array.isArray(apiEvents)) {
+      return (apiEvents as Record<string, unknown>[]).map((event) => ({
+        id: String(event.id),
+        name: String(event.title || event.slug || 'Unnamed Event'),
+        slug: event.slug ? String(event.slug) : undefined,
+      }))
+    }
+    return []
+  }, [apiEvents])
+
+  // Auto-select the first event if none is selected yet
+  useEffect(() => {
+    if (!selectedEventId && eventsForSelector.length > 0) {
+      setSelectedEvent(eventsForSelector[0].id)
+    }
+  }, [selectedEventId, eventsForSelector, setSelectedEvent])
 
   const userRole = user?.role ?? 'SUPER_ADMIN'
   const userName = user?.name ?? 'User'
@@ -136,9 +159,7 @@ export function AdminLayout({ children, onExit }: AdminLayoutProps) {
     await loginAsRole(newRole)
   }
 
-  const isMockMode = typeof window !== 'undefined' &&
-    process.env.NEXT_PUBLIC_USE_MOCK !== 'false' &&
-    localStorage.getItem('sele_use_mock') !== 'false'
+  // isMockMode is imported from @/lib/api
 
   return (
     <div className="min-h-screen bg-background">
@@ -183,18 +204,23 @@ export function AdminLayout({ children, onExit }: AdminLayoutProps) {
           </Button>
         </div>
 
-        {/* Event Selector (for ORGANIZER) */}
-        {hasRole('ORGANIZER') && (
+        {/* Event Selector */}
+        {(hasRole('ORGANIZER') || hasRole('SUPER_ADMIN')) && (
           <div className="px-3 py-2 border-b">
             <Select
-              value={selectedEventId ?? MOCK_EVENTS[0]?.id}
+              value={selectedEventId ?? eventsForSelector[0]?.id ?? ''}
               onValueChange={(val) => setSelectedEvent(val)}
             >
               <SelectTrigger className="h-8 text-xs">
-                <SelectValue placeholder="Select event..." />
+                <SelectValue placeholder={
+                  eventsLoading ? 'Memuat event...' :
+                  eventsError ? 'Gagal memuat event' :
+                  eventsForSelector.length === 0 ? 'Tidak ada event' :
+                  'Pilih event...'
+                } />
               </SelectTrigger>
               <SelectContent>
-                {MOCK_EVENTS.map((event) => (
+                {eventsForSelector.map((event) => (
                   <SelectItem key={event.id} value={event.id} className="text-xs">
                     {event.name}
                   </SelectItem>
@@ -295,7 +321,7 @@ export function AdminLayout({ children, onExit }: AdminLayoutProps) {
 
             <div className="flex items-center gap-3 ml-auto">
               {/* Role Switcher (Mock Mode Only) */}
-              {isMockMode && (
+              {isMockMode() && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8">

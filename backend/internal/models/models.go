@@ -12,14 +12,14 @@ import (
 // BaseModel contains common fields with id, createdAt, updatedAt.
 // ID is a string UUID generated via BeforeCreate hook.
 type BaseModel struct {
-        ID        string    `gorm:"primaryKey;type:text" json:"id"`
+        ID        string    `gorm:"primaryKey;type:uuid" json:"id"`
         CreatedAt time.Time `gorm:"autoCreateTime" json:"createdAt"`
         UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updatedAt"`
 }
 
 // BaseModelNoUpdate contains common fields with id and createdAt only (no updatedAt).
 type BaseModelNoUpdate struct {
-        ID        string    `gorm:"primaryKey;type:text" json:"id"`
+        ID        string    `gorm:"primaryKey;type:uuid" json:"id"`
         CreatedAt time.Time `gorm:"autoCreateTime" json:"createdAt"`
 }
 
@@ -48,7 +48,7 @@ type User struct {
         Avatar      *string    `gorm:"type:text" json:"avatar,omitempty"`
         Phone       *string    `json:"phone,omitempty"`
         Role        string     `gorm:"default:PARTICIPANT;not null" json:"role"`
-        OrganizerID *string    `gorm:"index" json:"organizerId,omitempty"`
+        OrganizerID *string    `gorm:"index;type:uuid" json:"organizerId,omitempty"`
         Status      string     `gorm:"default:active;not null" json:"status"`
         LastLoginAt *time.Time `json:"lastLoginAt,omitempty"`
 
@@ -87,7 +87,7 @@ type Tenant struct {
 
 type Subscription struct {
         BaseModel
-        TenantID           string     `gorm:"index;not null" json:"tenantId"`
+        TenantID           string     `gorm:"index;not null;type:uuid" json:"tenantId"`
         Plan               string     `gorm:"not null" json:"plan"`
         Status             string     `gorm:"default:trial;not null" json:"status"`
         CurrentPeriodStart time.Time  `gorm:"not null" json:"currentPeriodStart"`
@@ -103,8 +103,8 @@ type Subscription struct {
 
 type Invoice struct {
         BaseModel
-        TenantID       string     `gorm:"index;not null" json:"tenantId"`
-        SubscriptionID *string    `gorm:"index" json:"subscriptionId,omitempty"`
+        TenantID       string     `gorm:"index;not null;type:uuid" json:"tenantId"`
+        SubscriptionID *string    `gorm:"index;type:uuid" json:"subscriptionId,omitempty"`
         AmountCents    int        `gorm:"not null" json:"amountCents"`
         Currency       string     `gorm:"default:IDR;not null" json:"currency"`
         Status         string     `gorm:"default:draft;not null" json:"status"`
@@ -121,8 +121,8 @@ type Invoice struct {
 
 type TenantUser struct {
         BaseModel
-        UserID   string    `gorm:"uniqueIndex:idx_user_tenant;not null" json:"userId"`
-        TenantID string    `gorm:"uniqueIndex:idx_user_tenant;not null" json:"tenantId"`
+        UserID   string    `gorm:"uniqueIndex:idx_user_tenant;not null;type:uuid" json:"userId"`
+        TenantID string    `gorm:"uniqueIndex:idx_user_tenant;not null;type:uuid" json:"tenantId"`
         Role     string    `gorm:"default:PARTICIPANT;not null" json:"role"`
         IsActive bool      `gorm:"default:true;not null" json:"isActive"`
         JoinedAt time.Time `gorm:"autoCreateTime" json:"joinedAt"`
@@ -135,8 +135,8 @@ type TenantUser struct {
 
 type Event struct {
         BaseModel
-        TenantID    string         `gorm:"index;not null" json:"tenantId"`
-        OrganizerID *string        `gorm:"index" json:"organizerId,omitempty"`
+        TenantID    string         `gorm:"index;not null;type:uuid" json:"tenantId"`
+        OrganizerID *string        `gorm:"index;type:uuid" json:"organizerId,omitempty"`
         Slug        string         `gorm:"uniqueIndex;not null" json:"slug"`
         Title       string         `gorm:"not null" json:"title"`
         Subtitle    *string        `gorm:"type:text" json:"subtitle,omitempty"`
@@ -161,8 +161,8 @@ type Event struct {
 
 type TicketType struct {
         BaseModel
-        TenantID    string         `gorm:"index;not null" json:"tenantId"`
-        EventID     string         `gorm:"index;not null" json:"eventId"`
+        TenantID    string         `gorm:"index;not null;type:uuid" json:"tenantId"`
+        EventID     string         `gorm:"index;not null;type:uuid" json:"eventId"`
         Name        string         `gorm:"not null" json:"name"`
         Description *string        `gorm:"type:text" json:"description,omitempty"`
         Price       int            `gorm:"not null" json:"price"`
@@ -171,7 +171,7 @@ type TicketType struct {
         Tier        string         `gorm:"default:floor;not null" json:"tier"`
         Zone        *string        `json:"zone,omitempty"`
         Emoji       *string        `json:"emoji,omitempty"`
-        Benefits    *string        `gorm:"type:text" json:"benefits,omitempty"`
+        Benefits    StringArray     `gorm:"type:text" json:"benefits"`
         PlatformFee float64        `gorm:"type:numeric(5,2);default:0;not null" json:"platformFee"`
         SeatConfig  *string        `gorm:"type:text" json:"seatConfig,omitempty"`
         DeletedAt   gorm.DeletedAt `gorm:"index" json:"deletedAt,omitempty"`
@@ -186,9 +186,9 @@ type TicketType struct {
 
 type Seat struct {
         BaseModel
-        TenantID     string `gorm:"index;not null" json:"tenantId"`
-        EventID      string `gorm:"index;not null" json:"eventId"`
-        TicketTypeID string `gorm:"index;not null" json:"ticketTypeId"`
+        TenantID     string `gorm:"index;not null;type:uuid" json:"tenantId"`
+        EventID      string `gorm:"index;not null;type:uuid" json:"eventId"`
+        TicketTypeID string `gorm:"index;not null;type:uuid" json:"ticketTypeId"`
         Section      string `gorm:"not null" json:"section"`
         Row          string `gorm:"not null" json:"row"`
         Number       string `gorm:"not null" json:"number"`
@@ -205,16 +205,16 @@ type Seat struct {
 
 type Order struct {
         BaseModel
-        TenantID              string         `gorm:"index;not null" json:"tenantId"`
+        TenantID              string         `gorm:"index;not null;type:uuid" json:"tenantId"`
         OrderCode             string         `gorm:"uniqueIndex;not null" json:"orderCode"`
-        UserID                string         `gorm:"index;not null" json:"userId"`
-        EventID               string         `gorm:"index;not null" json:"eventId"`
+        UserID                string         `gorm:"index;not null;type:uuid" json:"userId"`
+        EventID               string         `gorm:"index;not null;type:uuid" json:"eventId"`
         SubTotal              float64        `gorm:"default:0" json:"subTotal"`
         AdminFee              float64        `gorm:"default:0" json:"adminFee"`
         TaxAmount             float64        `gorm:"default:0" json:"taxAmount"`
         DiscountAmount        float64        `gorm:"default:0" json:"discountAmount"`
         TotalAmount           int            `gorm:"not null" json:"totalAmount"`
-        CouponID              *string        `gorm:"index" json:"couponId,omitempty"`
+        CouponID              *string        `gorm:"index;type:uuid" json:"couponId,omitempty"`
         Status                string         `gorm:"index;default:pending;not null" json:"status"`
         PaymentType           *string        `json:"paymentType,omitempty"`
         PaymentMethod         *string        `json:"paymentMethod,omitempty"`
@@ -236,9 +236,9 @@ type Order struct {
 
 type OrderItem struct {
         BaseModel
-        TenantID       string `gorm:"index;not null" json:"tenantId"`
-        OrderID        string `gorm:"index;not null" json:"orderId"`
-        TicketTypeID   string `gorm:"index;not null" json:"ticketTypeId"`
+        TenantID       string `gorm:"index;not null;type:uuid" json:"tenantId"`
+        OrderID        string `gorm:"index;not null;type:uuid" json:"orderId"`
+        TicketTypeID   string `gorm:"index;not null;type:uuid" json:"ticketTypeId"`
         Quantity       int    `gorm:"not null" json:"quantity"`
         PricePerTicket int    `gorm:"not null" json:"pricePerTicket"`
         Subtotal       int    `gorm:"not null" json:"subtotal"`
@@ -252,11 +252,11 @@ type OrderItem struct {
 
 type Ticket struct {
         BaseModel
-        TenantID       string     `gorm:"index;not null" json:"tenantId"`
-        OrderID        string     `gorm:"index;not null" json:"orderId"`
-        TicketTypeID   string     `gorm:"index;not null" json:"ticketTypeId"`
-        EventID        string     `gorm:"index;not null" json:"eventId"`
-        SeatID         *string    `gorm:"index" json:"seatId,omitempty"`
+        TenantID       string     `gorm:"index;not null;type:uuid" json:"tenantId"`
+        OrderID        string     `gorm:"index;not null;type:uuid" json:"orderId"`
+        TicketTypeID   string     `gorm:"index;not null;type:uuid" json:"ticketTypeId"`
+        EventID        string     `gorm:"index;not null;type:uuid" json:"eventId"`
+        SeatID         *string    `gorm:"index;type:uuid" json:"seatId,omitempty"`
         TicketCode     string     `gorm:"uniqueIndex;not null" json:"ticketCode"`
         AttendeeName   string     `gorm:"not null" json:"attendeeName"`
         AttendeeEmail  string     `gorm:"index;not null" json:"attendeeEmail"`
@@ -280,8 +280,8 @@ type Ticket struct {
 
 type Counter struct {
         BaseModel
-        TenantID string     `gorm:"index;not null" json:"tenantId"`
-        EventID  string     `gorm:"index;not null" json:"eventId"`
+        TenantID string     `gorm:"index;not null;type:uuid" json:"tenantId"`
+        EventID  string     `gorm:"index;not null;type:uuid" json:"eventId"`
         Name     string     `gorm:"not null" json:"name"`
         Location *string    `gorm:"type:text" json:"location,omitempty"`
         Capacity int        `gorm:"default:500;not null" json:"capacity"`
@@ -299,9 +299,9 @@ type Counter struct {
 
 type CounterStaff struct {
         BaseModel
-        TenantID   string    `gorm:"index;not null" json:"tenantId"`
-        UserID     string    `gorm:"uniqueIndex:idx_user_counter;not null" json:"userId"`
-        CounterID  string    `gorm:"uniqueIndex:idx_user_counter;not null" json:"counterId"`
+        TenantID   string    `gorm:"index;not null;type:uuid" json:"tenantId"`
+        UserID     string    `gorm:"uniqueIndex:idx_user_counter;not null;type:uuid" json:"userId"`
+        CounterID  string    `gorm:"uniqueIndex:idx_user_counter;not null;type:uuid" json:"counterId"`
         Shift      *string   `json:"shift,omitempty"`
         Status     string    `gorm:"default:active;not null" json:"status"`
         AssignedAt time.Time `gorm:"autoCreateTime" json:"assignedAt"`
@@ -315,8 +315,8 @@ type CounterStaff struct {
 
 type Gate struct {
         BaseModel
-        TenantID       string  `gorm:"index;not null" json:"tenantId"`
-        EventID        string  `gorm:"index;not null" json:"eventId"`
+        TenantID       string  `gorm:"index;not null;type:uuid" json:"tenantId"`
+        EventID        string  `gorm:"index;not null;type:uuid" json:"eventId"`
         Name           string  `gorm:"not null" json:"name"`
         Type           string  `gorm:"default:entry;not null" json:"type"`
         Location       *string `gorm:"type:text" json:"location,omitempty"`
@@ -334,9 +334,9 @@ type Gate struct {
 
 type GateStaff struct {
         BaseModel
-        TenantID   string    `gorm:"index;not null" json:"tenantId"`
-        UserID     string    `gorm:"uniqueIndex:idx_user_gate;not null" json:"userId"`
-        GateID     string    `gorm:"uniqueIndex:idx_user_gate;not null" json:"gateId"`
+        TenantID   string    `gorm:"index;not null;type:uuid" json:"tenantId"`
+        UserID     string    `gorm:"uniqueIndex:idx_user_gate;not null;type:uuid" json:"userId"`
+        GateID     string    `gorm:"uniqueIndex:idx_user_gate;not null;type:uuid" json:"gateId"`
         Shift      *string   `json:"shift,omitempty"`
         Status     string    `gorm:"default:active;not null" json:"status"`
         AssignedAt time.Time `gorm:"autoCreateTime" json:"assignedAt"`
@@ -350,10 +350,10 @@ type GateStaff struct {
 
 type Redemption struct {
         BaseModel
-        TenantID       string    `gorm:"index;not null" json:"tenantId"`
-        TicketID       string    `gorm:"uniqueIndex;not null" json:"ticketId"`
-        CounterID      string    `gorm:"index;not null" json:"counterId"`
-        StaffID        string    `gorm:"index;not null" json:"staffId"`
+        TenantID       string    `gorm:"index;not null;type:uuid" json:"tenantId"`
+        TicketID       string    `gorm:"uniqueIndex;not null;type:uuid" json:"ticketId"`
+        CounterID      string    `gorm:"index;not null;type:uuid" json:"counterId"`
+        StaffID        string    `gorm:"index;not null;type:uuid" json:"staffId"`
         WristbandCode  string    `gorm:"not null" json:"wristbandCode"`
         WristbandColor string    `gorm:"not null" json:"wristbandColor"`
         WristbandType  string    `gorm:"not null" json:"wristbandType"`
@@ -370,11 +370,11 @@ type Redemption struct {
 
 type GateLog struct {
         BaseModel
-        TenantID  string    `gorm:"index;not null" json:"tenantId"`
-        TicketID  string    `gorm:"index;not null" json:"ticketId"`
-        GateID    string    `gorm:"index;not null" json:"gateId"`
-        StaffID   string    `gorm:"index;not null" json:"staffId"`
-        EventID   string    `gorm:"index;not null" json:"eventId"`
+        TenantID  string    `gorm:"index;not null;type:uuid" json:"tenantId"`
+        TicketID  string    `gorm:"index;not null;type:uuid" json:"ticketId"`
+        GateID    string    `gorm:"index;not null;type:uuid" json:"gateId"`
+        StaffID   string    `gorm:"index;not null;type:uuid" json:"staffId"`
+        EventID   string    `gorm:"index;not null;type:uuid" json:"eventId"`
         Action    string    `gorm:"index;not null" json:"action"`
         Notes     *string   `gorm:"type:text" json:"notes,omitempty"`
         ScannedAt time.Time `gorm:"index;autoCreateTime" json:"scannedAt"`
@@ -389,8 +389,8 @@ type GateLog struct {
 
 type WristbandInventory struct {
         BaseModel
-        TenantID       string `gorm:"index;not null" json:"tenantId"`
-        EventID        string `gorm:"uniqueIndex:idx_event_color;not null" json:"eventId"`
+        TenantID       string `gorm:"index;not null;type:uuid" json:"tenantId"`
+        EventID        string `gorm:"uniqueIndex:idx_event_color;not null;type:uuid" json:"eventId"`
         Color          string `gorm:"uniqueIndex:idx_event_color;not null" json:"color"`
         ColorHex       string `gorm:"not null" json:"colorHex"`
         Type           string `gorm:"not null" json:"type"`
@@ -402,10 +402,10 @@ type WristbandInventory struct {
 // ─── NOTIFICATION ───────────────────────────────────────────────────────────
 
 type Notification struct {
-        ID        string    `gorm:"primaryKey;type:text" json:"id"`
-        TenantID  string    `gorm:"index;not null" json:"tenantId"`
-        UserID    string    `gorm:"index;not null" json:"userId"`
-        EventID   string    `gorm:"index" json:"eventId,omitempty"`
+        ID        string    `gorm:"primaryKey;type:uuid" json:"id"`
+        TenantID  string    `gorm:"index;not null;type:uuid" json:"tenantId"`
+        UserID    string    `gorm:"index;not null;type:uuid" json:"userId"`
+        EventID   string    `gorm:"index;type:uuid" json:"eventId,omitempty"`
         Title     string    `gorm:"size:255;not null" json:"title"`
         Message   string    `gorm:"type:text;not null" json:"message"`
         Type      string    `gorm:"size:50;default:info;not null" json:"type"` // info, warning, success, error
@@ -427,8 +427,8 @@ func (n *Notification) BeforeCreate(tx *gorm.DB) error {
 
 type AuditLog struct {
         BaseModelNoUpdate
-        TenantID string  `gorm:"index;not null" json:"tenantId"`
-        UserID   string  `gorm:"index;not null" json:"userId"`
+        TenantID string  `gorm:"index;not null;type:uuid" json:"tenantId"`
+        UserID   string  `gorm:"index;not null;type:uuid" json:"userId"`
         Action   string  `gorm:"not null" json:"action"`
         Module   string  `gorm:"index;not null" json:"module"`
         Details  *string `gorm:"type:text" json:"details,omitempty"`
@@ -442,8 +442,8 @@ type AuditLog struct {
 
 type Organizer struct {
         BaseModel
-        UserID   string  `gorm:"index;not null" json:"userId"`
-        TenantID string  `gorm:"index;not null" json:"tenantId"`
+        UserID   string  `gorm:"index;not null;type:uuid" json:"userId"`
+        TenantID string  `gorm:"index;not null;type:uuid" json:"tenantId"`
         Status   string  `gorm:"default:pending;not null" json:"status"` // pending, approved, rejected
 
         // Relations
@@ -456,8 +456,8 @@ type Organizer struct {
 
 type Coupon struct {
         BaseModel
-        TenantID          string         `gorm:"index;not null" json:"tenantId"`
-        OrganizerID       string         `gorm:"index;not null" json:"organizerId"`
+        TenantID          string         `gorm:"index;not null;type:uuid" json:"tenantId"`
+        OrganizerID       string         `gorm:"index;not null;type:uuid" json:"organizerId"`
         Code              string         `gorm:"uniqueIndex;not null" json:"code"`
         Name              string         `gorm:"not null" json:"name"`
         Description       *string        `gorm:"type:text" json:"description,omitempty"`
@@ -465,7 +465,7 @@ type Coupon struct {
         DiscountValue     float64        `gorm:"not null" json:"discountValue"`
         MaxDiscount       *float64       `json:"maxDiscount,omitempty"`
         Scope             string         `gorm:"not null" json:"scope"` // global, event
-        EventID           *string        `gorm:"index" json:"eventId,omitempty"`
+        EventID           *string        `gorm:"index;type:uuid" json:"eventId,omitempty"`
         CategoryConfigs   *string        `gorm:"type:text" json:"categoryConfigs,omitempty"` // JSON array
         UsageLimit        int            `gorm:"default:100;not null" json:"usageLimit"`
         UsageLimitPerUser int            `gorm:"default:1;not null" json:"usageLimitPerUser"`
@@ -480,9 +480,9 @@ type Coupon struct {
 
 type CouponUsage struct {
         BaseModelNoUpdate
-        CouponID       string  `gorm:"index;not null" json:"couponId"`
-        UserID         string  `gorm:"index;not null" json:"userId"`
-        OrderID        string  `gorm:"index;not null" json:"orderId"`
+        CouponID       string  `gorm:"index;not null;type:uuid" json:"couponId"`
+        UserID         string  `gorm:"index;not null;type:uuid" json:"userId"`
+        OrderID        string  `gorm:"index;not null;type:uuid" json:"orderId"`
         DiscountAmount float64 `gorm:"not null" json:"discountAmount"`
 }
 
@@ -490,7 +490,7 @@ type CouponUsage struct {
 
 type OrganizerBankAccount struct {
         BaseModel
-        OrganizerID   string `gorm:"index;not null" json:"organizerId"`
+        OrganizerID   string `gorm:"index;not null;type:uuid" json:"organizerId"`
         BankName      string `gorm:"not null" json:"bankName"`
         AccountNumber string `gorm:"not null" json:"accountNumber"`
         AccountHolder string `gorm:"not null" json:"accountHolder"`
@@ -502,15 +502,15 @@ type OrganizerBankAccount struct {
 
 type WithdrawalRequest struct {
         BaseModel
-        OrganizerID        string     `gorm:"index;not null" json:"organizerId"`
+        OrganizerID        string     `gorm:"index;not null;type:uuid" json:"organizerId"`
         OrganizerName      string     `gorm:"not null" json:"organizerName"`
-        EventID            string     `gorm:"index;not null" json:"eventId"`
+        EventID            string     `gorm:"index;not null;type:uuid" json:"eventId"`
         EventCode          string     `json:"eventCode"`
         EventName          string     `json:"eventName"`
         Amount             float64    `gorm:"not null" json:"amount"`
         Fee                float64    `gorm:"default:0;not null" json:"fee"`
         NetAmount          float64    `gorm:"not null" json:"netAmount"`
-        BankAccountID      string     `gorm:"index;not null" json:"bankAccountId"`
+        BankAccountID      string     `gorm:"index;not null;type:uuid" json:"bankAccountId"`
         BankName           string     `json:"bankName"`
         AccountNumber      string     `json:"accountNumber"`
         AccountHolder      string     `json:"accountHolder"`
@@ -536,8 +536,8 @@ type WithdrawalRequest struct {
 
 type PaymentLog struct {
         BaseModelNoUpdate
-        EventID               string     `gorm:"index;not null" json:"eventId"`
-        OrderID               string     `gorm:"index;not null" json:"orderId"`
+        EventID               string     `gorm:"index;not null;type:uuid" json:"eventId"`
+        OrderID               string     `gorm:"index;not null;type:uuid" json:"orderId"`
         OrderCode             string     `gorm:"not null" json:"orderCode"`
         TransactionID         string     `gorm:"not null" json:"transactionId"`
         PaymentMethod         string     `gorm:"not null" json:"paymentMethod"`
@@ -556,7 +556,7 @@ type PaymentLog struct {
 
 type OrganizerFeeConfig struct {
         BaseModel
-        OrganizerID   string  `gorm:"uniqueIndex;not null" json:"organizerId"`
+        OrganizerID   string  `gorm:"uniqueIndex;not null;type:uuid" json:"organizerId"`
         OrganizerName string  `gorm:"not null" json:"organizerName"`
         FeePercent    float64 `gorm:"type:numeric(5,2);default:5;not null" json:"feePercent"`
         IsApproved    bool    `gorm:"default:false;not null" json:"isApproved"`
@@ -566,8 +566,8 @@ type OrganizerFeeConfig struct {
 
 type Refund struct {
         BaseModel
-        OrganizerID     string     `gorm:"index;not null" json:"organizerId"`
-        OrderID         string     `gorm:"index;not null" json:"orderId"`
+        OrganizerID     string     `gorm:"index;not null;type:uuid" json:"organizerId"`
+        OrderID         string     `gorm:"index;not null;type:uuid" json:"orderId"`
         Amount          int        `gorm:"not null" json:"amount"`
         Reason          string     `gorm:"type:text;not null" json:"reason"`
         Status          string     `gorm:"index;default:pending;not null" json:"status"` // pending, approved, rejected, completed, failed

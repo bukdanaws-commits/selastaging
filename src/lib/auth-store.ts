@@ -188,15 +188,15 @@ function tryOAuth2Popup(
   resolve: (token: string) => void,
   reject: (error: Error) => void
 ) {
-  const redirectUri = `\${window.location.origin}/`
+  const redirectUri = `${window.location.origin}/`
   const scope = 'openid email profile'
   const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
-    `client_id=\${encodeURIComponent(clientId)}` +
-    `&redirect_uri=\${encodeURIComponent(redirectUri)}` +
+    `client_id=${encodeURIComponent(clientId)}` +
+    `&redirect_uri=${encodeURIComponent(redirectUri)}` +
     `&response_type=id_token` +
-    `&scope=\${encodeURIComponent(scope)}` +
+    `&scope=${encodeURIComponent(scope)}` +
     `&prompt=select_account` +
-    `&nonce=\${Date.now()}`
+    `&nonce=${Date.now()}`
 
   const popup = window.open(authUrl, 'google-signin', 'width=500,height=600,left=100,top=100')
 

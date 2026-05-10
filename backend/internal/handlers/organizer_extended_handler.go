@@ -283,7 +283,7 @@ func CreateOrganizerTicketType(db *gorm.DB) fiber.Handler {
                         Tier        string  `json:"tier"`
                         Zone        *string `json:"zone,omitempty"`
                         Emoji       *string `json:"emoji,omitempty"`
-                        Benefits    *string `json:"benefits,omitempty"`
+                        Benefits    models.StringArray `json:"benefits,omitempty"`
                         PlatformFee float64 `json:"platformFee"`
                 }
 
@@ -367,7 +367,7 @@ func UpdateOrganizerTicketType(db *gorm.DB) fiber.Handler {
                         Tier        *string  `json:"tier"`
                         Zone        *string  `json:"zone"`
                         Emoji       *string  `json:"emoji"`
-                        Benefits    *string  `json:"benefits"`
+                        Benefits    models.StringArray `json:"benefits"`
                         PlatformFee *float64 `json:"platformFee"`
                         Status      *string  `json:"status"`
                 }
@@ -399,9 +399,7 @@ func UpdateOrganizerTicketType(db *gorm.DB) fiber.Handler {
                 if req.Emoji != nil {
                         updates["emoji"] = req.Emoji
                 }
-                if req.Benefits != nil {
-                        updates["benefits"] = req.Benefits
-                }
+                updates["benefits"] = req.Benefits
                 if req.PlatformFee != nil {
                         updates["platform_fee"] = *req.PlatformFee
                 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
         "fmt"
         "log"
         "math/rand"
@@ -193,6 +194,19 @@ var ticketTypeDescriptions = []string{
         "Tribun Atas Kanan — kursi bernomor",
         "Tribun Ujung Belakang — kursi bernomor",
         "Tribun Belakang — kursi bernomor",
+}
+
+// parseBenefits converts a JSON string like '["a","b"]' into models.StringArray.
+func parseBenefits(s string) models.StringArray {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return nil
+	}
+	var arr []string
+	if err := json.Unmarshal([]byte(s), &arr); err == nil {
+		return models.StringArray(arr)
+	}
+	return nil
 }
 
 var ticketTypeBenefits = []string{
@@ -537,7 +551,7 @@ func seedAllTicketTypes(db *gorm.DB, tenantID string, events []eventInfo) map[st
                                 Tier:        ticketTypeTiers[i],
                                 Zone:        &zone,
                                 Emoji:       &emoji,
-                                Benefits:    &benefits,
+                                Benefits:    parseBenefits(benefits),
                                 PlatformFee: 5.0,
                         }
                         if err := db.Create(&tt).Error; err != nil {

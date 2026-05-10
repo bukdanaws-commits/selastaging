@@ -30,9 +30,11 @@ func Setup(app *fiber.App, db *gorm.DB, hub *services.SSEHub) {
                         "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS",
                 },
                 AllowHeaders: []string{
-                        "Origin", "Content-Type", "Accept", "Authorization",
+                        "Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With",
                 },
                 AllowCredentials: true,
+		ExposeHeaders:    []string{"Content-Length"},
+		MaxAge:           86400,
         }))
 
         // Health check

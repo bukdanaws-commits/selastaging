@@ -28,8 +28,8 @@ type GoogleTokenInfo struct {
         GivenName     string `json:"given_name"`
         FamilyName    string `json:"family_name"`
         Locale        string `json:"locale"`
-        Exp           int64  `json:"exp"`
-        Iat           int64  `json:"iat"`
+        Exp           string `json:"exp"`
+        Iat           string `json:"iat"`
         HD            string `json:"hd"` // Hosted domain (for Google Workspace)
 }
 
