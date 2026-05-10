@@ -148,8 +148,8 @@ steps:
           --platform=managed \
           --cpu=2 \
           --memory=4Gi \
-          --min-instances=2 \
-          --max-instances=100 \
+          --min-instances=1 \
+          --max-instances=10 \
           --concurrency=80 \
           --timeout=300 \
           --port=3000 \
