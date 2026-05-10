@@ -164,65 +164,10 @@ steps:
         SERVICE_URL=$(gcloud run services describe $_SERVICE_NAME --region=$_REGION --format='value(status.url)')
         echo "  URL: $$SERVICE_URL"
 
-  # ── Step 8: Run database migrations via Cloud SQL proxy ───────────────────
-  - name: 'gcr.io/cloud-builders/gcloud'
-    id: 'db-migrate'
-    waitFor: ['deploy-cloudrun']
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "=== Running database migrations ==="
-
-        # Install Cloud SQL Proxy
-        wget -qO cloud_sql_proxy https://storage.googleapis.com/cloudsql-proxy/v2.14.0/cloud_sql_proxy.linux.amd64
-        chmod +x cloud_sql_proxy
-
-        # Start Cloud SQL Proxy in background
-        ./cloud_sql_proxy \
-          --instances=$PROJECT_ID:$_REGION:$_INSTANCE_NAME=tcp:5432 \
-          --private-ip &
-        PROXY_PID=$!
-
-        # Wait for proxy to be ready
-        echo "Waiting for Cloud SQL Proxy..."
-        for i in $(seq 1 30); do
-          if nc -z 127.0.0.1 5432 2>/dev/null; then
-            echo "Cloud SQL Proxy is ready"
-            break
-          fi
-          sleep 1
-        done
-
-        # Get DATABASE_URL secret (contains connection string with password)
-        DATABASE_URL=$(gcloud secrets versions access latest --secret=database-url 2>/dev/null || echo "")
-
-        if [ -z "$$DATABASE_URL" ]; then
-          echo "⚠️  DATABASE_URL secret not found, constructing from components..."
-          DB_PASSWORD=$(gcloud secrets versions access latest --secret=database-password 2>/dev/null || echo "")
-          if [ -n "$$DB_PASSWORD" ]; then
-            export DATABASE_URL="postgresql://eventku:$${DB_PASSWORD}@127.0.0.1:5432/eventku?sslmode=no-verify"
-          else
-            echo "❌ Cannot determine DATABASE_URL. Skipping migrations."
-            kill $$PROXY_PID 2>/dev/null
-            exit 0
-          fi
-        else
-          # Replace the host with localhost for proxy connection
-          export DATABASE_URL=$(echo "$$DATABASE_URL" | sed 's|@[^/]*|@127.0.0.1:5432|')
-        fi
-
-        echo "Prisma migrate skipped — no longer in use"
-
-        # Clean up
-        kill $$PROXY_PID 2>/dev/null
-        echo "✅ Database migration step completed"
-
   # ── Step 9: Send notification (success) ───────────────────────────────────
   - name: 'gcr.io/cloud-builders/gcloud'
     id: 'notify-success'
-    waitFor: ['db-migrate']
+    waitFor: ['deploy-cloudrun']
     entrypoint: 'bash'
     args:
       - '-c'
