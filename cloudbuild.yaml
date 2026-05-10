@@ -52,26 +52,10 @@ steps:
         }
         echo "✅ Linting passed"
 
-  # ── Step 3: Generate Prisma client ────────────────────────────────────────
-  - name: 'node:20-slim'
-    id: 'prisma-generate'
-    waitFor: ['install-deps']
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "=== Generating Prisma client ==="
-        npx prisma generate 2>&1 || {
-          echo "❌ Prisma generate failed"
-          exit 1
-        }
-        echo "✅ Prisma client generated successfully"
-
   # ── Step 4: Build Next.js application ─────────────────────────────────────
   - name: 'node:20-slim'
     id: 'build-nextjs'
-    waitFor: ['lint', 'prisma-generate']
+    waitFor: ['lint']
     entrypoint: 'bash'
     args:
       - '-c'
