@@ -155,7 +155,7 @@ steps:
           --port=3000 \
           --vpc-connector=$_VPC_CONNECTOR \
           --add-cloudsql-instances=$PROJECT_ID:$_REGION:$_INSTANCE_NAME \
-          --set-secrets=DATABASE_URL=database-url:latest,REDIS_URL=redis-url:latest,DOKU_CLIENT_ID=doku-client-id:latest,DOKU_SHARED_KEY=doku-shared-key:latest,DOKU_PRIVATE_KEY=doku-private-key:latest,JWT_SECRET=jwt-secret:latest,NEXTAUTH_SECRET=nextauth-secret:latest \
+          --set-secrets=DATABASE_URL=DATABASE_URL:latest,REDIS_URL=REDIS_URL:latest,DOKU_CLIENT_ID=DOKU_CLIENT_ID:latest,DOKU_SHARED_KEY=DOKU_SHARED_KEY:latest,DOKU_PRIVATE_KEY=doku-private-key:latest,JWT_SECRET=JWT_SECRET:latest,NEXTAUTH_SECRET=NEXTAUTH_SECRET:latest \
           --set-env-vars=NODE_ENV=production,DATABASE_HOST=/cloudsql/$PROJECT_ID:$_REGION:$_INSTANCE_NAME \
           --allow-unauthenticated \
           --no-cpu-throttling
