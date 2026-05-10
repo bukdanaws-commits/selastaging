@@ -227,7 +227,7 @@ steps:
           echo "⚠️  DATABASE_URL secret not found, constructing from components..."
           DB_PASSWORD=$(gcloud secrets versions access latest --secret=database-password 2>/dev/null || echo "")
           if [ -n "$$DB_PASSWORD" ]; then
-            export DATABASE_URL="postgresql://eventku:${DB_PASSWORD}@127.0.0.1:5432/eventku?sslmode=no-verify"
+            export DATABASE_URL="postgresql://eventku:$${DB_PASSWORD}@127.0.0.1:5432/eventku?sslmode=no-verify"
           else
             echo "❌ Cannot determine DATABASE_URL. Skipping migrations."
             kill $$PROXY_PID 2>/dev/null
