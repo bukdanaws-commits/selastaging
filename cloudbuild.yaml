@@ -213,13 +213,13 @@ substitutions:
   _SERVICE_NAME: selevent-web
   _INSTANCE_NAME: selevent-db
   _VPC_CONNECTOR: selevent-vpc
-  _NEXT_PUBLIC_API_URL: ''
-  _NEXT_PUBLIC_DOKU_CLIENT_ID: ''
-  _NEXT_PUBLIC_DOKU_NOTIFICATION_URL: ''
-  _NEXT_PUBLIC_DOKU_FINISH_URL: ''
-  _NEXT_PUBLIC_DOKU_ERROR_URL: ''
-  _NEXT_PUBLIC_DOKU_UNPAYMENT_URL: ''
-  _NEXT_PUBLIC_GOOGLE_CLIENT_ID: ''
+  _NEXT_PUBLIC_API_URL: 'https://eventku-api-lkfw4e5kna-et.a.run.app'
+  _NEXT_PUBLIC_DOKU_CLIENT_ID: 'BRN-0252-1778130371806'
+  _NEXT_PUBLIC_DOKU_NOTIFICATION_URL: 'https://sheilaon7.eventku.co.id/api/doku/notification'
+  _NEXT_PUBLIC_DOKU_FINISH_URL: 'https://sheilaon7.eventku.co.id/payment/success'
+  _NEXT_PUBLIC_DOKU_ERROR_URL: 'https://sheilaon7.eventku.co.id/payment/error'
+  _NEXT_PUBLIC_DOKU_UNPAYMENT_URL: 'https://sheilaon7.eventku.co.id/payment/pending'
+  _NEXT_PUBLIC_GOOGLE_CLIENT_ID: '503551786622-k3uajo9c2d6om6qnqofsa3b47fvo5o6g.apps.googleusercontent.com'
   _SLACK_WEBHOOK_URL: ''
 
 # ── Build options ──────────────────────────────────────────────────────────
