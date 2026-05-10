@@ -28,7 +28,7 @@ steps:
         echo "=== Installing dependencies (bun) ==="
         apt-get update -qq && apt-get install -y -qq curl unzip > /dev/null 2>&1
         curl -fsSL https://bun.sh/install | bash > /dev/null 2>&1
-        export PATH="$HOME/.bun/bin:$PATH"
+        export PATH="$$HOME/.bun/bin:$PATH"
         bun --version
         bun install --frozen-lockfile 2>&1 || {
           echo "bun install failed, falling back to npm ci"
