@@ -155,15 +155,8 @@ steps:
           --port=3000 \
           --vpc-connector=$_VPC_CONNECTOR \
           --add-cloudsql-instances=$PROJECT_ID:$_REGION:$_INSTANCE_NAME \
-          --set-secrets=\
-          DATABASE_URL=database-url:latest,\
-          REDIS_URL=redis-url:latest,\
-          DOKU_CLIENT_ID=doku-client-id:latest,\
-          DOKU_SHARED_KEY=doku-shared-key:latest,\
-          DOKU_PRIVATE_KEY=doku-private-key:latest,\
-          JWT_SECRET=jwt-secret:latest,\
-          NEXTAUTH_SECRET=nextauth-secret:latest \
-          --set-env-vars=NODE_ENV=production \DATABASE_HOST=/cloudsql/$PROJECT_ID:$_REGION:$_INSTANCE_NAME \
+          --set-secrets=DATABASE_URL=database-url:latest,REDIS_URL=redis-url:latest,DOKU_CLIENT_ID=doku-client-id:latest,DOKU_SHARED_KEY=doku-shared-key:latest,DOKU_PRIVATE_KEY=doku-private-key:latest,JWT_SECRET=jwt-secret:latest,NEXTAUTH_SECRET=nextauth-secret:latest \
+          --set-env-vars=NODE_ENV=production,DATABASE_HOST=/cloudsql/$PROJECT_ID:$_REGION:$_INSTANCE_NAME \
           --allow-unauthenticated \
           --no-cpu-throttling
 
@@ -220,11 +213,7 @@ steps:
           export DATABASE_URL=$(echo "$$DATABASE_URL" | sed 's|@[^/]*|@127.0.0.1:5432|')
         fi
 
-        echo "Running: npx prisma migrate deploy"
-        npx prisma migrate deploy 2>&1 || {
-          echo "⚠️  Prisma migrate deploy failed — the app may still work if schema is unchanged"
-          echo "   Check the error above. If it says 'already applied', this is safe to ignore."
-        }
+        echo "Prisma migrate skipped — no longer in use"
 
         # Clean up
         kill $$PROXY_PID 2>/dev/null
