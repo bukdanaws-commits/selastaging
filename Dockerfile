@@ -109,6 +109,22 @@ RUN echo "NEXT_PUBLIC_USE_MOCK=${NEXT_PUBLIC_USE_MOCK}" > .env.production && \
     echo "NEXT_PUBLIC_SETTLEMENT_DAYS=${NEXT_PUBLIC_SETTLEMENT_DAYS}" >> .env.production && \
     echo "=== .env.production ===" && cat .env.production && echo "=== end ==="
 
+# Generate .env.production from build args — guaranteed to be read by Next.js
+RUN echo "NEXT_PUBLIC_USE_MOCK=${NEXT_PUBLIC_USE_MOCK}" > .env.production && \
+    echo "NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}" >> .env.production && \
+    echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=${NEXT_PUBLIC_GOOGLE_CLIENT_ID}" >> .env.production && \
+    echo "NEXT_PUBLIC_DOKU_ENVIRONMENT=${NEXT_PUBLIC_DOKU_ENVIRONMENT}" >> .env.production && \
+    echo "NEXT_PUBLIC_DOKU_API_BASE_URL=${NEXT_PUBLIC_DOKU_API_BASE_URL}" >> .env.production && \
+    echo "NEXT_PUBLIC_DOKU_CHECKOUT_URL=${NEXT_PUBLIC_DOKU_CHECKOUT_URL}" >> .env.production && \
+    echo "NEXT_PUBLIC_DOKU_CLIENT_ID=${NEXT_PUBLIC_DOKU_CLIENT_ID}" >> .env.production && \
+    echo "NEXT_PUBLIC_DOKU_NOTIFICATION_URL=${NEXT_PUBLIC_DOKU_NOTIFICATION_URL}" >> .env.production && \
+    echo "NEXT_PUBLIC_DOKU_FINISH_URL=${NEXT_PUBLIC_DOKU_FINISH_URL}" >> .env.production && \
+    echo "NEXT_PUBLIC_DOKU_ERROR_URL=${NEXT_PUBLIC_DOKU_ERROR_URL}" >> .env.production && \
+    echo "NEXT_PUBLIC_DOKU_UNPAYMENT_URL=${NEXT_PUBLIC_DOKU_UNPAYMENT_URL}" >> .env.production && \
+    echo "NEXT_PUBLIC_PLATFORM_FEE_PERCENTAGE=${NEXT_PUBLIC_PLATFORM_FEE_PERCENTAGE}" >> .env.production && \
+    echo "NEXT_PUBLIC_SETTLEMENT_DAYS=${NEXT_PUBLIC_SETTLEMENT_DAYS}" >> .env.production && \
+    echo "=== .env.production ===" && cat .env.production && echo "=== end ==="
+
 # Build Next.js application (standalone output)
 # The build script also copies static files into standalone output:
 #   "build": "next build && cp -r .next/static .next/standalone/.next/ && cp -r public .next/standalone/"
