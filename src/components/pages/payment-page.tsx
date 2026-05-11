@@ -233,6 +233,17 @@ export default function PaymentPage() {
     );
   }
 
+    if (orderLoading || !order) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="text-center">
+          <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Memuat detail pesanan...</p>
+        </div>
+      </div>
+    );
+  }
+
     return (
     <div className="min-h-screen bg-background">
       {/* Header */}
