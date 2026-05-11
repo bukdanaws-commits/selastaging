@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Loader2 } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -69,6 +70,24 @@ export default function PaymentPage() {
   const { toast } = useToast();
   const createPayment = useCreatePayment();
 
+
+  if (orderLoading || !order) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="text-center">
+          <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Memuat detail pesanan...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    // ... existing return JSX
+  );
+
+
+
   // ─── Fetch order detail from API ───────────────────────────
   const { data: orderData, isLoading: orderLoading } = useOrderDetail(currentOrderId || "");
   const order = orderData as IOrder | null;
@@ -92,22 +111,12 @@ export default function PaymentPage() {
   }, []);
 
   // ─── Fee breakdown display helpers ──────────────────────────────
-  // Loading guard: wait for order data before accessing properties
-  if (orderLoading || !order) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="text-center">
-          <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">Memuat detail pesanan...</p>
-        </div>
-      </div>
-    );
-  }
 
-  const subTotal = order.subTotal ?? (order.totalAmount - Math.round(order.totalAmount * 13 / 113));
-  const adminFee = order.adminFee ?? Math.round(subTotal * 2 / 100);
-  const taxAmount = order.taxAmount ?? Math.round(subTotal * 11 / 100);
-  const discountAmount = order.discountAmount ?? 0;
+
+  const subTotal = order?.subTotal ?? (order?.totalAmount ? order.totalAmount - Math.round(order.totalAmount * 13 / 113) : 0);
+  const adminFee = order?.adminFee ?? Math.round(subTotal * 2 / 100);
+  const taxAmount = order?.taxAmount ?? Math.round(subTotal * 11 / 100);
+  const discountAmount = order?.discountAmount ?? 0;
 
   // Calculate actual percentages from stored order data (more accurate than hardcoded)
   const adminFeePercent = subTotal > 0 ? Math.round((adminFee / subTotal) * 100) : 2;
@@ -213,7 +222,18 @@ export default function PaymentPage() {
   // Show payment result panel (VA / QRIS)
   const showPaymentPanel = paymentResult && (paymentResult.vaNumber || paymentResult.qrContent);
 
-  return (
+  if (orderLoading || !order) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="text-center">
+          <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Memuat detail pesanan...</p>
+        </div>
+      </div>
+    );
+  }
+
+    return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
