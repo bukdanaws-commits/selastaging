@@ -74,9 +74,9 @@ export const API = {
 
   // Payment (DOKU)
   PAYMENT: {
-    CREATE:         '/api/doku/create-payment',
-    CALLBACK:       '/api/doku/notification',
-    STATUS:         (orderId: string) => `/api/doku/check-status?orderId=${orderId}`,
+    CREATE:         '/api/v1/doku/create',
+    CALLBACK:       '/api/v1/doku/notification',
+    STATUS:         (orderId: string) => `/api/v1/doku/status/${orderId}`,
   },
 
   // Organizer (SUPER_ADMIN | ADMIN | ORGANIZER)

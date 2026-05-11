@@ -59,6 +59,8 @@ class SSEClient {
   // ─── CONNECTION ──────────────────────────────────────────────────────────
 
   connect(token?: string): void {
+    // SSE not supported on Cloud Run (buffers HTTP responses)
+    if (this.url.startsWith("http")) return
     this.token = token || this.token
     if (!this.token) return
     if (this.eventSource) {
