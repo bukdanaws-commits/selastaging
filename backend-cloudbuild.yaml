@@ -1,0 +1,10 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-f', 'backend/Dockerfile', '-t', 'asia-southeast2-docker.pkg.dev/eventku-494416/eventku/eventku-api:latest', '.']
+    id: 'build-backend'
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'asia-southeast2-docker.pkg.dev/eventku-494416/eventku/eventku-api:latest']
+    id: 'push-backend'
+    waitFor: ['build-backend']
+images:
+  - 'asia-southeast2-docker.pkg.dev/eventku-494416/eventku/eventku-api:latest'

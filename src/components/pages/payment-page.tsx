@@ -92,6 +92,18 @@ export default function PaymentPage() {
   }, []);
 
   // ─── Fee breakdown display helpers ──────────────────────────────
+  // Loading guard: wait for order data before accessing properties
+  if (orderLoading || !order) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="text-center">
+          <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Memuat detail pesanan...</p>
+        </div>
+      </div>
+    );
+  }
+
   const subTotal = order.subTotal ?? (order.totalAmount - Math.round(order.totalAmount * 13 / 113));
   const adminFee = order.adminFee ?? Math.round(subTotal * 2 / 100);
   const taxAmount = order.taxAmount ?? Math.round(subTotal * 11 / 100);
