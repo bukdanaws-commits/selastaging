@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Loader2 } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -70,24 +69,6 @@ export default function PaymentPage() {
   const { toast } = useToast();
   const createPayment = useCreatePayment();
 
-
-  if (orderLoading || !order) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="text-center">
-          <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">Memuat detail pesanan...</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    // ... existing return JSX
-  );
-
-
-
   // ─── Fetch order detail from API ───────────────────────────
   const { data: orderData, isLoading: orderLoading } = useOrderDetail(currentOrderId || "");
   const order = orderData as IOrder | null;
@@ -109,18 +90,6 @@ export default function PaymentPage() {
       ...group,
     }));
   }, []);
-
-  // ─── Fee breakdown display helpers ──────────────────────────────
-
-
-  const subTotal = order?.subTotal ?? (order?.totalAmount ? order.totalAmount - Math.round(order.totalAmount * 13 / 113) : 0);
-  const adminFee = order?.adminFee ?? Math.round(subTotal * 2 / 100);
-  const taxAmount = order?.taxAmount ?? Math.round(subTotal * 11 / 100);
-  const discountAmount = order?.discountAmount ?? 0;
-
-  // Calculate actual percentages from stored order data (more accurate than hardcoded)
-  const adminFeePercent = subTotal > 0 ? Math.round((adminFee / subTotal) * 100) : 2;
-  const ppnPercent = subTotal > 0 ? Math.round((taxAmount / subTotal) * 100) : 11;
 
   const selectedMethodInfo = selectedMethod ? getPaymentMethodInfo(selectedMethod) : null;
 
@@ -216,35 +185,12 @@ export default function PaymentPage() {
   const isUrgent = timeLeft.hours < 1 && timeLeft.minutes < 30;
   const eventTitle = order.event?.title || "Event";
   const eventDate = order.event?.date || "";
-  const eventCity = order.event?.city || "";
   const totalTickets = order.items?.reduce((s, i) => s + i.quantity, 0) || 0;
 
   // Show payment result panel (VA / QRIS)
   const showPaymentPanel = paymentResult && (paymentResult.vaNumber || paymentResult.qrContent);
 
-  if (orderLoading || !order) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="text-center">
-          <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">Memuat detail pesanan...</p>
-        </div>
-      </div>
-    );
-  }
-
-    if (orderLoading || !order) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="text-center">
-          <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">Memuat detail pesanan...</p>
-        </div>
-      </div>
-    );
-  }
-
-    return (
+  return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-md border-b border-border">
@@ -308,7 +254,7 @@ export default function PaymentPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-foreground font-semibold">{eventTitle}</p>
-                <p className="text-muted-foreground text-xs">{eventDate}{eventCity ? ` • ${eventCity}` : ''}</p>
+                <p className="text-muted-foreground text-xs">{eventDate}</p>
               </div>
               <div className="text-right">
                 <p className="text-green-400 font-bold text-xl">
@@ -319,32 +265,6 @@ export default function PaymentPage() {
                 </p>
               </div>
             </div>
-            {/* Fee breakdown */}
-            {(adminFee > 0 || taxAmount > 0 || discountAmount > 0) && (
-              <>
-                <Separator className="bg-border" />
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span className="text-foreground">{formatRupiah(subTotal)}</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">Biaya Admin ({adminFeePercent}%)</span>
-                    <span className="text-foreground">{formatRupiah(adminFee)}</span>
-                  </div>
-                  <div className="flex justify-between text-xs">
-                    <span className="text-muted-foreground">PPN ({ppnPercent}%)</span>
-                    <span className="text-foreground">{formatRupiah(taxAmount)}</span>
-                  </div>
-                  {discountAmount > 0 && (
-                    <div className="flex justify-between text-xs">
-                      <span className="text-green-400">Diskon</span>
-                      <span className="text-green-400">-{formatRupiah(discountAmount)}</span>
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
           </CardContent>
         </Card>
 
@@ -545,6 +465,18 @@ export default function PaymentPage() {
                   ?.methods.map((method) => {
                     const info = getPaymentMethodInfo(method);
                     const isSelected = selectedMethod === method;
+  if (orderLoading || !order) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="text-center">
+          <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Memuat detail pesanan...</p>
+        </div>
+      </div>
+    );
+  }
+
+
                     return (
                       <button
                         key={method}
