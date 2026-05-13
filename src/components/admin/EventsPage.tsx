@@ -576,7 +576,7 @@ export function EventsPage() {
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent className="bg-card border-primary/20 text-foreground max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-foreground">Edit Tier Tiket — {editForm.name || selectedTier?.name || ''}</DialogTitle>
+            <DialogTitle className="text-foreground">Edit Tier Tiket</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-2">
             <div className="space-y-2">
@@ -596,10 +596,6 @@ export function EventsPage() {
             <div className="space-y-2">
               <label className="text-sm text-muted-foreground">Zone</label>
               <Input value={editForm.zone} onChange={(e) => setEditForm(prev => ({ ...prev, zone: e.target.value }))} className="bg-background border-primary/20 text-foreground" />
-            </div>
-            <div className="space-y-2">
-              <label className="text-sm text-muted-foreground">Deskripsi</label>
-              <Input value={editForm.description} onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))} className="bg-background border-primary/20 text-foreground" />
             </div>
             <div className="flex justify-end gap-3 pt-2">
               <Button variant="outline" onClick={() => setEditDialogOpen(false)} className="border-input text-foreground hover:bg-accent">Batal</Button>
