@@ -118,26 +118,6 @@ export function EventsPage() {
     setEditDialogOpen(true)
   }
 
-    try {
-      await updateTicketTypeMutation.mutateAsync({
-        ticketTypeId: selectedTier?.id || '',
-        data: {
-          name: editForm.name, price: parseInt(editForm.price), quota: parseInt(editForm.quota),
-          description: editForm.description, tier: editForm.tier, zone: editForm.zone,
-          emoji: editForm.emoji, benefits: editForm.benefits,
-        },
-      })
-      toast.success('Tiket berhasil diperbarui')
-      setEditDialogOpen(false)
-    } catch (err) {
-      toast.error('Gagal memperbarui tiket')
-      console.error(err)
-    }
-  }
-
-)
-    setEditDialogOpen(true)
-  };
   const [editingTier, setEditingTier] = useState<string | null>(null);
 
   const { isOrganizer, organizerId, scopeParams, apiScope } = useScopedData({ filterByEvent: true });
