@@ -118,8 +118,6 @@ export function EventsPage() {
     setEditDialogOpen(true)
   }
 
-  const [editingTier, setEditingTier] = useState<string | null>(null);
-
   const { isOrganizer, organizerId, scopeParams, apiScope } = useScopedData({ filterByEvent: true });
   const pageTitle = useRoleLabel({ superAdmin: 'Kelola Event', organizer: 'My Events' });
 
@@ -578,26 +576,30 @@ export function EventsPage() {
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent className="bg-card border-primary/20 text-foreground max-w-lg">
           <DialogHeader>
-            <DialogTitle className="text-foreground">Edit Tier Tiket — {editingTier || ''}</DialogTitle>
+            <DialogTitle className="text-foreground">Edit Tier Tiket — {editForm.name || selectedTier?.name || ''}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-2">
             <div className="space-y-2">
               <label className="text-sm text-muted-foreground">Nama Tier</label>
-              <Input defaultValue={editingTier ? String(ticketTypes.find(t => String(t.id) === editingTier)?.name || '') : ''} className="bg-background border-primary/20 text-foreground" />
+              <Input value={editForm.name} onChange={(e) => setEditForm(prev => ({ ...prev, name: e.target.value }))} className="bg-background border-primary/20 text-foreground" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">Harga (Rp)</label>
-                <Input type="number" defaultValue={editingTier ? Number(ticketTypes.find(t => String(t.id) === editingTier)?.price || 0) : ''} className="bg-background border-primary/20 text-foreground" />
+                <Input type="number" value={editForm.price} onChange={(e) => setEditForm(prev => ({ ...prev, price: e.target.value }))} className="bg-background border-primary/20 text-foreground" />
               </div>
               <div className="space-y-2">
                 <label className="text-sm text-muted-foreground">Quota</label>
-                <Input type="number" defaultValue={editingTier ? Number(ticketTypes.find(t => String(t.id) === editingTier)?.quota || 0) : ''} className="bg-background border-primary/20 text-foreground" />
+                <Input type="number" value={editForm.quota} onChange={(e) => setEditForm(prev => ({ ...prev, quota: e.target.value }))} className="bg-background border-primary/20 text-foreground" />
               </div>
             </div>
             <div className="space-y-2">
               <label className="text-sm text-muted-foreground">Zone</label>
-              <Input defaultValue={editingTier ? String(ticketTypes.find(t => String(t.id) === editingTier)?.zone || '') : ''} className="bg-background border-primary/20 text-foreground" />
+              <Input value={editForm.zone} onChange={(e) => setEditForm(prev => ({ ...prev, zone: e.target.value }))} className="bg-background border-primary/20 text-foreground" />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm text-muted-foreground">Deskripsi</label>
+              <Input value={editForm.description} onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))} className="bg-background border-primary/20 text-foreground" />
             </div>
             <div className="flex justify-end gap-3 pt-2">
               <Button variant="outline" onClick={() => setEditDialogOpen(false)} className="border-input text-foreground hover:bg-accent">Batal</Button>
