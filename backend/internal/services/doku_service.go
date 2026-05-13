@@ -11,7 +11,8 @@ import (
         "crypto/rand"
         "crypto/sha256"
         "crypto/sha512"
-        "encoding/hex"
+        "encoding/base64"
+	"encoding/hex"
         "encoding/json"
         "fmt"
         "io"
@@ -429,7 +430,7 @@ func (s *DokuService) generateSNAPHeaders(method, endpoint, requestBody string) 
         // Compute HMAC-SHA512 signature
         mac := hmac.New(sha512.New, []byte(s.ClientSecret))
         mac.Write([]byte(stringToSign))
-        signature := hex.EncodeToString(mac.Sum(nil))
+        signature := base64.StdEncoding.EncodeToString(mac.Sum(nil))
 
         // Generate external ID (10-digit timestamp-based)
         externalID := fmt.Sprintf("%d", time.Now().UnixMilli()%1e10)
@@ -497,7 +498,7 @@ func (s *DokuService) VerifySignature(timestamp, signature, body string) bool {
         mac.Write([]byte(s.ClientID))
         mac.Write([]byte(timestamp))
         mac.Write([]byte(body))
-        expectedSig := hex.EncodeToString(mac.Sum(nil))
+        expectedSig := base64.StdEncoding.EncodeToString(mac.Sum(nil))
 
         return hmac.Equal([]byte(signature), []byte(expectedSig))
 }
