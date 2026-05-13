@@ -472,6 +472,31 @@ export function useOrganizerTicketTypes(eventId?: string) {
 /**
  * useCreateTicketType() — POST create ticket type
  */
+export function useUpdateTicketType() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ ticketTypeId, data }: { ticketTypeId: string; data: Record<string, unknown> }) =>
+      organizerApi.updateTicketType(ticketTypeId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['organizer', 'ticket-types'] })
+      queryClient.invalidateQueries({ queryKey: ['admin', 'events'] })
+    },
+  })
+}
+
+export function useDeleteTicketType() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (ticketTypeId: string) =>
+      organizerApi.deleteTicketType(ticketTypeId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['organizer', 'ticket-types'] })
+      queryClient.invalidateQueries({ queryKey: ['admin', 'events'] })
+    },
+  })
+}
+
+
 export function useCreateTicketType() {
   const queryClient = useQueryClient()
   return useMutation({

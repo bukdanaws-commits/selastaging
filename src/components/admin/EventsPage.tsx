@@ -6,7 +6,7 @@ import { id as idLocale } from 'date-fns/locale';
 import { toast } from 'sonner';
 
 import { cn, formatRupiah } from '@/lib/utils';
-import { useAdminEvents, useAdminDashboard } from '@/hooks/use-api';
+import { useAdminEvents, useAdminDashboard, useUpdateTicketType } from '@/hooks/use-api';
 import { useScopedData, useRoleLabel } from '@/hooks/use-scoped-data';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -79,7 +79,44 @@ function getQuotaPercentage(tt: Record<string, unknown>): number {
 export function EventsPage() {
   const [expandedTier, setExpandedTier] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+
+  const [editForm, setEditForm] = useState({
+    name: '', price: '', quota: '', description: '', tier: '', zone: '', emoji: '', benefits: '',
+  })
+  const updateTicketTypeMutation = useUpdateTicketType()
+
+  const handleSaveTier = async () => {
+    if (!editForm.name || !editForm.price || !editForm.quota) {
+      toast.error('Nama, harga, dan kuota wajib diisi')
+      return
+    }
+    try {
+      await updateTicketTypeMutation.mutateAsync({
+        ticketTypeId: selectedTier?.id || '',
+        data: {
+          name: editForm.name, price: parseInt(editForm.price), quota: parseInt(editForm.quota),
+          description: editForm.description, tier: editForm.tier, zone: editForm.zone,
+          emoji: editForm.emoji, benefits: editForm.benefits,
+        },
+      })
+      toast.success('Tiket berhasil diperbarui')
+      setEditDialogOpen(false)
+    } catch (err) {
+      toast.error('Gagal memperbarui tiket')
+      console.error(err)
+    }
+  }
+
+  const handleEditTier = (tier: any) => {
+    setSelectedTier(tier)
+    setEditForm({
+      name: tier.name || '', price: String(tier.price || ''), quota: String(tier.quota || ''),
+      description: tier.description || '', tier: tier.tier || '', zone: tier.zone || '',
+      emoji: tier.emoji || '', benefits: tier.benefits || '',
+    })
+    setEditDialogOpen(true)
+  };
   const [editingTier, setEditingTier] = useState<string | null>(null);
 
   const { isOrganizer, organizerId, scopeParams, apiScope } = useScopedData({ filterByEvent: true });
@@ -566,7 +603,7 @@ export function EventsPage() {
             </div>
             <div className="flex justify-end gap-3 pt-2">
               <Button variant="outline" onClick={() => setEditDialogOpen(false)} className="border-input text-foreground hover:bg-accent">Batal</Button>
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold" onClick={() => { toast.success('Tier berhasil diperbarui!'); setEditDialogOpen(false); }}>Simpan Perubahan</Button>
+              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold" onClick={handleSaveTier}>Simpan Perubahan</Button>
             </div>
           </div>
         </DialogContent>

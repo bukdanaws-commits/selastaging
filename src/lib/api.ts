@@ -407,6 +407,10 @@ export const publicApi = {
     apiFetch<Record<string, unknown>>(API.PUBLIC.EVENT_DETAIL(slug)),
 
   getTicketTypes: (eventId: string) =>
+      updateTicketType: (ticketTypeId: string, data: Record<string, unknown>) =>
+        apiFetch<unknown>(`/api/v1/organizer/ticket-types/${ticketTypeId}`, { method: 'PUT', body: JSON.stringify(data) }),
+      deleteTicketType: (ticketTypeId: string) =>
+        apiFetch<unknown>(`/api/v1/organizer/ticket-types/${ticketTypeId}`, { method: 'DELETE' }),
     apiFetch<unknown[]>(API.PUBLIC.TICKET_TYPES(eventId)),
 
   checkTicket: (ticketCode: string) =>
