@@ -507,6 +507,11 @@ export const organizerApi = {
   getBankAccount: () =>
     apiFetch<unknown>('/api/v1/organizer/bank-account'),
 
+  updateTicketType: (ticketTypeId: string, data: Record<string, unknown>) =>
+    apiFetch<unknown>(`/api/v1/organizer/ticket-types/${ticketTypeId}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteTicketType: (ticketTypeId: string) =>
+    apiFetch<unknown>(`/api/v1/organizer/ticket-types/${ticketTypeId}`, { method: 'DELETE' }),
+
   saveBankAccount: (data: Record<string, unknown>) =>
     apiFetch<unknown>('/api/v1/organizer/bank-account', { method: 'POST', body: JSON.stringify(data) }),
 
