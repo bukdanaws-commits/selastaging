@@ -80,6 +80,7 @@ export function EventsPage() {
   const [expandedTier, setExpandedTier] = useState<string | null>(null);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [selectedTier, setSelectedTier] = useState<Record<string, unknown> | null>(null)
 
   const [editForm, setEditForm] = useState({
     name: '', price: '', quota: '', description: '', tier: '', zone: '', emoji: '', benefits: '',
@@ -127,8 +128,8 @@ export function EventsPage() {
   const kpis = dashboardData as Record<string, unknown> | undefined;
   const events = ((eventsData as unknown[]) || []) as Record<string, unknown>[];
   const event = events[0] || {};
-  const ticketTypes = ((event.ticketTypes || []) as Record<string, unknown>[]);
-  const salesByTier = ((kpis?.salesByTier || []) as { name: string; terjual: number; quota: number; revenue: number; percentage: number }[]);
+  const ticketTypes = Array.isArray(event.ticketTypes) ? (event.ticketTypes as Record<string, unknown>[]) : [];
+  const salesByTier = Array.isArray(kpis?.salesByTier) ? ((kpis?.salesByTier) as { name: string; terjual: number; quota: number; revenue: number; percentage: number }[]);
 
   const totalSold = ticketTypes.reduce((sum, tt) => sum + Number(tt.sold || 0), 0);
   const totalQuota = ticketTypes.reduce((sum, tt) => sum + Number(tt.quota || 0), 0);
@@ -148,8 +149,8 @@ export function EventsPage() {
     }
   };
 
-  const floorTiers = ticketTypes.filter((tt) => tt.tier === 'floor');
-  const tribunTiers = ticketTypes.filter((tt) => tt.tier === 'tribun');
+  const floorTiers = ticketTypes.filter((tt: Record<string, unknown>) => tt.tier === 'floor');
+  const tribunTiers = ticketTypes.filter((tt: Record<string, unknown>) => tt.tier === 'tribun');
 
   const handleCreateEvent = () => {
     toast.success('Event berhasil dibuat!');
