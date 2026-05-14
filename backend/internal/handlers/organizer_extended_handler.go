@@ -990,3 +990,79 @@ func GetOrganizerRefunds(db *gorm.DB) fiber.Handler {
                 return response.Paginated(c, refunds, total, page, perPage)
         }
 }
+
+
+// GetAdminTicketTypes handles GET /api/v1/admin/ticket-types
+func GetAdminTicketTypes(db *gorm.DB) fiber.Handler {
+    return func(c *fiber.Ctx) error {
+        ticketTypes := []models.TicketType{}
+        query := db.Model(&models.TicketType{})
+        
+        if eventID := c.Query("eventId"); eventID != "" {
+            query = query.Where("event_id = ?", eventID)
+        }
+        
+        if err := query.Order("created_at DESC").Find(&ticketTypes).Error; err != nil {
+            return response.InternalError(c, "Failed to retrieve ticket types")
+        }
+        return c.JSON(fiber.Map{"data": ticketTypes})
+    }
+}
+
+// UpdateAdminTicketType handles PUT /api/v1/admin/ticket-types/:ticketTypeId
+func UpdateAdminTicketType(db *gorm.DB) fiber.Handler {
+    return func(c *fiber.Ctx) error {
+        ticketTypeID := c.Params("ticketTypeId")
+        if ticketTypeID == "" {
+            return response.BadRequest(c, "Ticket type ID is required")
+        }
+
+        var ticketType models.TicketType
+        if err := db.Where("id = ?", ticketTypeID).First(&ticketType).Error; err != nil {
+            return response.NotFound(c, "Ticket type not found")
+        }
+
+        var req map[string]interface{}
+        if err := c.BodyParser(&req); err != nil {
+            return response.BadRequest(c, "Invalid request body")
+        }
+
+        updates := make(map[string]interface{})
+        allowedFields := []string{"name", "price", "quota", "description", "tier", "zone", "emoji", "benefits"}
+        for _, field := range allowedFields {
+            if val, ok := req[field]; ok {
+                updates[field] = val
+            }
+        }
+
+        if len(updates) > 0 {
+            if err := db.Model(&ticketType).Updates(updates).Error; err != nil {
+                return response.InternalError(c, "Failed to update ticket type")
+            }
+        }
+
+        db.Where("id = ?", ticketTypeID).First(&ticketType)
+        return c.JSON(fiber.Map{"data": ticketType})
+    }
+}
+
+// DeleteAdminTicketType handles DELETE /api/v1/admin/ticket-types/:ticketTypeId
+func DeleteAdminTicketType(db *gorm.DB) fiber.Handler {
+    return func(c *fiber.Ctx) error {
+        ticketTypeID := c.Params("ticketTypeId")
+        if ticketTypeID == "" {
+            return response.BadRequest(c, "Ticket type ID is required")
+        }
+
+        var ticketType models.TicketType
+        if err := db.Where("id = ?", ticketTypeID).First(&ticketType).Error; err != nil {
+            return response.NotFound(c, "Ticket type not found")
+        }
+
+        if err := db.Delete(&ticketType).Error; err != nil {
+            return response.InternalError(c, "Failed to delete ticket type")
+        }
+
+        return c.JSON(fiber.Map{"message": "Ticket type deleted successfully"})
+    }
+}

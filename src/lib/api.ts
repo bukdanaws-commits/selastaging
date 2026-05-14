@@ -482,6 +482,10 @@ export const organizerApi = {
   getRedemptions: (params?: Record<string, string>) =>
     apiFetch<PaginatedData<unknown>>(API.ORGANIZER.REDEMPTIONS, { params }),
 
+  updateTicketType: (ticketTypeId: string, data: Record<string, unknown>) =>
+    apiFetch<unknown>(`/api/v1/admin/ticket-types/${ticketTypeId}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteTicketType: (ticketTypeId: string) =>
+    apiFetch<unknown>(`/api/v1/admin/ticket-types/${ticketTypeId}`, { method: 'DELETE' }),
   getCounters: (params?: Record<string, string>) =>
     apiFetch<unknown[]>(API.ORGANIZER.COUNTERS, { params }),
 
@@ -595,6 +599,10 @@ export const adminApi = {
   getStaff: (params?: Record<string, string>) =>
     apiFetch<PaginatedData<unknown>>(API.ADMIN.STAFF, { params }),
 
+  updateTicketType: (ticketTypeId: string, data: Record<string, unknown>) =>
+    apiFetch<unknown>(`/api/v1/admin/ticket-types/${ticketTypeId}`, { method: 'PUT', body: JSON.stringify(data) }),
+  deleteTicketType: (ticketTypeId: string) =>
+    apiFetch<unknown>(`/api/v1/admin/ticket-types/${ticketTypeId}`, { method: 'DELETE' }),
   getCounters: (params?: Record<string, string>) =>
     apiFetch<PaginatedData<unknown>>(API.ADMIN.COUNTERS, { params }),
 

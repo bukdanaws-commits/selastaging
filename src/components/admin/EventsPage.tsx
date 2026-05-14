@@ -6,7 +6,8 @@ import { id as idLocale } from 'date-fns/locale';
 import { toast } from 'sonner';
 
 import { cn, formatRupiah } from '@/lib/utils';
-import { useAdminEvents, useAdminDashboard, useUpdateTicketType } from '@/hooks/use-api';
+import { useAdminEvents, useAdminDashboard, useUpdateTicketType, useDeleteTicketType } from '@/hooks/use-api';
+import { adminApi, organizerApi } from '@/lib/api';
 import { useScopedData, useRoleLabel } from '@/hooks/use-scoped-data';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -93,13 +94,11 @@ export function EventsPage() {
       return
     }
     try {
-      await updateTicketTypeMutation.mutateAsync({
-        ticketTypeId: selectedTier?.id || '',
-        data: {
-          name: editForm.name, price: parseInt(editForm.price), quota: parseInt(editForm.quota),
-          description: editForm.description, tier: editForm.tier, zone: editForm.zone,
-          emoji: editForm.emoji, benefits: editForm.benefits,
-        },
+      const api = isOrganizer ? organizerApi : adminApi;
+      await api.updateTicketType(String(selectedTier?.id || ''), {
+        name: editForm.name, price: parseInt(editForm.price), quota: parseInt(editForm.quota),
+        description: editForm.description, tier: editForm.tier, zone: editForm.zone,
+        emoji: editForm.emoji, benefits: editForm.benefits,
       })
       toast.success('Tiket berhasil diperbarui')
       setEditDialogOpen(false)

@@ -177,6 +177,11 @@ func Setup(app *fiber.App, db *gorm.DB, hub *services.SSEHub) {
         admin.Patch("/tickets/:ticketId/cancel", handlers.CancelTicket(db))
         admin.Post("/tickets/expire-pending", handlers.ExpirePendingTickets(db))
 
+        // Admin ticket types management
+        admin.Get("/ticket-types", handlers.GetAdminTicketTypes(db))
+        admin.Put("/ticket-types/:ticketTypeId", handlers.UpdateAdminTicketType(db))
+        admin.Delete("/ticket-types/:ticketTypeId", handlers.DeleteAdminTicketType(db))
+
         // Admin organizers management
         admin.Get("/organizers", handlers.GetAdminOrganizers(db))
         admin.Patch("/organizers/:id/approve", handlers.ApproveOrganizer(db))
