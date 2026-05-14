@@ -435,7 +435,7 @@ export function EventsPage() {
                           <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-accent h-7 w-7 p-0" onClick={() => toggleTierExpand(String(tt.id))}>
                             {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                           </Button>
-                          <Button variant="ghost" size="sm" className="text-gold hover:text-gold hover:bg-gold/10 h-7 w-7 p-0" onClick={() => handleEditTier(String(tt.id))}>
+                          <Button variant="ghost" size="sm" className="text-gold hover:text-gold hover:bg-gold/10 h-7 w-7 p-0" onClick={() => handleEditTier(tt)}>
                             <Pencil className="w-3.5 h-3.5" />
                           </Button>
                         </div>
@@ -491,7 +491,7 @@ export function EventsPage() {
                           <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground hover:bg-accent h-7 w-7 p-0" onClick={() => toggleTierExpand(String(tt.id))}>
                             {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                           </Button>
-                          <Button variant="ghost" size="sm" className="text-gold hover:text-gold hover:bg-gold/10 h-7 w-7 p-0" onClick={() => handleEditTier(String(tt.id))}>
+                          <Button variant="ghost" size="sm" className="text-gold hover:text-gold hover:bg-gold/10 h-7 w-7 p-0" onClick={() => handleEditTier(tt)}>
                             <Pencil className="w-3.5 h-3.5" />
                           </Button>
                         </div>
