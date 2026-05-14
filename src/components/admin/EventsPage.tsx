@@ -156,8 +156,6 @@ export function EventsPage() {
     setCreateDialogOpen(false);
   };
 
-  `);
-  };
 
   const toggleTierExpand = (tierId: string) => {
     setExpandedTier((prev) => (prev === tierId ? null : tierId));
