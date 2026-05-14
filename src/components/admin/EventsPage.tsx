@@ -129,7 +129,7 @@ export function EventsPage() {
   const events = ((eventsData as unknown[]) || []) as Record<string, unknown>[];
   const event = events[0] || {};
   const ticketTypes = Array.isArray(event.ticketTypes) ? (event.ticketTypes as Record<string, unknown>[]) : [];
-  const salesByTier = Array.isArray(kpis?.salesByTier) ? ((kpis?.salesByTier) as { name: string; terjual: number; quota: number; revenue: number; percentage: number }[]);
+  const salesByTier = Array.isArray(kpis?.salesByTier) ? (kpis.salesByTier as { name: string; terjual: number; quota: number; revenue: number; percentage: number }[]) : [];
 
   const totalSold = ticketTypes.reduce((sum, tt) => sum + Number(tt.sold || 0), 0);
   const totalQuota = ticketTypes.reduce((sum, tt) => sum + Number(tt.quota || 0), 0);
