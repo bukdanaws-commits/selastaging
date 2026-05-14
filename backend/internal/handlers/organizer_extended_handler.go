@@ -994,75 +994,75 @@ func GetOrganizerRefunds(db *gorm.DB) fiber.Handler {
 
 // GetAdminTicketTypes handles GET /api/v1/admin/ticket-types
 func GetAdminTicketTypes(db *gorm.DB) fiber.Handler {
-    return func(c *fiber.Ctx) error {
-        ticketTypes := []models.TicketType{}
-        query := db.Model(&models.TicketType{})
-        
-        if eventID := c.Query("eventId"); eventID != "" {
-            query = query.Where("event_id = ?", eventID)
-        }
-        
-        if err := query.Order("created_at DESC").Find(&ticketTypes).Error; err != nil {
-            return response.InternalError(c, "Failed to retrieve ticket types")
-        }
-        return c.JSON(fiber.Map{"data": ticketTypes})
-    }
+	return func(c fiber.Ctx) error {
+		var ticketTypes []models.TicketType
+		if err := db.Find(&ticketTypes).Error; err != nil {
+			return response.InternalError(c, "Failed to fetch ticket types")
+		}
+		return c.JSON(ticketTypes)
+	}
 }
 
-// UpdateAdminTicketType handles PUT /api/v1/admin/ticket-types/:ticketTypeId
 func UpdateAdminTicketType(db *gorm.DB) fiber.Handler {
-    return func(c *fiber.Ctx) error {
-        ticketTypeID := c.Params("ticketTypeId")
-        if ticketTypeID == "" {
-            return response.BadRequest(c, "Ticket type ID is required")
-        }
+	return func(c fiber.Ctx) error {
+		ticketTypeID := c.Params("ticketTypeId")
+		if ticketTypeID == "" {
+			return response.BadRequest(c, "Ticket type ID is required")
+		}
 
-        var ticketType models.TicketType
-        if err := db.Where("id = ?", ticketTypeID).First(&ticketType).Error; err != nil {
-            return response.NotFound(c, "Ticket type not found")
-        }
+		var ticketType models.TicketType
+		if err := db.First(&ticketType, "id = ?", ticketTypeID).Error; err != nil {
+			return response.NotFound(c, "Ticket type not found")
+		}
 
-        var req map[string]interface{}
-        if err := c.BodyParser(&req); err != nil {
-            return response.BadRequest(c, "Invalid request body")
-        }
+		var req map[string]interface{}
+		if err := c.Bind().Body(&req); err != nil {
+			return response.BadRequest(c, "Invalid request body")
+		}
 
-        updates := make(map[string]interface{})
-        allowedFields := []string{"name", "price", "quota", "description", "tier", "zone", "emoji", "benefits"}
-        for _, field := range allowedFields {
-            if val, ok := req[field]; ok {
-                updates[field] = val
-            }
-        }
+		updates := make(map[string]interface{})
+		if name, ok := req["name"].(string); ok {
+			updates["name"] = name
+		}
+		if price, ok := req["price"].(float64); ok {
+			updates["price"] = price
+		}
+		if quota, ok := req["quota"].(float64); ok {
+			updates["quota"] = int(quota)
+		}
+		if description, ok := req["description"].(string); ok {
+			updates["description"] = description
+		}
+		if zone, ok := req["zone"].(string); ok {
+			updates["zone"] = zone
+		}
 
-        if len(updates) > 0 {
-            if err := db.Model(&ticketType).Updates(updates).Error; err != nil {
-                return response.InternalError(c, "Failed to update ticket type")
-            }
-        }
+		if len(updates) > 0 {
+			if err := db.Model(&ticketType).Updates(updates).Error; err != nil {
+				return response.InternalError(c, "Failed to update ticket type")
+			}
+		}
 
-        db.Where("id = ?", ticketTypeID).First(&ticketType)
-        return c.JSON(fiber.Map{"data": ticketType})
-    }
+		db.First(&ticketType, "id = ?", ticketTypeID)
+		return c.JSON(ticketType)
+	}
 }
 
-// DeleteAdminTicketType handles DELETE /api/v1/admin/ticket-types/:ticketTypeId
 func DeleteAdminTicketType(db *gorm.DB) fiber.Handler {
-    return func(c *fiber.Ctx) error {
-        ticketTypeID := c.Params("ticketTypeId")
-        if ticketTypeID == "" {
-            return response.BadRequest(c, "Ticket type ID is required")
-        }
+	return func(c fiber.Ctx) error {
+		ticketTypeID := c.Params("ticketTypeId")
+		if ticketTypeID == "" {
+			return response.BadRequest(c, "Ticket type ID is required")
+		}
 
-        var ticketType models.TicketType
-        if err := db.Where("id = ?", ticketTypeID).First(&ticketType).Error; err != nil {
-            return response.NotFound(c, "Ticket type not found")
-        }
+		var ticketType models.TicketType
+		if err := db.First(&ticketType, "id = ?", ticketTypeID).Error; err != nil {
+			return response.NotFound(c, "Ticket type not found")
+		}
 
-        if err := db.Delete(&ticketType).Error; err != nil {
-            return response.InternalError(c, "Failed to delete ticket type")
-        }
-
-        return c.JSON(fiber.Map{"message": "Ticket type deleted successfully"})
-    }
+		if err := db.Delete(&ticketType).Error; err != nil {
+			return response.InternalError(c, "Failed to delete ticket type")
+		}
+		return c.JSON(fiber.Map{"message": "Ticket type deleted"})
+	}
 }
