@@ -192,7 +192,7 @@ async function getGoogleIdToken(): Promise<string> {
           ? notification.getSkippedReason()
           : null
         
-        if (notDisplayedReason || skippedReason || notification.isNotDisplayed || notification.isSkippedMoment) {
+        if (notDisplayedReason || skippedReason || (typeof notification.isNotDisplayed === 'function' && notification.isNotDisplayed()) || (typeof notification.isSkippedMoment === 'function' && notification.isSkippedMoment())) {
           console.warn('[Auth] Google One Tap not available, trying popup flow...')
           tryOAuth2Popup(GOOGLE_CLIENT_ID, resolve, reject)
         }
