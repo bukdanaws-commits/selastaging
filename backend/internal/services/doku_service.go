@@ -8,11 +8,15 @@ package services
 import (
         "bytes"
         "crypto/hmac"
+	"encoding/base64"
+	"encoding/pem"
+	"crypto/x509"
+	"crypto"
+	"crypto/rsa"
         "crypto/rand"
         "crypto/sha256"
         "crypto/sha512"
-        "encoding/base64"
-	"encoding/hex"
+        "encoding/hex"
         "encoding/json"
         "fmt"
         "io"
@@ -347,6 +351,7 @@ func (s *DokuService) generateB2BToken() (string, error) {
 
         // Generate timestamp and signature for B2B token request
         timestamp := generateDokuTimestamp()
+	log.Printf("[DOKU-DBG] Timestamp: %s", timestamp)
         signature, err := s.generateB2BSignature(timestamp)
         if err != nil {
                 return "", fmt.Errorf("failed to generate B2B signature: %w", err)
@@ -412,25 +417,35 @@ func (s *DokuService) generateB2BToken() (string, error) {
 // generateSNAPHeaders builds the DOKU SNAP required headers.
 func (s *DokuService) generateSNAPHeaders(method, endpoint, requestBody string) (map[string]string, error) {
         accessToken, err := s.generateB2BToken()
+	tokenForSign := strings.TrimPrefix(accessToken, "Bearer ")
         if err != nil {
                 return nil, fmt.Errorf("failed to get B2B token: %w", err)
         }
 
         timestamp := generateDokuTimestamp()
+	log.Printf("[DOKU-DBG] Timestamp: %s", timestamp)
 
         // Compute body hash (SHA-256 hex lowercase)
-        bodyHash := sha256.Sum256([]byte(requestBody))
+        log.Printf("[DOKU-DBG] RequestBody (first 200): %s", func() string { if len(requestBody) > 200 { return requestBody[:200] } else { return requestBody } }())
+	bodyHash := sha256.Sum256([]byte(requestBody))
         bodyHex := hex.EncodeToString(bodyHash[:])
         bodyHex = strings.ToLower(bodyHex)
 
         // Build string to sign: METHOD:ENDPOINT:ACCESS_TOKEN:BODY_HASH:TIMESTAMP
         stringToSign := fmt.Sprintf("%s:%s:%s:%s:%s",
-                strings.ToUpper(method), endpoint, accessToken, bodyHex, timestamp)
+
+
+
+                strings.ToUpper(method), endpoint, tokenForSign, bodyHex, timestamp)
+	log.Printf("[DOKU-DBG] StringToSign: %s", stringToSign)
 
         // Compute HMAC-SHA512 signature
-        mac := hmac.New(sha512.New, []byte(s.ClientSecret))
+        hmacKey := strings.TrimSpace(s.ClientSecret)
+	mac := hmac.New(sha512.New, []byte(hmacKey))
+	log.Printf("[DOKU-DBG] HMAC key (trimmed) len=%d, first10=%s", len(hmacKey), func() string { if len(hmacKey) > 10 { return hmacKey[:10] } else { return hmacKey } }())
         mac.Write([]byte(stringToSign))
         signature := base64.StdEncoding.EncodeToString(mac.Sum(nil))
+	log.Printf("[DOKU-DBG] Signature: %s", signature)
 
         // Generate external ID (10-digit timestamp-based)
         externalID := fmt.Sprintf("%d", time.Now().UnixMilli()%1e10)
@@ -498,7 +513,7 @@ func (s *DokuService) VerifySignature(timestamp, signature, body string) bool {
         mac.Write([]byte(s.ClientID))
         mac.Write([]byte(timestamp))
         mac.Write([]byte(body))
-        expectedSig := base64.StdEncoding.EncodeToString(mac.Sum(nil))
+        expectedSig := hex.EncodeToString(mac.Sum(nil))
 
         return hmac.Equal([]byte(signature), []byte(expectedSig))
 }
@@ -1204,10 +1219,41 @@ func generateUUID() string {
 }
 
 // signRSASHA256 signs a message with RSA-SHA256 using the provided PEM key.
-// This is a placeholder — production use should use crypto/rsa or crypto/ecdsa.
+// Returns Base64-encoded signature as required by DOKU SNAP API.
 func signRSASHA256(privateKeyPEM []byte, message string) (string, error) {
-        // For now, return an error to trigger HMAC fallback
-        // In production, implement proper RSA signing using:
-        //   x509.ParsePKCS8PrivateKey → rsa.SignPKCS1v15 with crypto.SHA256
-        return "", fmt.Errorf("RSA signing not yet implemented — use HMAC fallback")
+	// Decode PEM block
+	block, _ := pem.Decode(privateKeyPEM)
+	if block == nil {
+		return "", fmt.Errorf("failed to decode PEM block containing private key")
+	}
+
+	// Try PKCS8 first (openssl genpkey format), then PKCS1 fallback
+	var rsaKey *rsa.PrivateKey
+
+	parsedKey, err := x509.ParsePKCS8PrivateKey(block.Bytes)
+	if err == nil {
+		var ok bool
+		rsaKey, ok = parsedKey.(*rsa.PrivateKey)
+		if !ok {
+			return "", fmt.Errorf("PKCS8 key is not RSA")
+		}
+	} else {
+		var err1 error
+		rsaKey, err1 = x509.ParsePKCS1PrivateKey(block.Bytes)
+		if err1 != nil {
+			return "", fmt.Errorf("failed to parse private key (PKCS8: %v, PKCS1: %v)", err, err1)
+		}
+	}
+
+	// Hash the message with SHA256
+	hashed := sha256.Sum256([]byte(message))
+
+	// Sign with RSA PKCS1v15
+	signature, err := rsa.SignPKCS1v15(rand.Reader, rsaKey, crypto.SHA256, hashed[:])
+	if err != nil {
+		return "", fmt.Errorf("RSA signing failed: %w", err)
+	}
+
+	// Return Base64-encoded signature
+	return base64.StdEncoding.EncodeToString(signature), nil
 }

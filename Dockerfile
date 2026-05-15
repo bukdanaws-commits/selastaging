@@ -49,7 +49,7 @@ COPY . .
 # Build-time environment variables (baked into build, NOT secrets)
 # ⚠️ NEXT_PUBLIC_USE_MOCK MUST be 'false' to connect to real backend!
 ARG NEXT_PUBLIC_USE_MOCK="false"
-ARG NEXT_PUBLIC_API_URL="https://eventku-api-lkfw4e5kna-et.a.run.app"
+ARG NEXT_PUBLIC_API_URL="https://eventku-api-503551786622.asia-southeast2.run.app"
 ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID="503551786622-k3uajo9c2d6om6qnqofsa3b47fvo5o6g.apps.googleusercontent.com"
 ARG NEXT_PUBLIC_DOKU_ENVIRONMENT="production"
 ARG NEXT_PUBLIC_DOKU_API_BASE_URL="https://api.doku.com"
