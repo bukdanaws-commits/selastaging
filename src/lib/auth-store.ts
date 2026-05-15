@@ -149,6 +149,9 @@ function loadGIS(): Promise<void> {
   })
 }
 
+// Track if Google GIS has been initialized to prevent multiple calls
+let gisInitialized = false
+
 // Get Google ID token using popup (more reliable than One Tap)
 async function getGoogleIdToken(): Promise<string> {
   if (!GOOGLE_CLIENT_ID) {
@@ -157,28 +160,47 @@ async function getGoogleIdToken(): Promise<string> {
 
   await loadGIS()
 
-  const google = (window as unknown as { google: { accounts: { id: { initialize: (config: Record<string, unknown>) => void; prompt: (callback: (notification: Record<string, unknown>) => void) => void; renderButton: (parent: HTMLElement, config: Record<string, unknown>) => void } } } }).google
+  const google = (window as unknown as { google: { accounts: { id: { initialize: (config: Record<string, unknown>) => void; prompt: (callback?: (notification: Record<string, unknown>) => void) => void; renderButton: (parent: HTMLElement, config: Record<string, unknown>) => void } } } }).google
 
   return new Promise((resolve, reject) => {
-    google.accounts.id.initialize({
-      client_id: GOOGLE_CLIENT_ID,
-      callback: (response: { credential?: string }) => {
-        if (response.credential) {
-          resolve(response.credential)
-        } else {
-          reject(new Error('No credential received'))
-        }
-      },
-      auto_select: false,
-      cancel_on_tap_outside: true,
-    })
+    // Only initialize once to prevent "called multiple times" warning
+    if (!gisInitialized) {
+      google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: (response: { credential?: string }) => {
+          if (response.credential) {
+            resolve(response.credential)
+          } else {
+            reject(new Error('No credential received'))
+          }
+        },
+        auto_select: false,
+        cancel_on_tap_outside: true,
+        use_fedcm_for_prompt: true,
+      })
+      gisInitialized = true
+    }
 
-    google.accounts.id.prompt((notification: Record<string, unknown>) => {
-      if (notification.isNotDisplayed || notification.isSkippedMoment) {
-        console.warn('[Auth] Google One Tap not available, trying popup flow...')
-        tryOAuth2Popup(GOOGLE_CLIENT_ID, resolve, reject)
-      }
-    })
+    // FedCM-compatible prompt call
+    try {
+      google.accounts.id.prompt((notification: Record<string, unknown>) => {
+        // FedCM migration: use getNotDisplayedReason() and getSkippedReason() instead
+        const notDisplayedReason = typeof notification.getNotDisplayedReason === 'function' 
+          ? notification.getNotDisplayedReason() 
+          : null
+        const skippedReason = typeof notification.getSkippedReason === 'function'
+          ? notification.getSkippedReason()
+          : null
+        
+        if (notDisplayedReason || skippedReason || notification.isNotDisplayed || notification.isSkippedMoment) {
+          console.warn('[Auth] Google One Tap not available, trying popup flow...')
+          tryOAuth2Popup(GOOGLE_CLIENT_ID, resolve, reject)
+        }
+      })
+    } catch (err) {
+      console.warn('[Auth] Google One Tap error, trying popup flow...', err)
+      tryOAuth2Popup(GOOGLE_CLIENT_ID, resolve, reject)
+    }
   })
 }
 
