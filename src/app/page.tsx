@@ -358,7 +358,7 @@ function getQuotaPercentage(tt: TicketTypeDisplay): number {
 // ─────────────────────────────────────────────────────────
 // Section 1 — STUNNING HERO
 // ─────────────────────────────────────────────────────────
-function HeroSection({ onLoginClick, isAuthenticated, selectedCity }: { onLoginClick: () => void; isAuthenticated: boolean; selectedCity: typeof TOUR_CITIES[number] }) {
+function HeroSection({ onLoginClick, isAuthenticated, isHydrated, selectedCity }: { onLoginClick: () => void; isAuthenticated: boolean; isHydrated: boolean; selectedCity: typeof TOUR_CITIES[number] }) {
   const scrollY = useParallax()
   const [mounted, setMounted] = useState(false)
 
@@ -481,8 +481,8 @@ function HeroSection({ onLoginClick, isAuthenticated, selectedCity }: { onLoginC
           </Button>
         </div>
 
-        {/* Google Login hint */}
-        {!isAuthenticated && (
+        {/* Google Login hint — hydration-safe: only show after hydration */}
+        {isHydrated && !isAuthenticated && (
           <div className={cn('mt-6 transition-all duration-1000', mounted ? 'opacity-100 translate-y-0 delay-[1500ms]' : 'opacity-0 translate-y-8')}>
             <Button
               variant="ghost"
@@ -1183,7 +1183,7 @@ function FAQSection({ faqs }: { faqs: { question: string; answer: string }[] }) 
 // ─────────────────────────────────────────────────────────
 // Section 6 — Trust + Final CTA
 // ─────────────────────────────────────────────────────────
-function TrustCTASection({ onLoginClick, isAuthenticated }: { onLoginClick: () => void; isAuthenticated: boolean }) {
+function TrustCTASection({ onLoginClick, isAuthenticated, isHydrated }: { onLoginClick: () => void; isAuthenticated: boolean; isHydrated: boolean }) {
   const { ref, inView } = useInView()
 
   const trustBadges = [
@@ -1240,7 +1240,7 @@ function TrustCTASection({ onLoginClick, isAuthenticated }: { onLoginClick: () =
               <Ticket className="mr-2 h-5 w-5" />
               Beli Tiket Sekarang
             </Button>
-            {!isAuthenticated && (
+            {isHydrated && !isAuthenticated && (
               <Button
                 size="lg"
                 variant="outline"
@@ -1262,7 +1262,7 @@ function TrustCTASection({ onLoginClick, isAuthenticated }: { onLoginClick: () =
 // Main Page Component
 // ─────────────────────────────────────────────────────────
 export default function HomePage() {
-  const { user, isAuthenticated, isLoading, login, rehydrateSession } = useAuthStore()
+  const { user, isAuthenticated, isLoading, isHydrated, login, rehydrateSession } = useAuthStore()
   const { currentPage, currentOrderId } = usePageStore()
 
   // ─── Ticket data state (API + fallback) ────────────────
@@ -1295,6 +1295,9 @@ export default function HomePage() {
         const response = await publicApi.getEventBySlug(selectedSlug)
         if (!response || typeof response !== 'object') return
 
+        // Backend returns event data directly (after apiFetch envelope unwrapping):
+        //   { id, slug, title, subtitle, date, venue, ..., ticketTypes: [...] }
+        // Some API versions may wrap it in { event: {...} } — handle both formats
         const event = ('event' in response)
           ? (response as { event: Record<string, unknown> }).event
           : (response as Record<string, unknown>)
@@ -1338,10 +1341,10 @@ export default function HomePage() {
           }
         }
       } catch (err) {
+        // Use fallback data on API error
         console.warn('[fetchEventData] API error, using fallback data:', err)
       }
     }
-
 
     fetchEventData()
   }, [selectedSlug])
@@ -1374,7 +1377,7 @@ export default function HomePage() {
 
   // ─── Buy ticket handler ────────────────────────────────
   const handleBuyTicket = useCallback((tt: TicketTypeDisplay) => {
-    if (!isAuthenticated) {
+    if (!isHydrated || !isAuthenticated) {
       setLoginModalOpen(true)
       toast.info('Silakan login terlebih dahulu untuk membeli tiket')
       return
@@ -1390,9 +1393,9 @@ export default function HomePage() {
     } else {
       setSeatModalOpen(true)
     }
-  }, [isAuthenticated])
+  }, [isHydrated, isAuthenticated])
 
-  // ─── City selection handler ────────────────────────────
+  // ─── City selection handler
   const handleSelectCity = useCallback((city: typeof TOUR_CITIES[number]) => {
     setSelectedCity(city)
     setSelectedSlug(city.slug)
@@ -1433,13 +1436,13 @@ export default function HomePage() {
       <Navbar />
 
       <main className="flex-1">
-        <HeroSection onLoginClick={openLoginModal} isAuthenticated={isAuthenticated} selectedCity={selectedCity} />
+        <HeroSection onLoginClick={openLoginModal} isAuthenticated={isAuthenticated} isHydrated={isHydrated} selectedCity={selectedCity} />
         <TourScheduleSection selectedCity={selectedCity} onSelectCity={handleSelectCity} />
         <TicketsSection ticketTypes={ticketTypes} onBuy={handleBuyTicket} />
         <VenueSection selectedCity={selectedCity} />
         <WristbandSection />
         <FAQSection faqs={faqs} />
-        <TrustCTASection onLoginClick={openLoginModal} isAuthenticated={isAuthenticated} />
+        <TrustCTASection onLoginClick={openLoginModal} isAuthenticated={isAuthenticated} isHydrated={isHydrated} />
       </main>
 
       <Footer />

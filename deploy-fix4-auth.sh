@@ -1,0 +1,63 @@
+#!/bin/bash
+# ═══════════════════════════════════════════════════════════════════════════
+# signin-fix4: Fix Google Login — Replace redirect-based OAuth with popup
+#
+# Run this in Cloud Shell:
+#   cd ~/selastaging
+#   bash deploy-fix4-auth.sh
+# ═══════════════════════════════════════════════════════════════════════════
+
+set -e
+
+echo "🔧 Fixing auth-store.ts — replacing redirect OAuth with popup OAuth2..."
+
+# Decode the updated auth-store.ts from base64+gzip
+echo "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" | base64 -d | gunzip > src/lib/auth-store.ts
+
+echo "✅ auth-store.ts updated!"
+
+# Verify the fix
+echo ""
+echo "🔍 Verifying the fix..."
+if grep -q "initTokenClient" src/lib/auth-store.ts; then
+  echo "✅ Popup-based OAuth2 (initTokenClient) — FOUND"
+else
+  echo "❌ Popup-based OAuth2 (initTokenClient) — NOT FOUND! Something went wrong."
+  exit 1
+fi
+
+if grep -q "requestAccessToken" src/lib/auth-store.ts; then
+  echo "✅ Popup flow (requestAccessToken) — FOUND"
+else
+  echo "❌ Popup flow (requestAccessToken) — NOT FOUND!"
+  exit 1
+fi
+
+if grep -q "fetchGoogleUserInfo" src/lib/auth-store.ts; then
+  echo "✅ Google userinfo fetch — FOUND"
+else
+  echo "❌ Google userinfo fetch — NOT FOUND!"
+  exit 1
+fi
+
+if grep -q 'tokenType.*access_token' src/lib/auth-store.ts; then
+  echo "✅ tokenType field in request — FOUND"
+else
+  echo "❌ tokenType field — NOT FOUND!"
+  exit 1
+fi
+
+# Check no active redirect_uri (only in comments)
+REDIRECT_COUNT=$(grep -c "redirect_uri" src/lib/auth-store.ts || true)
+COMMENT_COUNT=$(grep -c "NEVER use redirect\|NOT redirect\|redirect_uri to be registered" src/lib/auth-store.ts || true)
+if [ "$REDIRECT_COUNT" -eq "$COMMENT_COUNT" ]; then
+  echo "✅ No active redirect_uri code (only in comments) — GOOD"
+else
+  echo "⚠️  Found redirect_uri in code (not just comments) — CHECK MANUALLY"
+  grep -n "redirect_uri" src/lib/auth-store.ts
+fi
+
+echo ""
+echo "🚀 Now build and deploy:"
+echo "   gcloud builds submit --tag gcr.io/eventku-494416/eventku-web:signin-fix4-v2 --timeout=1200 ."
+echo "   gcloud run deploy eventku-web --image gcr.io/eventku-494416/eventku-web:signin-fix4-v2 --region asia-southeast1 --platform managed --allow-unauthenticated --port 3000 --memory 1Gi --cpu 1 --min-instances 0 --max-instances 10 --set-env-vars=\"BACKEND_API_URL=https://eventku-api-lkfw4e5kna-et.a.run.app\""
